@@ -3,9 +3,10 @@
 ## 📋 **FÖRBEREDELSER INNAN ANSÖKAN**
 
 ### **✅ Din Live Site:**
-**URL:** https://ai-affiliate-site-l9ubm0e5o-pierre-lemons-projects.vercel.app
+**URL:** https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app
 **Status:** ✅ Live och fungerar
 **Content:** ✅ Trending landningssidor skapade
+**Legal Pages:** ✅ About Us, Privacy Policy, Terms of Service, Contact
 
 ### **🔧 Förbättringar som behövs:**
 1. **About Us-sida** (obligatorisk för Amazon)
@@ -38,20 +39,27 @@
 ### **Steg 3: Information du behöver:**
 ```bash
 📝 Website Information:
-- Website URL: https://ai-affiliate-site-l9ubm0e5o-pierre-lemons-projects.vercel.app
+- Website URL: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app
 - Website Name: AI Affiliate Platform
-- Website Category: Shopping/Product Reviews
-- Content Type: Product recommendations, trending products
-- Primary audience: Swedish consumers (men kan säga "International")
+- Website Category: Shopping/Product Reviews/Technology
+- Content Type: AI-driven product recommendations, trending products, price comparisons
+- Primary audience: Swedish and international consumers
+- About Us: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app/about
+- Privacy Policy: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app/privacy
+- Terms of Service: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app/terms
+- Contact: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app/contact
 
 📝 Traffic Information:
-- Monthly visitors: "Under 500" (ehrligt för start, de accepterar detta)
-- Traffic sources: "Search engines, social media"
-- How you drive traffic: "SEO, Google Trends content, social media"
+- Monthly visitors: "Under 500" (ehrligt för start, Amazon accepterar detta)
+- Traffic sources: "Search engines (Google), social media, direct visits"
+- How you drive traffic: "SEO-optimized content based on Google Trends data, social media marketing"
+- Growth strategy: "AI-driven content creation, trend analysis, user experience optimization"
 
 📝 Monetization:
-- Primary monetization: Amazon affiliate links
-- Products you'll promote: Consumer electronics, home & garden, trending products
+- Primary monetization: Amazon affiliate links + AliExpress partnerships
+- Products you'll promote: Consumer electronics, home & garden, trending products, health & beauty
+- Content strategy: Product reviews, comparison guides, trending product analysis
+- Target market: Sweden primary, international secondary
 ```
 
 ### **Steg 4: Vanliga frågor i ansökan:**
@@ -78,17 +86,27 @@ A: "To help visitors find quality products while earning commissions through tra
 ### **Steg 2: Information för AliExpress:**
 ```bash
 📝 Account Information:
-- Website: https://ai-affiliate-site-l9ubm0e5o-pierre-lemons-projects.vercel.app
+- Website: https://ai-affiliate-site-2kfdixgra-pierre-lemons-projects.vercel.app
 - Business Type: Individual/Sole Proprietor
-- Primary Traffic Source: SEO/Content Marketing
+- Primary Traffic Source: SEO/Content Marketing/Google Trends
 - Monthly Visitors: Under 1000 (för start)
-- Content Focus: Product reviews, trending items, deal alerts
+- Content Focus: AI-driven product recommendations, trending items, price comparisons
+- Target Audience: Sweden + International
+- Content Language: Swedish (primary), English (secondary)
 
 📝 Promotion Methods:
-- Website/Blog ✅
-- Social Media (om du planerar det)
-- Email Marketing (framtida)
-- Content Marketing ✅
+- Website/Blog ✅ (Live site med professionellt innehåll)
+- Social Media (planerar Facebook, Instagram, Twitter)
+- Email Marketing (framtida expansion)
+- Content Marketing ✅ (Google Trends-baserat innehåll)
+- SEO ✅ (Optimerat för sökmotorer)
+
+📝 Content Examples på din site:
+- /about - Professionell företagsinformation
+- /dashboard - Produktdashboard med trending items
+- /content/trending-hub-2025 - SEO-optimerade landningssidor
+- /privacy - GDPR-kompatibel integritetspolicy
+- /terms - Transparenta affiliate-villkor
 ```
 
 ### **Steg 3: AliExpress är vanligen lättare:**

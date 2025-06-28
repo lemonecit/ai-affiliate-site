@@ -47,7 +47,10 @@ export default function HomePage() {
             </p>
             <div className="flex justify-center space-x-4 animate-slide-up">
               <Link href="/products" className="btn-secondary">
-                Utforska Produkter
+                Se Trending Produkter
+              </Link>
+              <Link href="/dashboard" className="btn-outline">
+                Analytics Dashboard
               </Link>
               <Link href="/dashboard" className="bg-white text-primary-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
                 Se Analytics

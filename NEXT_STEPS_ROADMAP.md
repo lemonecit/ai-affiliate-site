@@ -147,6 +147,12 @@
 
 ### **Dag 1-2: Post-Migration Setup**
 - [ ] **Google Analytics & Search Console setup**
+- [x] **Site ready för affiliate applications** ✅
+  - [x] About Us page (/about)
+  - [x] Privacy Policy (/privacy) 
+  - [x] Terms of Service (/terms)
+  - [x] Contact page (/contact)
+  - [x] Professional design & content
 - [ ] **Ansök Amazon Associates (med live URL)**
 - [ ] **Ansök AliExpress Affiliate (med live URL)**
 - [x] **Setup Google Trends API (30 min) ⭐** - KLART!
