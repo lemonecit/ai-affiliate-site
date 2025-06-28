@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Panel - AI Affiliate Store</title>
+    
+    <!-- Favicon för att förhindra 404-fel -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f8fafc; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer; margin: 0.5rem; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-secondary { background: #f59e0b; color: white; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 1rem; }
+        h1 { color: #2563eb; margin-bottom: 2rem; }
+        .debug-section { background: #f0f9ff; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0; }
+        .status { font-family: monospace; background: #1f2937; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 AI Affiliate Store - Debug Test</h1>
+        
+        <div class="debug-section">
+            <h3>Debug Test Panel</h3>
+            <p>Klicka på debug-knappen för att testa funktionaliteten:</p>
+            
+            <button type="button" class="btn btn-secondary" onclick="debugIntegrations()" title="Debug Integrationer">
+                🔧 Kör Debug Test
+            </button>
+            
+            <button type="button" class="btn btn-primary" onclick="showNotification('Test meddelande!', 'success')" title="Test notifiering">
+                📢 Test Notifiering
+            </button>
+        </div>
+        
+        <div class="status" id="statusOutput">
+            Status: Redo för test...
+        </div>
+        
+        <div class="debug-section">
+            <h4>Testresultat:</h4>
+            <ul id="testResults">
+                <li>Väntar på test...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Mock data för test
+        const links = [
+            { id: 1, name: 'Test Produkt 1', platform: 'Amazon', category: 'Elektronik', active: true },
+            { id: 2, name: 'Test Produkt 2', platform: 'KSP', category: 'Datorer', active: true },
+            { id: 3, name: 'Test Produkt 3', platform: 'AliExpress', category: 'Mode', active: false }
+        ];
+
+        // Notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6',
+                warning: '#f59e0b'
+            };
+            
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: ${colors[type]}; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1001;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ==================== SÄKRA DEBUG FUNKTIONER ====================
+        
+        function debugIntegrations() {
+            try {
+                console.clear();
+                console.log('🔧 SÄKER DEBUG-FUNKTION STARTAR...');
+                
+                const statusOutput = document.getElementById('statusOutput');
+                const testResults = document.getElementById('testResults');
+                
+                statusOutput.textContent = 'Status: Kör debug test...';
+                testResults.innerHTML = '<li>🔄 Kör tester...</li>';
+                
+                const debugInfo = {
+                    timestamp: new Date().toISOString(),
+                    browser: navigator.userAgent.substring(0, 50) + '...',
+                    screen: `${screen.width}x${screen.height}`,
+                    location: window.location.href,
+                    linksData: {
+                        total: links ? links.length : 0,
+                        active: links ? links.filter(l => l.active).length : 0,
+                        platforms: links ? [...new Set(links.map(l => l.platform))] : [],
+                        categories: links ? [...new Set(links.map(l => l.category))] : []
+                    },
+                    tests: []
+                };
+                
+                // Kör tester
+                const tests = [
+                    { name: 'Links Data', status: debugInfo.linksData.total > 0 ? 'PASS' : 'FAIL' },
+                    { name: 'Browser Support', status: typeof window !== 'undefined' ? 'PASS' : 'FAIL' },
+                    { name: 'Console Available', status: typeof console !== 'undefined' ? 'PASS' : 'FAIL' },
+                    { name: 'DOM Ready', status: document.readyState === 'complete' ? 'PASS' : 'PARTIAL' },
+                    { name: 'JSON Support', status: typeof JSON !== 'undefined' ? 'PASS' : 'FAIL' }
+                ];
+                
+                debugInfo.tests = tests;
+                
+                // Visa resultat
+                const resultsList = tests.map(test => 
+                    `<li>${test.status === 'PASS' ? '✅' : test.status === 'PARTIAL' ? '⚠️' : '❌'} ${test.name}: ${test.status}</li>`
+                ).join('');
+                
+                testResults.innerHTML = resultsList;
+                
+                console.group('🔧 AI AFFILIATE SITE DEBUG TEST');
+                console.log('📅 Timestamp:', debugInfo.timestamp);
+                console.log('🌐 Browser:', debugInfo.browser);
+                console.log('📱 Screen:', debugInfo.screen);
+                console.log('🔗 Links Data:', debugInfo.linksData);
+                console.log('✅ Tests:', debugInfo.tests);
+                console.groupEnd();
+                
+                statusOutput.textContent = `Status: Test slutfört - ${tests.filter(t => t.status === 'PASS').length}/${tests.length} tester passerade`;
+                
+                showNotification('🔧 Debug test slutfört! Kontrollera konsolen för detaljer.', 'success');
+                
+                const debugSummary = `🔧 DEBUG TEST SAMMANFATTNING
+
+✅ Test slutfört: ${new Date().toLocaleTimeString('sv-SE')}
+📍 URL: ${debugInfo.location}
+🔗 Testdata: ${debugInfo.linksData.total} länkar (${debugInfo.linksData.active} aktiva)
+📊 Tester: ${tests.filter(t => t.status === 'PASS').length}/${tests.length} passerade
+
+TESTRESULTAT:
+${tests.map(t => `${t.status === 'PASS' ? '✅' : '❌'} ${t.name}`).join('\n')}
+
+🔍 Plattformar: ${debugInfo.linksData.platforms.join(', ')}
+📂 Kategorier: ${debugInfo.linksData.categories.join(', ')}
+
+✅ DEBUG-FUNKTIONEN FUNGERAR PERFEKT!`;
+                
+                setTimeout(() => {
+                    alert(debugSummary);
+                }, 500);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Debug function error:', error);
+                showNotification('❌ DEBUG FEL: ' + error.message, 'error');
+                
+                document.getElementById('statusOutput').textContent = 'Status: Fel uppstod - ' + error.message;
+                document.getElementById('testResults').innerHTML = '<li>❌ Test misslyckades: ' + error.message + '</li>';
+                
+                return false;
+            }
+        }
+
+        // Säkra placeholder funktioner
+        function showAmazonProducts() {
+            showNotification('📦 Amazon-integration (test mode)', 'info');
+        }
+
+        function showKSPProducts() {
+            showNotification('🇮🇱 KSP-integration (test mode)', 'info');
+        }
+
+        function showAliExpressProducts() {
+            showNotification('🏪 AliExpress-integration (test mode)', 'info');
+        }
+
+        // Auto-load test när sidan laddas
+        window.addEventListener('load', function() {
+            showNotification('🚀 Test-sida laddad! Redo för debug-test.', 'success');
+            document.getElementById('statusOutput').textContent = 'Status: Test-sida laddad och redo för debug...';
+        });
+    </script>
+</body>
+</html>

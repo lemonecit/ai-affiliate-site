@@ -1,0 +1,57 @@
+<!-- Lägg till detta i din admin.html -->
+<div class="trending-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+    <h3 style="margin-bottom: 15px;">🔥 Google Trends - Live Data</h3>
+    <div id="trending-products" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        <!-- Trending products will be loaded here -->
+    </div>
+    <button onclick="refreshTrends()" style="background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 15px; cursor: pointer;">
+        🔄 Refresh Trends
+    </button>
+</div>
+
+<script>
+// Add this JavaScript to your admin panel
+async function refreshTrends() {
+    try {
+        // In production, this would call your real Google Trends API
+        const mockTrends = [
+            { name: "Yoga Matta", score: 92, growth: "+67%", revenue: "$138/mån" },
+            { name: "Luftfuktare", score: 88, growth: "+55%", revenue: "$66/mån" },
+            { name: "Bluetooth Hörlurar", score: 85, growth: "+45%", revenue: "$64/mån" }
+        ];
+        
+        const container = document.getElementById('trending-products');
+        container.innerHTML = mockTrends.map(trend => `
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0;">${trend.name}</h4>
+                <div style="font-size: 0.9em;">
+                    📈 Score: ${trend.score}/100<br>
+                    🚀 Growth: ${trend.growth}<br>
+                    💰 Est. Revenue: ${trend.revenue}
+                </div>
+                <button onclick="addTrendingProduct('${trend.name}')" 
+                        style="background: #22c55e; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-top: 10px; cursor: pointer;">
+                    ➕ Lägg Till Produkter
+                </button>
+            </div>
+        `).join('');
+        
+        showNotification('🔥 Trends uppdaterade!', 'success');
+    } catch (error) {
+        showNotification('❌ Kunde inte hämta trends', 'error');
+    }
+}
+
+function addTrendingProduct(trendName) {
+    // Auto-search for products based on trend
+    document.getElementById('search-input').value = trendName;
+    searchProducts();
+    showNotification(`🔍 Söker produkter för: ${trendName}`, 'info');
+}
+
+// Auto-refresh trends every hour
+setInterval(refreshTrends, 3600000);
+
+// Load trends on page load
+document.addEventListener('DOMContentLoaded', refreshTrends);
+</script>

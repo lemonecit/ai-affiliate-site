@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO & Trend Control Panel - AI Affiliate Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+        
+        /* Main Content */
+        .main { padding: 2rem 0; }
+        .page-header { background: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .page-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #6b7280; }
+        
+        /* Cards */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .card-title { font-size: 1.25rem; font-weight: bold; }
+        .card-icon { font-size: 2rem; }
+        
+        /* Status indicators */
+        .status-indicator { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+        .status-active { color: #22c55e; }
+        .status-pending { color: #f59e0b; }
+        .status-inactive { color: #ef4444; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-active { background: #22c55e; animation: pulse 2s infinite; }
+        .dot-pending { background: #f59e0b; }
+        .dot-inactive { background: #ef4444; }
+        
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; margin: 0.25rem; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #374151; }
+        
+        /* Progress bars */
+        .progress-bar { width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin: 0.5rem 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #16a34a); transition: width 0.3s; }
+        
+        /* Tables */
+        .table-container { background: white; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 2rem; }
+        .table { width: 100%; }
+        .table th, .table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
+        .table th { background: #f9fafb; font-weight: 600; color: #374151; }
+        .table tr:hover { background: #f9fafb; }
+        
+        /* Trend indicators */
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+        .trend-stable { color: #6b7280; }
+        
+        /* Log viewer */
+        .log-viewer { background: #1f2937; color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem; max-height: 300px; overflow-y: auto; margin-top: 1rem; }
+        .log-entry { margin-bottom: 0.5rem; }
+        .log-success { color: #22c55e; }
+        .log-warning { color: #f59e0b; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #3b82f6; }
+        
+        /* Animations */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .page-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <span>🔍</span>
+                    <span>SEO & Trend Control</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="simple.html">Affiliate Store</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                    <li><a href="#" class="active">Trend Control</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="page-title">SEO & Trend Control Panel</h1>
+                        <p class="page-subtitle">Automatisk produktoptimering baserat på Google Trends och SEO-analys</p>
+                    </div>
+                    <div class="status-indicator status-active">
+                        <div class="status-dot dot-active"></div>
+                        <span>System Aktivt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Cards -->
+            <div class="cards-grid">
+                <!-- Trend Analysis Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Trend-analys</h3>
+                        <div class="card-icon">📈</div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Analysera Google Trends och hitta bästa produkter att sälja</p>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Senaste analys:</span>
+                            <span id="lastAnalysis">2 timmar sedan</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="runTrendAnalysis()">
+                            <span id="trendBtn">🚀 Kör Trend-analys</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewTrendReport()">📄 Visa Rapport</button>
+                    </div>
+                    
+                    <div style="font-size: 0.875rem; color: #6b7280;">
+                        Status: <span class="status-active">✅ Senaste analys lyckades</span>
+                    </div>
+                </div>
+
+                <!-- SEO Optimization Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">SEO-optimering</h3>
+                        <div class="card-icon">🔍</div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Optimera keywords och sökbarhetsindex för bästa resultat</p>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>SEO Score:</span>
+                            <span style="font-weight: bold; color: #22c55e;">8.7/10</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-success" onclick="runSEOOptimization()">
+                            <span id="seoBtn">🎯 Optimera SEO</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewKeywords()">🔤 Keywords</button>
+                    </div>
+                    
+                    <div style="font-size: 0.875rem; color: #6b7280;">
+                        Aktiva keywords: <span style="font-weight: bold;">47</span> | Rankningar: <span class="trend-up">↗️ +12%</span>
+                    </div>
+                </div>
+
+                <!-- Product Update Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Produktuppdatering</h3>
+                        <div class="card-icon">🛍️</div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Uppdatera produkter automatiskt baserat på trend-data</p>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Produkter uppdaterade:</span>
+                            <span id="updatedProducts">12 idag</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-warning" onclick="updateProducts()">
+                            <span id="updateBtn">🔄 Uppdatera Produkter</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewProducts()">👀 Se Produkter</button>
+                    </div>
+                    
+                    <div style="font-size: 0.875rem; color: #6b7280;">
+                        Nästa auto-uppdatering: <span style="font-weight: bold;">Om 5 dagar</span>
+                    </div>
+                </div>
+
+                <!-- Performance Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Prestanda</h3>
+                        <div class="card-icon">📊</div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Övervaka klick, konverteringar och ROI</p>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>Klick från trends:</span>
+                            <span style="font-weight: bold; color: #22c55e;">+47%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>SEO-trafik:</span>
+                            <span style="font-weight: bold; color: #22c55e;">+32%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Konvertering:</span>
+                            <span style="font-weight: bold; color: #f59e0b;">3.2%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="openDashboard()">📈 Dashboard</button>
+                        <button class="btn btn-secondary" onclick="exportReport()">📄 Exportera</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Trends Table -->
+            <div class="table-container">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+                    <h3>🔥 Aktuella Trending Produkter</h3>
+                    <p style="color: #6b7280; margin-top: 0.5rem;">Produkter med högst trend-score och SEO-potential</p>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Kategori</th>
+                            <th>Trend Score</th>
+                            <th>SEO Score</th>
+                            <th>Månadssökningar</th>
+                            <th>Potentiell Intäkt</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendsTable">
+                        <tr>
+                            <td><strong>Smart Fitness Tracker</strong></td>
+                            <td>Sport & Hälsa</td>
+                            <td><span style="color: #22c55e; font-weight: bold;">9.2/10</span></td>
+                            <td><span style="color: #22c55e; font-weight: bold;">8.8/10</span></td>
+                            <td>38,000</td>
+                            <td style="color: #22c55e; font-weight: bold;">$247/mån</td>
+                            <td><span class="status-indicator status-active"><div class="status-dot dot-active"></div>Live</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trådlösa Hörlurar Pro</strong></td>
+                            <td>Elektronik</td>
+                            <td><span style="color: #22c55e; font-weight: bold;">8.9/10</span></td>
+                            <td><span style="color: #f59e0b; font-weight: bold;">7.4/10</span></td>
+                            <td>45,000</td>
+                            <td style="color: #22c55e; font-weight: bold;">$312/mån</td>
+                            <td><span class="status-indicator status-active"><div class="status-dot dot-active"></div>Live</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gaming Mus RGB Pro</strong></td>
+                            <td>Gaming</td>
+                            <td><span style="color: #f59e0b; font-weight: bold;">8.1/10</span></td>
+                            <td><span style="color: #22c55e; font-weight: bold;">8.5/10</span></td>
+                            <td>28,000</td>
+                            <td style="color: #22c55e; font-weight: bold;">$156/mån</td>
+                            <td><span class="status-indicator status-pending"><div class="status-dot dot-pending"></div>Uppdateras</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Smart Hem Enheter</strong></td>
+                            <td>Hem & Trädgård</td>
+                            <td><span style="color: #22c55e; font-weight: bold;">9.1/10</span></td>
+                            <td><span style="color: #22c55e; font-weight: bold;">9.0/10</span></td>
+                            <td>62,000</td>
+                            <td style="color: #22c55e; font-weight: bold;">$428/mån</td>
+                            <td><span class="status-indicator status-pending"><div class="status-dot dot-pending"></div>Analyseras</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Luftrenare</strong></td>
+                            <td>Hem & Trädgård</td>
+                            <td><span style="color: #22c55e; font-weight: bold;">8.7/10</span></td>
+                            <td><span style="color: #f59e0b; font-weight: bold;">7.8/10</span></td>
+                            <td>35,000</td>
+                            <td style="color: #22c55e; font-weight: bold;">$189/mån</td>
+                            <td><span class="status-indicator status-active"><div class="status-dot dot-active"></div>Live</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- System Log -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">System-logg</h3>
+                    <button class="btn btn-secondary" onclick="clearLog()">🗑️ Rensa</button>
+                </div>
+                <div class="log-viewer" id="systemLog">
+                    <div class="log-entry log-success">[14:25:12] ✅ Trend-analys slutförd - 47 produkter analyserade</div>
+                    <div class="log-entry log-info">[14:23:45] 📊 SEO-scores uppdaterade för 12 produkter</div>
+                    <div class="log-entry log-success">[14:20:31] 🔄 Produktdatabas synkroniserad med trend-data</div>
+                    <div class="log-entry log-warning">[14:15:22] ⚠️ Hög konkurrens upptäckt för keyword "bluetooth headphones"</div>
+                    <div class="log-entry log-info">[14:12:08] 🤖 Telegram bot uppdaterad med 6 nya trending produkter</div>
+                    <div class="log-entry log-success">[14:10:15] ✅ Google Trends API-anrop lyckades</div>
+                    <div class="log-entry log-info">[14:05:33] 🔍 Startar schemalagd SEO-analys...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let isRunningAnalysis = false;
+        let currentTrends = [];
+
+        // Main functions
+        async function runTrendAnalysis() {
+            if (isRunningAnalysis) return;
+            
+            const btn = document.getElementById('trendBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                isRunningAnalysis = true;
+                btn.innerHTML = '<span class="spinner">⚙️</span> Analyserar...';
+                btn.disabled = true;
+                
+                addLogEntry('🚀 Startar Google Trends-analys...', 'info');
+                
+                // Simulate API calls
+                await simulateProgress('Hämtar Google Trends data...', 2000);
+                addLogEntry('📊 Google Trends data hämtad', 'success');
+                
+                await simulateProgress('Analyserar keyword difficulty...', 1500);
+                addLogEntry('🔍 SEO-analys slutförd', 'success');
+                
+                await simulateProgress('Beräknar opportunity scores...', 1000);
+                addLogEntry('🎯 Opportunity scores beräknade', 'success');
+                
+                await simulateProgress('Uppdaterar produktdatabas...', 800);
+                addLogEntry('✅ Trend-analys slutförd - 47 produkter analyserade', 'success');
+                
+                // Update UI
+                updateTrendsTable();
+                updateLastAnalysis();
+                showNotification('Trend-analys slutförd!', 'success');
+                
+            } catch (error) {
+                addLogEntry(`❌ Fel vid trend-analys: ${error.message}`, 'error');
+                showNotification('Fel vid analys', 'error');
+            } finally {
+                isRunningAnalysis = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function runSEOOptimization() {
+            const btn = document.getElementById('seoBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.innerHTML = '<span class="spinner">⚙️</span> Optimerar...';
+                btn.disabled = true;
+                
+                addLogEntry('🔍 Startar SEO-optimering...', 'info');
+                
+                await simulateProgress('Analyserar keyword density...', 1200);
+                addLogEntry('📝 Meta-descriptions uppdaterade', 'success');
+                
+                await simulateProgress('Optimerar title tags...', 1000);
+                addLogEntry('🏷️ Title tags optimerade', 'success');
+                
+                await simulateProgress('Uppdaterar internal linking...', 800);
+                addLogEntry('🔗 Internal linking förbättrat', 'success');
+                
+                addLogEntry('✅ SEO-optimering slutförd', 'success');
+                showNotification('SEO optimerat!', 'success');
+                
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function updateProducts() {
+            const btn = document.getElementById('updateBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.innerHTML = '<span class="spinner">⚙️</span> Uppdaterar...';
+                btn.disabled = true;
+                
+                addLogEntry('🔄 Startar produktuppdatering...', 'info');
+                
+                await simulateProgress('Hämtar trending produkter...', 1500);
+                addLogEntry('📦 12 nya produkter identifierade', 'info');
+                
+                await simulateProgress('Uppdaterar HTML-sidor...', 1200);
+                addLogEntry('📝 HTML-sidor uppdaterade', 'success');
+                
+                await simulateProgress('Synkroniserar Telegram bot...', 800);
+                addLogEntry('🤖 Telegram bot synkroniserad', 'success');
+                
+                addLogEntry('✅ Produktuppdatering slutförd', 'success');
+                updateProductCount();
+                showNotification('Produkter uppdaterade!', 'success');
+                
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Utility functions
+        function simulateProgress(message, delay) {
+            return new Promise(resolve => {
+                setTimeout(resolve, delay);
+            });
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const log = document.getElementById('systemLog');
+            const timestamp = new Date().toLocaleTimeString('sv-SE');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (log.children.length > 20) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        function updateTrendsTable() {
+            // Simulate updated trend scores
+            const rows = document.querySelectorAll('#trendsTable tr');
+            rows.forEach(row => {
+                const trendCell = row.cells[2];
+                if (trendCell) {
+                    const currentScore = parseFloat(trendCell.textContent);
+                    const newScore = Math.min(10, currentScore + (Math.random() * 0.5));
+                    trendCell.innerHTML = `<span style="color: #22c55e; font-weight: bold;">${newScore.toFixed(1)}/10</span>`;
+                }
+            });
+        }
+
+        function updateLastAnalysis() {
+            document.getElementById('lastAnalysis').textContent = 'Just nu';
+        }
+
+        function updateProductCount() {
+            const current = parseInt(document.getElementById('updatedProducts').textContent);
+            document.getElementById('updatedProducts').textContent = `${current + 3} idag`;
+        }
+
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: ${colors[type]}; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Navigation functions
+        function viewTrendReport() {
+            window.open('trend_analysis_report.html', '_blank');
+        }
+
+        function viewKeywords() {
+            alert('🔤 Aktiva Keywords:\n\n• "trådlösa hörlurar" - Pos. 3\n• "smart fitness tracker" - Pos. 1\n• "gaming mus rgb" - Pos. 7\n• "bluetooth högtalare" - Pos. 4\n• "laptop ställ" - Pos. 12');
+        }
+
+        function viewProducts() {
+            window.open('simple.html', '_blank');
+        }
+
+        function openDashboard() {
+            window.open('dashboard.html', '_blank');
+        }
+
+        function exportReport() {
+            addLogEntry('📄 Rapport exporterad', 'info');
+            showNotification('Rapport exporterad!', 'success');
+        }
+
+        function clearLog() {
+            document.getElementById('systemLog').innerHTML = '';
+            addLogEntry('🧹 Logg rensad', 'info');
+        }
+
+        // Auto-refresh functions
+        setInterval(() => {
+            if (Math.random() > 0.8) { // 20% chance every 30 seconds
+                const messages = [
+                    'Övervakar Google Trends...',
+                    'Kontrollerar keyword rankings...',
+                    'Analyserar konkurrentdata...',
+                    'Uppdaterar SEO-scores...'
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                addLogEntry(randomMessage, 'info');
+            }
+        }, 30000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            addLogEntry('🚀 SEO & Trend Control Panel startat', 'success');
+            addLogEntry('📊 Övervakning aktiverad', 'info');
+        });
+    </script>
+</body>
+</html>

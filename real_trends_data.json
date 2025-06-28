@@ -1,0 +1,275 @@
+{
+  "trending_keywords": [
+    {
+      "keyword": "kök",
+      "category": "hem",
+      "interest_score": 58,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:01.951440"
+    },
+    {
+      "keyword": "massage",
+      "category": "hälsa",
+      "interest_score": 54,
+      "trend_direction": "up",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:13.655556"
+    },
+    {
+      "keyword": "förvaring",
+      "category": "hem",
+      "interest_score": 50,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:04.258869"
+    },
+    {
+      "keyword": "klänning",
+      "category": "mode",
+      "interest_score": 49,
+      "trend_direction": "down",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:37:57.269952"
+    },
+    {
+      "keyword": "jacka",
+      "category": "mode",
+      "interest_score": 49,
+      "trend_direction": "up",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:37:59.445065"
+    },
+    {
+      "keyword": "tv",
+      "category": "elektronik",
+      "interest_score": 47,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:37:53.067661"
+    },
+    {
+      "keyword": "gaming",
+      "category": "elektronik",
+      "interest_score": 45,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:37:55.142137"
+    },
+    {
+      "keyword": "tennis",
+      "category": "sport",
+      "interest_score": 45,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:10.327221"
+    },
+    {
+      "keyword": "säng",
+      "category": "hem",
+      "interest_score": 44,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:01.952433"
+    },
+    {
+      "keyword": "jeans",
+      "category": "mode",
+      "interest_score": 41,
+      "trend_direction": "down",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:37:57.269952"
+    },
+    {
+      "keyword": "möbler",
+      "category": "hem",
+      "interest_score": 39,
+      "trend_direction": "stable",
+      "search_volume": "<1K",
+      "last_updated": "2025-06-28T08:38:01.951440"
+    },
+    {
+      "keyword": "wellness",
+      "category": "hälsa",
+      "interest_score": 36,
+      "trend_direction": "stable",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:38:13.655556"
+    },
+    {
+      "keyword": "träning",
+      "category": "sport",
+      "interest_score": 34,
+      "trend_direction": "up",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:38:10.327221"
+    },
+    {
+      "keyword": "väska",
+      "category": "mode",
+      "interest_score": 32,
+      "trend_direction": "stable",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:37:57.269952"
+    },
+    {
+      "keyword": "inredning",
+      "category": "hem",
+      "interest_score": 32,
+      "trend_direction": "down",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:38:04.258869"
+    },
+    {
+      "keyword": "kamera",
+      "category": "elektronik",
+      "interest_score": 31,
+      "trend_direction": "stable",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:37:55.141139"
+    },
+    {
+      "keyword": "iphone",
+      "category": "elektronik",
+      "interest_score": 29,
+      "trend_direction": "stable",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:37:53.067661"
+    },
+    {
+      "keyword": "smycken",
+      "category": "mode",
+      "interest_score": 27,
+      "trend_direction": "up",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:37:59.445065"
+    },
+    {
+      "keyword": "sömn",
+      "category": "hälsa",
+      "interest_score": 23,
+      "trend_direction": "up",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:38:15.322778"
+    },
+    {
+      "keyword": "fotboll",
+      "category": "sport",
+      "interest_score": 22,
+      "trend_direction": "up",
+      "search_volume": "1K-10K",
+      "last_updated": "2025-06-28T08:38:07.682958"
+    }
+  ],
+  "product_trends": [
+    {
+      "product": "kök",
+      "current_interest": 31,
+      "trend_direction": "down",
+      "peak_interest": 45,
+      "recommendation": "low_priority",
+      "last_updated": "2025-06-28T08:38:18.839028"
+    },
+    {
+      "product": "massage",
+      "current_interest": 26,
+      "trend_direction": "stable",
+      "peak_interest": 36,
+      "recommendation": "monitor",
+      "last_updated": "2025-06-28T08:38:18.839028"
+    },
+    {
+      "product": "förvaring",
+      "current_interest": 12,
+      "trend_direction": "stable",
+      "peak_interest": 21,
+      "recommendation": "monitor",
+      "last_updated": "2025-06-28T08:38:18.839028"
+    },
+    {
+      "product": "klänning",
+      "current_interest": 52,
+      "trend_direction": "stable",
+      "peak_interest": 100,
+      "recommendation": "medium_priority",
+      "last_updated": "2025-06-28T08:38:18.839028"
+    },
+    {
+      "product": "jacka",
+      "current_interest": 17,
+      "trend_direction": "down",
+      "peak_interest": 56,
+      "recommendation": "low_priority",
+      "last_updated": "2025-06-28T08:38:18.840026"
+    },
+    {
+      "product": "tv",
+      "current_interest": 63,
+      "trend_direction": "stable",
+      "peak_interest": 100,
+      "recommendation": "medium_priority",
+      "last_updated": "2025-06-28T08:38:22.158088"
+    },
+    {
+      "product": "gaming",
+      "current_interest": 6,
+      "trend_direction": "stable",
+      "peak_interest": 14,
+      "recommendation": "monitor",
+      "last_updated": "2025-06-28T08:38:22.158088"
+    },
+    {
+      "product": "tennis",
+      "current_interest": 5,
+      "trend_direction": "stable",
+      "peak_interest": 24,
+      "recommendation": "monitor",
+      "last_updated": "2025-06-28T08:38:22.159086"
+    },
+    {
+      "product": "säng",
+      "current_interest": 6,
+      "trend_direction": "stable",
+      "peak_interest": 9,
+      "recommendation": "monitor",
+      "last_updated": "2025-06-28T08:38:22.159086"
+    },
+    {
+      "product": "jeans",
+      "current_interest": 12,
+      "trend_direction": "down",
+      "peak_interest": 23,
+      "recommendation": "low_priority",
+      "last_updated": "2025-06-28T08:38:22.159086"
+    }
+  ],
+  "seasonal_insights": [
+    {
+      "keyword": "online",
+      "category": "midsommar",
+      "interest_score": 52,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:24.415255"
+    },
+    {
+      "keyword": "online",
+      "category": "grill",
+      "interest_score": 52,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:27.839752"
+    },
+    {
+      "keyword": "online",
+      "category": "semester",
+      "interest_score": 52,
+      "trend_direction": "stable",
+      "search_volume": "10K-50K",
+      "last_updated": "2025-06-28T08:38:31.661096"
+    }
+  ],
+  "generated_at": "2025-06-28T08:38:34.346032",
+  "source": "automated_scheduler",
+  "update_frequency": "daily"
+}

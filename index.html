@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Affiliate Store - Smart Product Recommendations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <span class="ml-2 text-xl font-bold text-gray-900">AI Affiliate Store</span>
+                </div>
+                
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-500 transition-colors">Hem</a>
+                    <a href="products.html" class="text-gray-700 hover:text-blue-500 transition-colors">Produkter</a>
+                    <a href="categories.html" class="text-gray-700 hover:text-blue-500 transition-colors">Kategorier</a>
+                    <a href="dashboard.html" class="text-gray-700 hover:text-blue-500 transition-colors">Dashboard</a>
+                    <a href="admin.html" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-6 animate-fade-in">
+                    AI-Driven Product Discovery
+                </h1>
+                <p class="text-xl mb-8 opacity-90 max-w-3xl mx-auto animate-slide-up">
+                    Upptäck de bästa produkterna från Amazon och AliExpress med hjälp av AI. 
+                    Få personliga rekommendationer, prisjämförelser och exklusiva erbjudanden.
+                </p>
+                <div class="flex justify-center space-x-4 animate-slide-up">
+                    <a href="products.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                        Utforska Produkter
+                    </a>
+                    <a href="dashboard.html" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                        Se Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Kraftfulla AI-funktioner
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Vår plattform använder avancerad AI för att leverera de bästa affiliate-upplevelserna
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6 text-center">
+                    <svg class="h-12 w-12 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-3">Smart Produktanalys</h3>
+                    <p class="text-gray-600">
+                        AI analyserar produkter från Amazon och AliExpress för att hitta de bästa erbjudandena
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6 text-center">
+                    <svg class="h-12 w-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-3">Personliga Rekommendationer</h3>
+                    <p class="text-gray-600">
+                        Få skräddarsydda produktförslag baserat på användarbeteende och preferenser
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6 text-center">
+                    <svg class="h-12 w-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-3">Avancerad Analytics</h3>
+                    <p class="text-gray-600">
+                        Spåra klick, konverteringar och intäkter med detaljerad rapportering
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Products Section -->
+    <section class="bg-gray-100 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Populära Produkter</h2>
+                <p class="text-xl text-gray-600">AI-rekommenderade produkter med bästa priser</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Product 1 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6">
+                    <div class="relative mb-4">
+                        <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span class="text-gray-400">Produktbild</span>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">-25%</div>
+                        <div class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">Amazon</div>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Trådlösa Hörlurar Pro</h3>
+                    <div class="flex items-center mb-2">
+                        <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                        <span class="text-sm text-gray-600 ml-1">(4.8)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-gray-900">$149</span>
+                            <span class="text-sm text-gray-500 line-through ml-2">$199</span>
+                        </div>
+                    </div>
+                    <button onclick="trackClick('amazon', 'Trådlösa Hörlurar Pro')" class="w-full bg-gradient-to-r from-orange-400 to-orange-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-xl transition-all">
+                        Köp på Amazon $149
+                    </button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6">
+                    <div class="relative mb-4">
+                        <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span class="text-gray-400">Produktbild</span>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">-40%</div>
+                        <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs">AliExpress</div>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Smart Fitness Tracker</h3>
+                    <div class="flex items-center mb-2">
+                        <span class="text-yellow-400">⭐⭐⭐⭐☆</span>
+                        <span class="text-sm text-gray-600 ml-1">(4.3)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-gray-900">$59</span>
+                            <span class="text-sm text-gray-500 line-through ml-2">$99</span>
+                        </div>
+                    </div>
+                    <button onclick="trackClick('aliexpress', 'Smart Fitness Tracker')" class="w-full bg-gradient-to-r from-red-400 to-red-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-xl transition-all">
+                        Köp på AliExpress $59
+                    </button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6">
+                    <div class="relative mb-4">
+                        <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span class="text-gray-400">Produktbild</span>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">-15%</div>
+                        <div class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">Amazon</div>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Bärbar SSD 1TB</h3>
+                    <div class="flex items-center mb-2">
+                        <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                        <span class="text-sm text-gray-600 ml-1">(4.9)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-2xl font-bold text-gray-900">$85</span>
+                            <span class="text-sm text-gray-500 line-through ml-2">$100</span>
+                        </div>
+                    </div>
+                    <button onclick="trackClick('amazon', 'Bärbar SSD 1TB')" class="w-full bg-gradient-to-r from-orange-400 to-orange-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-xl transition-all">
+                        Köp på Amazon $85
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-3xl font-bold text-blue-500 mb-2">10,000+</div>
+                    <div class="text-gray-600">Produkter Indexerade</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-green-500 mb-2">95%</div>
+                    <div class="text-gray-600">AI Noggrannhet</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-yellow-500 mb-2">24/7</div>
+                    <div class="text-gray-600">Prisövervakning</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-blue-500 mb-2">50+</div>
+                    <div class="text-gray-600">Kategorier</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        <span class="ml-2 text-lg font-semibold">AI Affiliate Store</span>
+                    </div>
+                    <p class="text-gray-400">
+                        AI-driven affiliate marketing platform för smarta produktrekommendationer.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Produkter</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Elektronik</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Mode</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Hem & Trädgård</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Sport</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Företag</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Om Oss</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Kontakt</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Integritet</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Villkor</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Hjälp</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Docs</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 AI Affiliate Store. Alla rättigheter förbehållna.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Click Tracking -->
+    <div id="clickNotification" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300">
+        <div class="flex items-center">
+            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Klick spårat! Omdirigerar...</span>
+        </div>
+    </div>
+
+    <script>
+        function trackClick(platform, productName) {
+            // Show notification
+            const notification = document.getElementById('clickNotification');
+            notification.style.transform = 'translateY(0)';
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateY(100%)';
+            }, 2000);
+            
+            // Simulate tracking
+            console.log(`Tracked click: ${platform} - ${productName}`);
+            
+            // In real app, this would send data to your API
+            // fetch('/api/clicks', { method: 'POST', body: JSON.stringify({platform, productName}) })
+            
+            // Simulate redirect after short delay
+            setTimeout(() => {
+                alert(`Skulle omdirigera till ${platform} för att köpa: ${productName}`);
+            }, 1000);
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

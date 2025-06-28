@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Affiliate Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        .header { background: #2563eb; color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 5rem 0; text-align: center; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
+        .btn { display: inline-block; padding: 1rem 2rem; margin: 0.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; transition: transform 0.3s; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: #22c55e; color: white; }
+        .btn-secondary { background: white; color: #2563eb; }
+        
+        /* Features */
+        .features { padding: 5rem 0; background: #f8fafc; }
+        .features h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .feature-card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-icon { width: 4rem; height: 4rem; margin: 0 auto 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .icon-blue { background: #dbeafe; color: #2563eb; }
+        .icon-green { background: #dcfce7; color: #22c55e; }
+        .icon-yellow { background: #fef3c7; color: #f59e0b; }
+        
+        /* Products */
+        .products { padding: 5rem 0; }
+        .products h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .product-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-image { height: 200px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #6b7280; position: relative; }
+        .product-badge { position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; }
+        .product-platform { position: absolute; top: 10px; left: 10px; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; color: white; font-weight: bold; }
+        .amazon { background: #ff9500; }
+        .aliexpress { background: #ff6b35; }
+        .product-info { padding: 1.5rem; }
+        .product-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .product-rating { margin-bottom: 1rem; }
+        .stars { color: #fbbf24; }
+        .product-price { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+        .current-price { font-size: 1.5rem; font-weight: bold; }
+        .original-price { color: #6b7280; text-decoration: line-through; }
+        .product-btn { width: 100%; padding: 1rem; border: none; border-radius: 0.5rem; color: white; font-weight: bold; cursor: pointer; transition: transform 0.3s; }
+        .product-btn:hover { transform: translateY(-2px); }
+        .amazon-btn { background: linear-gradient(135deg, #ff9500, #ff7300); }
+        .aliexpress-btn { background: linear-gradient(135deg, #ff6b35, #e55a2b); }
+        
+        /* Stats */
+        .stats { padding: 4rem 0; background: #f1f5f9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-blue { color: #2563eb; }
+        .stat-green { color: #22c55e; }
+        .stat-yellow { color: #f59e0b; }
+        
+        /* Footer */
+        .footer { background: #1f2937; color: white; padding: 3rem 0; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .footer h3 { margin-bottom: 1rem; }
+        .footer ul { list-style: none; }
+        .footer a { color: #9ca3af; text-decoration: none; transition: color 0.3s; }
+        .footer a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid #374151; margin-top: 2rem; padding-top: 2rem; text-align: center; color: #9ca3af; }
+        
+        /* Notification */
+        .notification { position: fixed; bottom: 20px; right: 20px; background: #22c55e; color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: translateY(100px); transition: transform 0.3s; z-index: 1000; }
+        .notification.show { transform: translateY(0); }
+    </style>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="AI-driven affiliate store med bästa deals från Amazon, KSP och fler. Handplockat av AI för bästa priser.">
+    <meta name="keywords" content="affiliate, deals, amazon, electronics, AI, shopping, rabatt, erbjudanden">
+    <meta name="author" content="AI Affiliate Store">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI Affiliate Store - Bästa Deals Handplockat av AI">
+    <meta property="og:description" content="Upptäck de bästa dealsen från Amazon, KSP och fler. Vår AI väljer produkter med bästa pris och kvalitet.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ai-affiliate-store.com">
+    <meta property="og:image" content="https://ai-affiliate-store.com/images/og-image.jpg">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Affiliate Store">
+    <meta name="twitter:description" content="Bästa deals handplockat av AI">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Performance optimering -->
+    <link rel="preconnect" href="https://amazon.com">
+    <link rel="preconnect" href="https://ksp.co.il">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+        
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">🛍️ AI Affiliate Store</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Hem</a></li>
+                    <li><a href="#products">Produkter</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>AI-Driven Product Discovery</h1>
+            <p>Upptäck de bästa produkterna från Amazon och AliExpress med hjälp av AI.<br>
+               Få personliga rekommendationer, prisjämförelser och exklusiva erbjudanden.</p>
+            <a href="#products" class="btn btn-primary">Utforska Produkter</a>
+            <a href="dashboard.html" class="btn btn-secondary">Se Analytics</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Kraftfulla AI-funktioner</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue">📈</div>
+                    <h3>Smart Produktanalys</h3>
+                    <p>AI analyserar produkter från Amazon och AliExpress för att hitta de bästa erbjudandena</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">👥</div>
+                    <h3>Personliga Rekommendationer</h3>
+                    <p>Få skräddarsydda produktförslag baserat på användarbeteende och preferenser</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-yellow">📊</div>
+                    <h3>Avancerad Analytics</h3>
+                    <p>Spåra klick, konverteringar och intäkter med detaljerad rapportering</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2>Populära Produkter</h2>
+            <p style="text-align: center; margin-bottom: 3rem; color: #6b7280;">AI-rekommenderade produkter med bästa priser</p>
+            
+            <div class="product-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="product-platform amazon">Amazon</div>
+                        <div class="product-badge">-25%</div>
+                        <span>🎧 Produktbild</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Trådlösa Hörlurar Pro</h3>
+                        <div class="product-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span>(4.8)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$149</span>
+                            <span class="original-price">$199</span>
+                        </div>
+                        <button class="product-btn amazon-btn" onclick="trackClick('amazon', 'Trådlösa Hörlurar Pro', 149)">
+                            Köp på Amazon $149
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="product-platform aliexpress">AliExpress</div>
+                        <div class="product-badge">-40%</div>
+                        <span>⌚ Produktbild</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Smart Fitness Tracker</h3>
+                        <div class="product-rating">
+                            <span class="stars">⭐⭐⭐⭐☆</span>
+                            <span>(4.3)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$59</span>
+                            <span class="original-price">$99</span>
+                        </div>
+                        <button class="product-btn aliexpress-btn" onclick="trackClick('aliexpress', 'Smart Fitness Tracker', 59)">
+                            Köp på AliExpress $59
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="product-platform amazon">Amazon</div>
+                        <div class="product-badge">-15%</div>
+                        <span>💾 Produktbild</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Bärbar SSD 1TB</h3>
+                        <div class="product-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span>(4.9)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$85</span>
+                            <span class="original-price">$100</span>
+                        </div>
+                        <button class="product-btn amazon-btn" onclick="trackClick('amazon', 'Bärbar SSD 1TB', 85)">
+                            Köp på Amazon $85
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div>
+                    <div class="stat-number stat-blue">10,000+</div>
+                    <div>Produkter Indexerade</div>
+                </div>
+                <div>
+                    <div class="stat-number stat-green">95%</div>
+                    <div>AI Noggrannhet</div>
+                </div>
+                <div>
+                    <div class="stat-number stat-yellow">24/7</div>
+                    <div>Prisövervakning</div>
+                </div>
+                <div>
+                    <div class="stat-number stat-blue">50+</div>
+                    <div>Kategorier</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>🛍️ AI Affiliate Store</h3>
+                    <p>AI-driven affiliate marketing platform för smarta produktrekommendationer.</p>
+                </div>
+                <div>
+                    <h3>Produkter</h3>
+                    <ul>
+                        <li><a href="#">Elektronik</a></li>
+                        <li><a href="#">Mode</a></li>
+                        <li><a href="#">Hem & Trädgård</a></li>
+                        <li><a href="#">Sport</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Företag</h3>
+                    <ul>
+                        <li><a href="#">Om Oss</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                        <li><a href="#">Integritet</a></li>
+                        <li><a href="#">Villkor</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Hjälp</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AI Affiliate Store. Alla rättigheter förbehållna.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText">Klick spårat! Omdirigerar...</span>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        let totalRevenue = 0;
+
+        function trackClick(platform, productName, price) {
+            clickCount++;
+            totalRevenue += price;
+            
+            // Show notification
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = `✅ Klick #${clickCount} spårat för ${productName} (${platform})`;
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+            
+            // Log the tracking data
+            console.log('=== AFFILIATE CLICK TRACKED ===');
+            console.log(`Platform: ${platform}`);
+            console.log(`Product: ${productName}`);
+            console.log(`Price: $${price}`);
+            console.log(`Total Clicks: ${clickCount}`);
+            console.log(`Total Revenue: $${totalRevenue}`);
+            console.log(`Timestamp: ${new Date().toLocaleString()}`);
+            console.log('==============================');
+            
+            // Simulate API call to track click
+            // In real app: fetch('/api/clicks', { method: 'POST', body: JSON.stringify({platform, productName, price}) })
+            
+            // Simulate redirect after delay
+            setTimeout(() => {
+                const confirmRedirect = confirm(`🚀 Omdirigera till ${platform} för att köpa: ${productName} ($${price})?`);
+                if (confirmRedirect) {
+                    // In real app, this would be the actual affiliate URL
+                    window.open(`https://${platform === 'amazon' ? 'amazon.com' : 'aliexpress.com'}/search?q=${encodeURIComponent(productName)}`, '_blank');
+                }
+            }, 1500);
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Show welcome message
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const notification = document.getElementById('notification');
+                const notificationText = document.getElementById('notificationText');
+                notificationText.textContent = '🎉 Välkommen till AI Affiliate Store! Klicka på produkter för att testa klickspårning.';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }, 1000);
+        });
+    </script>
+    
+    <!-- Smart Visitor Capture Strategy -->
+    <script src="visitor_capture.js"></script>
+</body>
+</html>

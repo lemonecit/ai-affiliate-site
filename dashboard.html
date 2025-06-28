@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Affiliate Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        .header { background: #2563eb; color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+        
+        /* Main Content */
+        .main { padding: 2rem 0; }
+        .page-header { background: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .page-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #6b7280; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-header { display: flex; justify-content: between; align-items: center; margin-bottom: 1rem; }
+        .stat-title { color: #6b7280; font-size: 0.875rem; font-weight: 500; }
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-change { display: flex; align-items: center; font-size: 0.875rem; }
+        .stat-change.positive { color: #22c55e; }
+        .stat-change.negative { color: #ef4444; }
+        .stat-icon { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .icon-blue { background: #dbeafe; color: #2563eb; }
+        .icon-green { background: #dcfce7; color: #22c55e; }
+        .icon-yellow { background: #fef3c7; color: #f59e0b; }
+        .icon-purple { background: #f3e8ff; color: #8b5cf6; }
+        
+        /* Charts */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .chart-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .chart-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; }
+        .chart-placeholder { height: 250px; background: #f1f5f9; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #6b7280; }
+        
+        /* Tables */
+        .table-card { background: white; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-header { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; }
+        .table { width: 100%; }
+        .table th, .table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
+        .table th { background: #f9fafb; font-weight: 600; color: #374151; }
+        .table tr:hover { background: #f9fafb; }
+        .platform-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .amazon { background: #fed7aa; color: #ea580c; }
+        .aliexpress { background: #fecaca; color: #dc2626; }
+        
+        /* Source badges */
+        .source-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .source-badge.telegram { background: #dbeafe; color: #0088cc; }
+        .source-badge.website { background: #dcfce7; color: #16a34a; }
+        .source-badge.direct { background: #f3e8ff; color: #8b5cf6; }
+        
+        /* Source filter buttons */
+        .source-filter-btn { 
+            padding: 0.5rem 1rem; 
+            border: 1px solid #d1d5db; 
+            background: white; 
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            font-size: 0.875rem;
+        }
+        .source-filter-btn:hover { background: #f3f4f6; }
+        .source-filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        
+        /* Table header improvements */
+        .table-header h3 { margin: 0; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Filters */
+        .filters { display: flex; gap: 1rem; margin-bottom: 2rem; align-items: center; }
+        .filter-select { padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; }
+        .filter-label { font-weight: 500; }
+        
+        /* Live indicator */
+        .live-indicator { display: flex; align-items: center; gap: 0.5rem; color: #22c55e; font-size: 0.875rem; }
+        .live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">🛍️ AI Affiliate Store</div>
+                <ul class="nav-links">
+                    <li><a href="simple.html">Hem</a></li>
+                    <li><a href="#products">Produkter</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="page-title">Analytics Dashboard</h1>
+                        <p class="page-subtitle">Övervaka dina affiliate-klick och intäkter</p>
+                    </div>
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>Live Data</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <span class="filter-label">Tidsperiod:</span>
+                <select class="filter-select" id="timeFilter">
+                    <option value="24h">Senaste 24h</option>
+                    <option value="7d" selected>Senaste 7 dagarna</option>
+                    <option value="30d">Senaste 30 dagarna</option>
+                    <option value="90d">Senaste 90 dagarna</option>
+                </select>
+                
+                <span class="filter-label">Plattform:</span>
+                <select class="filter-select" id="platformFilter">
+                    <option value="all">Alla plattformar</option>
+                    <option value="amazon">Amazon</option>
+                    <option value="aliexpress">AliExpress</option>
+                </select>
+                
+                <span class="filter-label">Källa:</span>
+                <select class="filter-select" id="sourceFilter">
+                    <option value="all">Alla källor</option>
+                    <option value="website">Webbsida</option>
+                    <option value="telegram">Telegram Bot</option>
+                    <option value="direct">Direktlänkar</option>
+                </select>
+                
+                <button onclick="refreshData()" style="background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    🔄 Uppdatera
+                </button>
+            </div>
+
+            <!-- Telegram Statistics -->
+            <div class="telegram-stats" style="margin: 2rem 0;">
+                <h3 style="color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="background: #0088cc; color: white; padding: 0.5rem; border-radius: 50%; font-size: 1.2rem;">📱</span>
+                    Telegram Bot Statistik
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-left: 4px solid #0088cc;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="stat-title">Telegram Klick</div>
+                                <div class="stat-value" id="telegramClicks">342</div>
+                                <div class="stat-change positive">↗️ +45.2% från förra veckan</div>
+                            </div>
+                            <div class="stat-icon" style="background: #0088cc; color: white;">🤖</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="border-left: 4px solid #22c55e;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="stat-title">Auto-Posts Idag</div>
+                                <div class="stat-value" id="autoPostsToday">6</div>
+                                <div style="color: #6b7280; font-size: 0.75rem;">Nästa: 20:00</div>
+                            </div>
+                            <div class="stat-icon" style="background: #22c55e; color: white;">⏰</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="stat-title">Telegram ROI</div>
+                                <div class="stat-value" id="telegramROI">$127.45</div>
+                                <div class="stat-change positive">↗️ 15.2% konvertering</div>
+                            </div>
+                            <div class="stat-icon" style="background: #f59e0b; color: white;">💎</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="stat-title">Aktiva Kanaler</div>
+                                <div class="stat-value" id="activeChannels">3</div>
+                                <div style="color: #6b7280; font-size: 0.75rem;">Test: 1, Live: 2</div>
+                            </div>
+                            <div class="stat-icon" style="background: #8b5cf6; color: white;">📺</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="stat-title">Totala Klick</div>
+                            <div class="stat-value" id="totalClicks">1,247</div>
+                            <div class="stat-change positive">↗️ +12.5% från förra veckan</div>
+                        </div>
+                        <div class="stat-icon icon-blue">👆</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="stat-title">Total Kommission</div>
+                            <div class="stat-value" id="totalCommission">$3,247.89</div>
+                            <div class="stat-change positive">↗️ +8.2% från förra veckan</div>
+                        </div>
+                        <div class="stat-icon icon-green">💰</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="stat-title">Konverteringsgrad</div>
+                            <div class="stat-value" id="conversionRate">3.2%</div>
+                            <div class="stat-change positive">↗️ +2.1% från förra veckan</div>
+                        </div>
+                        <div class="stat-icon icon-yellow">👁️</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="stat-title">Genomsnittlig Order</div>
+                            <div class="stat-value" id="avgOrder">$45.67</div>
+                            <div class="stat-change positive">↗️ +5.3% från förra veckan</div>
+                        </div>
+                        <div class="stat-icon icon-purple">📈</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3 class="chart-title">Klick över tid</h3>
+                    <div class="chart-placeholder">
+                        📊 Interaktivt diagram kommer här
+                        <br><small>Visar Amazon vs AliExpress klick per dag</small>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Plattformsfördelning</h3>
+                    <div class="chart-placeholder">
+                        🥧 Cirkeldiagram kommer här
+                        <br><small>Amazon: 65% | AliExpress: 35%</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Clicks Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Senaste Klick</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="filterBySource('all')" class="source-filter-btn active" id="filter-all">Alla</button>
+                        <button onclick="filterBySource('telegram')" class="source-filter-btn" id="filter-telegram">📱 Telegram</button>
+                        <button onclick="filterBySource('website')" class="source-filter-btn" id="filter-website">🌐 Webbsida</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tid</th>
+                            <th>Produkt</th>
+                            <th>Plattform</th>
+                            <th>Källa</th>
+                            <th>Pris</th>
+                            <th>Kommission</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentClicksTable">
+                        <tr data-source="telegram">
+                            <td>14:15</td>
+                            <td>Gaming Mus RGB Pro</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td><span class="source-badge telegram">📱 Telegram Bot</span></td>
+                            <td>$39.00</td>
+                            <td style="color: #22c55e; font-weight: bold;">$2.34</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                        <tr data-source="website">
+                            <td>13:45</td>
+                            <td>Trådlösa Hörlurar Pro</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td><span class="source-badge website">🌐 Webbsida</span></td>
+                            <td>$149.00</td>
+                            <td style="color: #22c55e; font-weight: bold;">$8.94</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                        <tr data-source="telegram">
+                            <td>13:23</td>
+                            <td>Smart Fitness Tracker</td>
+                            <td><span class="platform-badge aliexpress">AliExpress</span></td>
+                            <td><span class="source-badge telegram">📱 Telegram Bot</span></td>
+                            <td>$59.00</td>
+                            <td style="color: #f59e0b; font-weight: bold;">$2.95</td>
+                            <td>⏳ Väntande</td>
+                        </tr>
+                        <tr data-source="website">
+                            <td>13:12</td>
+                            <td>Bärbar SSD 1TB</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td><span class="source-badge website">🌐 Webbsida</span></td>
+                            <td>$85.00</td>
+                            <td style="color: #22c55e; font-weight: bold;">$4.25</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                        <tr data-source="telegram">
+                            <td>12:58</td>
+                            <td>Trådlös Snabbladdare</td>
+                            <td><span class="platform-badge aliexpress">AliExpress</span></td>
+                            <td><span class="source-badge telegram">📱 Telegram Bot</span></td>
+                            <td>$25.00</td>
+                            <td style="color: #6b7280;">$0.00</td>
+                            <td>❌ Ej konverterad</td>
+                        </tr>
+                        <tr data-source="telegram">
+                            <td>12:34</td>
+                            <td>Bluetooth Högtalare</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td><span class="source-badge telegram">📱 Telegram Bot</span></td>
+                            <td>$45.00</td>
+                            <td style="color: #22c55e; font-weight: bold;">$2.70</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                        <tr data-source="website">
+                            <td>12:15</td>
+                            <td>Gaming Tangentbord</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td><span class="source-badge website">🌐 Webbsida</span></td>
+                            <td>$89.99</td>
+                            <td style="color: #22c55e; font-weight: bold;">$6.30</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                        <tr data-source="telegram">
+                            <td>11:45</td>
+                            <td>Smartwatch Pro</td>
+                            <td><span class="platform-badge aliexpress">AliExpress</span></td>
+                            <td><span class="source-badge telegram">📱 Telegram Bot</span></td>
+                            <td>$129.00</td>
+                            <td style="color: #22c55e; font-weight: bold;">$7.74</td>
+                            <td>✅ Konverterad</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let isLive = true;
+        
+        function refreshData() {
+            // Simulate data refresh including Telegram stats
+            const stats = {
+                clicks: Math.floor(Math.random() * 500) + 1000,
+                commission: (Math.random() * 2000 + 2000).toFixed(2),
+                conversion: (Math.random() * 3 + 2).toFixed(1),
+                avgOrder: (Math.random() * 30 + 30).toFixed(2),
+                telegramClicks: Math.floor(Math.random() * 200) + 250,
+                autoPostsToday: Math.floor(Math.random() * 4) + 4,
+                telegramROI: (Math.random() * 100 + 100).toFixed(2),
+                activeChannels: Math.floor(Math.random() * 2) + 2
+            };
+            
+            document.getElementById('totalClicks').textContent = stats.clicks.toLocaleString();
+            document.getElementById('totalCommission').textContent = `$${stats.commission}`;
+            document.getElementById('conversionRate').textContent = `${stats.conversion}%`;
+            document.getElementById('avgOrder').textContent = `$${stats.avgOrder}`;
+            
+            // Update Telegram stats
+            document.getElementById('telegramClicks').textContent = stats.telegramClicks;
+            document.getElementById('autoPostsToday').textContent = stats.autoPostsToday;
+            document.getElementById('telegramROI').textContent = `$${stats.telegramROI}`;
+            document.getElementById('activeChannels').textContent = stats.activeChannels;
+            
+            // Show update notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: #22c55e; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.innerHTML = '✅ Data uppdaterad (inkl. Telegram)!';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+        
+        // Source filtering function
+        function filterBySource(source) {
+            const rows = document.querySelectorAll('#recentClicksTable tr[data-source]');
+            const buttons = document.querySelectorAll('.source-filter-btn');
+            
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`filter-${source}`).classList.add('active');
+            
+            // Filter rows
+            rows.forEach(row => {
+                if (source === 'all' || row.dataset.source === source) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update stats based on filter
+            updateFilteredStats(source);
+        }
+        
+        function updateFilteredStats(source) {
+            const sourceStats = {
+                all: { clicks: 1247, conversion: 3.2 },
+                telegram: { clicks: 342, conversion: 4.8 },
+                website: { clicks: 905, conversion: 2.8 }
+            };
+            
+            const stats = sourceStats[source] || sourceStats.all;
+            
+            // Temporarily highlight the relevant stats
+            if (source === 'telegram') {
+                document.querySelector('.telegram-stats').style.background = '#eff6ff';
+                setTimeout(() => {
+                    document.querySelector('.telegram-stats').style.background = '';
+                }, 2000);
+            }
+        }
+        
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            if (isLive) {
+                refreshData();
+            }
+        }, 30000);
+        
+        // Filter handlers
+        document.getElementById('timeFilter').addEventListener('change', function() {
+            console.log('Time filter changed to:', this.value);
+            refreshData();
+        });
+        
+        document.getElementById('platformFilter').addEventListener('change', function() {
+            console.log('Platform filter changed to:', this.value);
+            refreshData();
+        });
+        
+        document.getElementById('sourceFilter').addEventListener('change', function() {
+            console.log('Source filter changed to:', this.value);
+            filterBySource(this.value);
+            refreshData();
+        });
+        
+        document.getElementById('platformFilter').addEventListener('change', function() {
+            console.log('Platform filter changed to:', this.value);
+            refreshData();
+        });
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('🎉 AI Affiliate Dashboard loaded!');
+        console.log('📊 Live data tracking enabled');
+    </script>
+    
+    <!-- Smart Visitor Capture Strategy -->
+    <script src="visitor_capture.js"></script>
+</body>
+</html>

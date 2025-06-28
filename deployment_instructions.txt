@@ -1,0 +1,105 @@
+
+🚀 AI AFFILIATE PLATFORM - DEPLOYMENT INSTRUKTIONER
+==================================================
+
+📅 Deployment förberedd: 2025-06-26 20:38
+
+🎯 SNABB DEPLOYMENT (Rekommenderat: Netlify)
+============================================
+
+1. Gå till: https://netlify.com
+2. Skapa gratis konto
+3. Klicka "Deploy manually"
+4. Dra filen "ai-affiliate-platform.zip" till webbsidan
+5. Vänta 30 sekunder
+6. Din webbsida är live!
+
+📋 FILER INKLUDERADE
+===================
+📄 simple.html
+📄 admin.html
+📄 dashboard.html
+📄 visitor_capture.js
+📄 market_data.js
+📄 amazon_integration.js
+📄 ksp_integration.js
+📄 amazon_products.json
+📄 ksp_products.json
+
+
+🌐 ALTERNATIVA WEBBHOTELL
+========================
+
+GRATIS ALTERNATIV:
+- Netlify: https://netlify.com (Rekommenderat)
+- GitHub Pages: https://pages.github.com
+- Vercel: https://vercel.com
+- Cloudflare Pages: https://pages.cloudflare.com
+
+BUDGET ALTERNATIV (20-100 kr/månad):
+- Hostinger: https://hostinger.se
+- Namecheap: https://namecheap.com
+- One.com: https://one.com
+
+🔧 MANUELL UPLOAD INSTRUKTIONER
+===============================
+
+För traditionella webbhotell (cPanel/FTP):
+
+1. Packa upp "ai-affiliate-platform.zip"
+2. Logga in på ditt webbhotell via cPanel eller FTP
+3. Navigera till public_html/ mappen
+4. Ladda upp alla filer från deployment/ mappen
+5. Se till att simple.html är tillgänglig som index-sida
+
+📊 POST-DEPLOYMENT CHECKLIST
+============================
+
+□ Testa huvudsida (simple.html)
+□ Testa admin-panel (admin.html) 
+□ Testa dashboard (dashboard.html)
+□ Verifiera visitor capture fungerar
+□ Kontrollera affiliate-länkar
+□ Testa på mobil/desktop
+□ Setup Google Analytics
+□ Lägg till i Google Search Console
+□ Testa laddningstider
+
+🔍 SEO OPTIMERING
+=================
+
+□ Anpassa meta-descriptions för dina produkter
+□ Lägg till Google Analytics tracking code
+□ Setup Google Search Console
+□ Skapa content för bättre ranking
+□ Optimera bilder med alt-tags
+□ Bygg backlinks från social media
+
+🎯 NÄSTA STEG
+============
+
+1. Köp domän (ai-affiliate-store.com)
+2. Koppla domän till webbhotell
+3. Setup SSL-certifikat (automatiskt på Netlify)
+4. Lansera marknadsföring via Telegram bot
+5. Börja generera affiliate-intäkter!
+
+💡 SUPPORT
+==========
+
+Vid problem:
+1. Kontrollera att alla filer laddats upp korrekt
+2. Verifiera att simple.html är index-sida
+3. Kontrollera JavaScript-konsolen för fel
+4. Testa i inkognito-läge
+
+🎉 GRATTIS!
+===========
+
+Din AI Affiliate Platform är redo för lansering!
+Förväntade resultat med visitor capture:
+- 10-35% minskning av bounce rate
+- 15-25% ökning av konverteringar
+- 30-50% förbättrat förtroende via social proof
+
+Lycka till med din affiliate-business! 🚀

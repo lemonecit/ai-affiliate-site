@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://ai-affiliate-store.com/sitemap.xml
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /dashboard/
+
+# Allow important pages
+Allow: /
+Allow: /admin.html
+Allow: /dashboard.html

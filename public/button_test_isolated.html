@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Rendering Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .product-card { border: 2px solid #e5e7eb; padding: 15px; margin: 10px; border-radius: 8px; background: white; }
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .product-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .product-actions button { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Button Rendering Test</h1>
+        <div id="testArea"></div>
+        <button onclick="testButtonRendering()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Button Rendering</button>
+    </div>
+
+    <script>
+        async function testButtonRendering() {
+            console.log('🧪 Testing button rendering...');
+            const testArea = document.getElementById('testArea');
+            
+            // Test data similar to what the API returns
+            const testProducts = [
+                {
+                    title: "Echo Dot (4th Gen, 2020 release)",
+                    platform: "amazon",
+                    price: { current: 36.34, currency: "USD" },
+                    productId: "B08N5WRWNW",
+                    category: "Electronics",
+                    url: "https://amazon.com/dp/B08N5WRWNW",
+                    affiliateUrl: "https://amazon.com/dp/B08N5WRWNW?tag=lemonec-20",
+                    image: "test.jpg"
+                }
+            ];
+            
+            // Clear test area
+            testArea.innerHTML = '';
+            
+            // Create product cards using the same method as admin.html
+            testProducts.forEach((product, index) => {
+                const title = product.title || 'Unnamed Product';
+                const price = product.price?.current || product.price || 0;
+                const currency = product.price?.currency || 'USD';
+                const platform = product.platform || 'unknown';
+                const productId = product.productId || product.id || `product_${index}`;
+                const category = product.category || 'Okategoriserad';
+                const affiliateUrl = product.affiliateUrl || product.url || '#';
+                const productUrl = product.url || '#';
+                const image = product.image || '';
+                
+                // Create card element
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.id = `test_card_${index}`;
+                
+                // Set data attributes safely
+                card.dataset.productId = productId;
+                card.dataset.platform = platform.toLowerCase();
+                card.dataset.title = title;
+                card.dataset.price = price;
+                card.dataset.category = category;
+                card.dataset.affiliateUrl = affiliateUrl;
+                card.dataset.productUrl = productUrl;
+                card.dataset.image = image;
+                
+                // Create card content
+                const cardHTML = `
+                    <h4 style="margin-bottom: 10px; color: #1f2937;">${title}</h4>
+                    <p style="font-weight: bold; color: #059669; margin-bottom: 8px;">
+                        ${price} ${currency}
+                    </p>
+                    <p style="color: #6b7280; margin-bottom: 8px;">
+                        Kategori: ${category} | Platform: ${platform.toUpperCase()}
+                    </p>
+                    <div class="product-actions">
+                        <button class="btn btn-primary add-product-btn">
+                            ➕ Lägg till
+                        </button>
+                        <button class="btn btn-secondary view-product-btn">
+                            👁️ Visa
+                        </button>
+                    </div>
+                `;
+                
+                card.innerHTML = cardHTML;
+                testArea.appendChild(card);
+                
+                console.log('✅ Created card for:', title);
+                console.log('📋 Data attributes:', {
+                    productId: card.dataset.productId,
+                    platform: card.dataset.platform,
+                    title: card.dataset.title
+                });
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.add-product-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    alert(`✅ "Lägg till" clicked for: ${card.dataset.title}`);
+                });
+            });
+            
+            document.querySelectorAll('.view-product-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    alert(`👁️ "Visa" clicked for: ${card.dataset.title}`);
+                });
+            });
+            
+            console.log('✅ Test completed - check if buttons render correctly');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Netlify redirects
+/               /simple.html           200
+/admin          /admin.html            200  
+/dashboard      /dashboard.html        200
+/home           /simple.html           301
+/index          /simple.html           301
+
+# Security redirects
+/wp-admin/*     /                      301
+/wp-login.php   /                      301
+/admin.php      /                      301

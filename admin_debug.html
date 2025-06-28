@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test - JavaScript Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .btn { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        #debug-output { background: #000; color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Admin Panel - JavaScript Debug</h1>
+    
+    <div class="debug-section">
+        <h3>Test JavaScript Laddning</h3>
+        <button class="btn" onclick="testScriptLoading()">Test Script Loading</button>
+        <button class="btn" onclick="testAmazonFunction()">Test Amazon Function</button>
+        <button class="btn" onclick="testAliExpressFunction()">Test AliExpress Function</button>
+        <button class="btn" onclick="clearDebug()">Clear Debug</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Debug Output</h3>
+        <div id="debug-output"></div>
+    </div>
+    
+    <!-- Test om scripts laddas -->
+    <script src="market_data.js"></script>
+    <script src="amazon_integration.js"></script>
+    <script src="ksp_integration.js"></script>
+    <script src="aliexpress_integration.js"></script>
+    
+    <script>
+        function debugLog(message) {
+            const output = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearDebug() {
+            document.getElementById('debug-output').innerHTML = '';
+        }
+        
+        function testScriptLoading() {
+            debugLog('🔍 Testing script loading...');
+            
+            // Test om scripts är laddade
+            debugLog(`Market Data: ${typeof marketData !== 'undefined' ? '✅ Loaded' : '❌ Missing'}`);
+            debugLog(`Amazon Integration: ${typeof AmazonIntegration !== 'undefined' ? '✅ Loaded' : '❌ Missing'}`);
+            debugLog(`KSP Integration: ${typeof KSPIntegration !== 'undefined' ? '✅ Loaded' : '❌ Missing'}`);
+            debugLog(`AliExpress Manager: ${typeof AliExpressManager !== 'undefined' ? '✅ Loaded' : '❌ Missing'}`);
+            
+            // Test globala variabler
+            debugLog(`window.amazonIntegration: ${typeof window.amazonIntegration !== 'undefined' ? '✅ Exists' : '❌ Missing'}`);
+            debugLog(`window.kspIntegration: ${typeof window.kspIntegration !== 'undefined' ? '✅ Exists' : '❌ Missing'}`);
+            debugLog(`window.aliexpressManager: ${typeof window.aliexpressManager !== 'undefined' ? '✅ Exists' : '❌ Missing'}`);
+        }
+        
+        function testAmazonFunction() {
+            debugLog('🛒 Testing Amazon function...');
+            try {
+                if (typeof showAmazonProducts === 'function') {
+                    debugLog('✅ showAmazonProducts function exists');
+                    showAmazonProducts();
+                    debugLog('✅ showAmazonProducts executed');
+                } else {
+                    debugLog('❌ showAmazonProducts function missing');
+                }
+            } catch (error) {
+                debugLog(`❌ Amazon error: ${error.message}`);
+            }
+        }
+        
+        function testAliExpressFunction() {
+            debugLog('🏪 Testing AliExpress function...');
+            try {
+                if (typeof showAliExpressProducts === 'function') {
+                    debugLog('✅ showAliExpressProducts function exists');
+                    showAliExpressProducts();
+                    debugLog('✅ showAliExpressProducts executed');
+                } else {
+                    debugLog('❌ showAliExpressProducts function missing');
+                }
+            } catch (error) {
+                debugLog(`❌ AliExpress error: ${error.message}`);
+            }
+        }
+        
+        // Simulera admin-funktioner som inte finns i denna test-sida
+        function showAmazonProducts() {
+            debugLog('📦 showAmazonProducts called - checking Amazon integration...');
+            
+            if (window.amazonIntegration) {
+                debugLog('✅ Amazon integration exists');
+                if (typeof window.amazonIntegration.show === 'function') {
+                    debugLog('✅ Amazon show method exists');
+                    window.amazonIntegration.show();
+                } else {
+                    debugLog('❌ Amazon show method missing');
+                }
+            } else {
+                debugLog('❌ Amazon integration missing - trying to create...');
+                if (typeof AmazonIntegration !== 'undefined') {
+                    window.amazonIntegration = new AmazonIntegration();
+                    debugLog('✅ Amazon integration created');
+                } else {
+                    debugLog('❌ AmazonIntegration class missing');
+                }
+            }
+        }
+        
+        function showAliExpressProducts() {
+            debugLog('🏪 showAliExpressProducts called - checking AliExpress integration...');
+            
+            if (window.aliexpressManager) {
+                debugLog('✅ AliExpress manager exists');
+            } else {
+                debugLog('❌ AliExpress manager missing - trying to create...');
+                if (typeof AliExpressManager !== 'undefined') {
+                    window.aliexpressManager = new AliExpressManager();
+                    debugLog('✅ AliExpress manager created');
+                } else {
+                    debugLog('❌ AliExpressManager class missing');
+                }
+            }
+        }
+        
+        function hideAllProductSections() {
+            debugLog('🔄 hideAllProductSections called');
+        }
+        
+        function showNotification(message, type) {
+            debugLog(`📢 Notification: ${message} (${type})`);
+        }
+        
+        // Auto-test när sidan laddas
+        window.addEventListener('DOMContentLoaded', () => {
+            debugLog('🚀 Page loaded - running auto-tests...');
+            setTimeout(() => {
+                testScriptLoading();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

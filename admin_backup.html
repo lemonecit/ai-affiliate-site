@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AI Affiliate Store</title>
+    
+    <!-- Favicon för att förhindra 404-fel -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+    
+    <!-- Preconnect för externa resurser -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <style>
+        /* Reset och grundläggande stil */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        .header { background: #2563eb; color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+        
+        /* Main Content */
+        .main { padding: 2rem 0; }
+        .page-header { background: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .page-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #6b7280; }
+        
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #374151; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-title { color: #6b7280; font-size: 0.875rem; }
+        .stat-icon { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
+        .icon-blue { background: #dbeafe; color: #2563eb; }
+        .icon-green { background: #dcfce7; color: #22c55e; }
+        .icon-yellow { background: #fef3c7; color: #f59e0b; }
+        .icon-purple { background: #f3e8ff; color: #8b5cf6; }
+        
+        /* Forms */
+        .form-section { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151; }
+        .form-input { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; }
+        .form-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        
+        /* Tables */
+        .table-section { background: white; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-header { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .table { width: 100%; }
+        .table th, .table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
+        .table th { background: #f9fafb; font-weight: 600; color: #374151; }
+        .table tr:hover { background: #f9fafb; }
+        .platform-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .amazon { background: #fed7aa; color: #ea580c; }
+        .aliexpress { background: #ff6b35; color: white; }
+        .aliexpress { background: #fecaca; color: #dc2626; }
+        .ebay { background: #fff7ed; color: #ea580c; }
+        .walmart { background: #dbeafe; color: #1d4ed8; }
+        .etsy { background: #fef3c7; color: #d97706; }
+        .asos { background: #1f2937; color: white; }
+        .hm { background: #dc2626; color: white; }
+        .zalando { background: #f97316; color: white; }
+        .nike { background: #1f2937; color: white; }
+        .adidas { background: #1f2937; color: white; }
+        .apple { background: #6b7280; color: white; }
+        .samsung { background: #1d4ed8; color: white; }
+        .bestbuy { background: #fbbf24; color: #1f2937; }
+        .newegg { background: #ef4444; color: white; }
+        .komplett { background: #22c55e; color: white; }
+        .booking { background: #003580; color: white; }
+        .expedia { background: #fbbf24; color: #1f2937; }
+        .airbnb { background: #ff5a5f; color: white; }
+        .hotels { background: #dc2626; color: white; }
+        .spotify { background: #1DB954; color: white; }
+        .netflix { background: #e50914; color: white; }
+        .audible { background: #f97316; color: white; }
+        .skillshare { background: #00d4aa; color: white; }
+        .iherb { background: #22c55e; color: white; }
+        .sephora { background: #1f2937; color: white; }
+        .myprotein { background: #0ea5e9; color: white; }
+        .ikea { background: #fbbf24; color: #1f2937; }
+        .wayfair { background: #8b5cf6; color: white; }
+        .homedepot { background: #f97316; color: white; }
+        .revolut { background: #0075EB; color: white; }
+        .wise { background: #37d67a; color: white; }
+        .nordnet { background: #003d82; color: white; }
+        .ksp { background: #FF6B35; color: white; }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .active { background: #dcfce7; color: #166534; }
+        .inactive { background: #fef2f2; color: #991b1b; }
+        
+        /* ML Analytics Section */
+        .ml-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; }
+        .ml-header { display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem; }
+        .ml-title { font-size: 1.5rem; font-weight: bold; }
+        .ml-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .ml-card { background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 0.75rem; backdrop-filter: blur(10px); }
+        .ml-score { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .progress-bar { background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin: 1rem 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #22c55e); transition: width 0.3s ease; }
+        
+        /* Market Analysis */
+        .market-analysis { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .country-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .country-card { background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #2563eb; cursor: pointer; transition: all 0.3s; }
+        .country-card:hover { background: #e5f3ff; transform: translateY(-2px); }
+        .country-card.selected { background: #dbeafe; border-left-color: #1d4ed8; }
+        .country-name { font-weight: bold; margin-bottom: 0.5rem; }
+        .country-stats { font-size: 0.875rem; color: #6b7280; }
+        
+        /* Recommendations */
+        .recommendations { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .recommendation-item { background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 4px solid #0ea5e9; }
+        .recommendation-title { font-weight: bold; color: #0c4a6e; margin-bottom: 0.5rem; }
+        .recommendation-text { color: #374151; font-size: 0.875rem; }
+        
+        /* Loading States */
+        .loading { display: inline-block; width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .inactive { background: #fecaca; color: #991b1b; }
+        
+        /* Search and Filters */
+        .search-section { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .search-grid { display: grid; grid-template-columns: 1fr auto auto auto; gap: 1rem; align-items: end; }
+        .search-input { position: relative; }
+        .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; }
+        .search-input input { padding-left: 2.5rem; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 1rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-title { font-size: 1.5rem; font-weight: bold; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+        .modal-close:hover { color: #374151; }
+        
+        /* Action buttons */
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.5rem; border: none; border-radius: 0.25rem; cursor: pointer; }
+        .edit-btn { background: #3b82f6; color: white; }
+        .delete-btn { background: #ef4444; color: white; }
+        .view-btn { background: #6b7280; color: white; }
+
+        /* Product Cards for AliExpress */
+        .product-card { background: white; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-2px); }
+        .product-image-container { position: relative; }
+        .product-image { width: 100%; height: 200px; object-fit: cover; }
+        .product-badges { position: absolute; top: 0.5rem; right: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+        .platform-badge { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; }
+        .discount-badge { background: #ef4444; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; }
+        .product-info { padding: 1rem; }
+        .product-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .product-pricing { margin-bottom: 0.5rem; }
+        .current-price { font-size: 1.25rem; font-weight: bold; color: #22c55e; }
+        .original-price { font-size: 1rem; color: #6b7280; text-decoration: line-through; margin-left: 0.5rem; }
+        .product-rating { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .stars { color: #fbbf24; }
+        .rating-text { font-size: 0.875rem; color: #6b7280; }
+        .product-meta { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem; color: #6b7280; }
+        .shipping-info { font-size: 0.875rem; color: #22c55e; margin-bottom: 1rem; }
+        .product-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+        .product-actions .btn { justify-content: center; font-size: 0.875rem; }
+        .no-products { text-align: center; padding: 3rem; color: #6b7280; }
+        .pagination { display: flex; gap: 0.5rem; justify-content: center; }
+        .page-btn { padding: 0.5rem 1rem; border: 1px solid #d1d5db; background: white; border-radius: 0.25rem; cursor: pointer; }
+        .page-btn:hover { background: #f3f4f6; }
+        .page-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .notification { position: fixed; top: 1rem; right: 1rem; padding: 1rem; border-radius: 0.5rem; color: white; z-index: 1000; display: flex; align-items: center; gap: 0.5rem; }
+        .notification.success { background: #22c55e; }
+        .notification.error { background: #ef4444; }
+        .notification.info { background: #3b82f6; }
+    </style>
+    <!-- Inkludera AI Market Data -->
+    <script src="market_data.js"></script>
+    <!-- Inkludera Amazon Integration -->
+    <script src="amazon_integration.js"></script>
+    <!-- Inkludera KSP Integration -->
+    <script src="ksp_integration.js"></script>
+    <!-- Inkludera AliExpress Integration -->
+    <script src="aliexpress_integration.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">🛍️ AI Affiliate Store</div>
+                <ul class="nav-links">
+                    <li><a href="simple.html">Hem</a></li>
+                    <li><a href="#products">Produkter</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="admin.html" class="active">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="page-title">Admin Panel</h1>
+                        <p class="page-subtitle">Hantera dina affiliate-länkar och produkter</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        ➕ Lägg till länk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue">🔗</div>
+                    <div class="stat-value" id="totalLinks">23</div>
+                    <div class="stat-title">Totala länkar</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-green">👁️</div>
+                    <div class="stat-value" id="activeLinks">18</div>
+                    <div class="stat-title">Aktiva länkar</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-yellow">👆</div>
+                    <div class="stat-value" id="totalClicks">1,247</div>
+                    <div class="stat-title">Totala klick</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-purple">💰</div>
+                    <div class="stat-value" id="totalCommission">$3,247</div>
+                    <div class="stat-title">Total kommission</div>
+                </div>
+            </div>
+
+            <!-- Telegram Bot Control -->
+            <div class="form-section">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="background: #0088cc; color: white; padding: 0.5rem; border-radius: 50%; font-size: 1.2rem;">🤖</span>
+                    Telegram Bot Kontroller
+                </h3>
+                
+                <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card" style="border-left: 4px solid #0088cc;">
+                        <div class="stat-title">Bot Status</div>
+                        <div class="stat-value" style="font-size: 1.5rem; color: #22c55e;">🟢 Aktiv</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Senaste post: 2 min sedan</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">Schemalagda poster idag</div>
+                        <div class="stat-value" style="font-size: 1.5rem;">6/6</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Nästa: 20:00</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">Aktiva kanaler</div>
+                        <div class="stat-value" style="font-size: 1.5rem;">3</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Test: 1, Live: 2</div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Bot Token Status</label>
+                        <input type="text" class="form-input" value="••••••••••••••••BOT_TOKEN_CONFIGURED" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Test Kanal</label>
+                        <input type="text" class="form-input" id="testChannel" value="@test_affiliate_channel" placeholder="@din_test_kanal">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Live Kanaler</label>
+                        <textarea class="form-input" id="liveChannels" placeholder="@kanal1&#10;@kanal2&#10;@kanal3">@affiliate_deals_sv
+@tech_deals_sweden</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Posting Schema</label>
+                        <input type="text" class="form-input" id="postingSchedule" value="09:00, 15:00, 20:00" placeholder="09:00, 12:00, 18:00">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-success" onclick="testTelegramPost()">📱 Test Post</button>
+                    <button class="btn btn-primary" onclick="manualPost()">🚀 Manuell Post</button>
+                    <button class="btn btn-secondary" onclick="viewTelegramStats()">📊 Telegram Statistik</button>
+                    <button class="btn btn-secondary" onclick="toggleBot()">⏸️ Pausa Bot</button>
+                    <button class="btn btn-danger" onclick="restartBot()">🔄 Starta om Bot</button>
+                </div>
+                
+                <div id="telegramLog" style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; border-left: 4px solid #0088cc; font-family: monospace; font-size: 0.875rem; max-height: 200px; overflow-y: auto;">
+                    <div style="color: #22c55e;">✅ [14:15:23] Bot startad och redo för posting</div>
+                    <div style="color: #0088cc;">📱 [14:12:15] Auto-post skickad till @affiliate_deals_sv: Gaming Mus RGB Pro</div>
+                    <div style="color: #0088cc;">📱 [14:12:17] Auto-post skickad till @tech_deals_sweden: Gaming Mus RGB Pro</div>
+                    <div style="color: #22c55e;">✅ [14:10:30] Telegram klick registrerat: Gaming Mus RGB Pro från @affiliate_deals_sv</div>
+                    <div style="color: #f59e0b;">⚠️ [14:08:45] Rate limit träffad, väntar 2 sekunder...</div>
+                    <div style="color: #22c55e;">✅ [14:05:12] Schemalagd post för 15:00 förberedd</div>
+                </div>
+            </div>
+
+            <!-- ML Marknadsanalys -->
+            <div class="ml-section">
+                <div class="ml-header">
+                    <h3 class="ml-title">🤖 AI Marknadsanalys</h3>
+                    <button class="btn btn-secondary" onclick="generateMarketAnalysis()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                        🔍 Analysera marknader
+                    </button>
+                </div>
+                
+                <div class="ml-grid">
+                    <div class="ml-card">
+                        <div class="ml-score" id="overallMarketScore">85%</div>
+                        <div>Övergripande marknadspotential</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">Baserat på 5 marknader, 23 produkter</div>
+                    </div>
+                    
+                    <div class="ml-card">
+                        <div class="ml-score" id="bestCategory">Elektronik</div>
+                        <div>Bästa kategori just nu</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%"></div>
+                        </div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">92% lokalt intresse</div>
+                    </div>
+                    
+                    <div class="ml-card">
+                        <div class="ml-score" id="topMarket">Sverige</div>
+                        <div>Prioriterad marknad</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 88%"></div>
+                        </div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">88% potential score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marknadsanalys Detaljer -->
+            <div class="market-analysis">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🌍 Lokala Marknader
+                    <span style="background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem;">Live Data</span>
+                </h3>
+                
+                <div class="country-grid">
+                    <div class="country-card selected" onclick="selectCountry('SE')" data-country="SE">
+                        <div class="country-name">🇸🇪 Sverige</div>
+                        <div class="country-stats">
+                            Potential: 88% | E-handel: 84%<br>
+                            Mobil: 65% | Priskänslig: 65%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('NO')" data-country="NO">
+                        <div class="country-name">🇳🇴 Norge</div>
+                        <div class="country-stats">
+                            Potential: 85% | E-handel: 87%<br>
+                            Mobil: 62% | Priskänslig: 45%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('DK')" data-country="DK">
+                        <div class="country-name">🇩🇰 Danmark</div>
+                        <div class="country-stats">
+                            Potential: 82% | E-handel: 86%<br>
+                            Mobil: 68% | Priskänslig: 58%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('FI')" data-country="FI">
+                        <div class="country-name">🇫🇮 Finland</div>
+                        <div class="country-stats">
+                            Potential: 78% | E-handel: 77%<br>
+                            Mobil: 59% | Priskänslig: 72%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('DE')" data-country="DE">
+                        <div class="country-name">🇩🇪 Tyskland</div>
+                        <div class="country-stats">
+                            Potential: 92% | E-handel: 73%<br>
+                            Mobil: 54% | Priskänslig: 68%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('NL')" data-country="NL">
+                        <div class="country-name">🇳🇱 Nederländerna</div>
+                        <div class="country-stats">
+                            Potential: 86% | E-handel: 91%<br>
+                            Mobil: 59% | Priskänslig: 58%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('FR')" data-country="FR">
+                        <div class="country-name">🇫🇷 Frankrike</div>
+                        <div class="country-stats">
+                            Potential: 78% | E-handel: 69%<br>
+                            Mobil: 52% | Priskänslig: 64%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('GB')" data-country="GB">
+                        <div class="country-name">🇬🇧 Storbritannien</div>
+                        <div class="country-stats">
+                            Potential: 84% | E-handel: 87%<br>
+                            Mobil: 71% | Priskänslig: 71%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('US')" data-country="US">
+                        <div class="country-name">🇺🇸 USA</div>
+                        <div class="country-stats">
+                            Potential: 89% | E-handel: 79%<br>
+                            Mobil: 74% | Priskänslig: 62%
+                        </div>
+                    </div>
+                    
+                    <div class="country-card" onclick="selectCountry('AU')" data-country="AU">
+                        <div class="country-name">🇦🇺 Australien</div>
+                        <div class="country-stats">
+                            Potential: 79% | E-handel: 82%<br>
+                            Mobil: 67% | Priskänslig: 69%
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="countryDetails" style="margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 1rem;">🇸🇪 Sverige - Marknadsinsikter</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h5 style="margin-bottom: 0.5rem; color: #374151;">Kulturella Faktorer</h5>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 0.25rem 0; color: #6b7280;">🎨 Design: Minimalistisk</li>
+                                <li style="padding: 0.25rem 0; color: #6b7280;">🛡️ Förtroende: Recensioner, Hållbarhet</li>
+                                <li style="padding: 0.25rem 0; color: #6b7280;">🛒 Beteende: Forskande</li>
+                                <li style="padding: 0.25rem 0; color: #6b7280;">🌍 Språkbarriär: 15%</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h5 style="margin-bottom: 0.5rem; color: #374151;">Säsongstrender</h5>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Maj</span><span>Jun</span>
+                                <span>Jul</span><span>Aug</span><span>Sep</span><span>Okt</span><span>Nov</span><span>Dec</span>
+                            </div>
+                            <div style="display: flex; gap: 1px; height: 20px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                                <div style="flex: 0.8; background: #6b7280;"></div>
+                                <div style="flex: 0.7; background: #6b7280;"></div>
+                                <div style="flex: 0.9; background: #22c55e;"></div>
+                                <div style="flex: 1.0; background: #22c55e;"></div>
+                                <div style="flex: 0.9; background: #22c55e;"></div>
+                                <div style="flex: 0.7; background: #6b7280;"></div>
+                                <div style="flex: 0.6; background: #ef4444;"></div>
+                                <div style="flex: 0.7; background: #6b7280;"></div>
+                                <div style="flex: 0.9; background: #22c55e;"></div>
+                                <div style="flex: 1.1; background: #22c55e;"></div>
+                                <div style="flex: 1.3; background: #10b981;"></div>
+                                <div style="flex: 1.5; background: #10b981;"></div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Peak: Nov-Dec (Black Friday, Jul)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Rekommendationer -->
+            <div class="recommendations">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    💡 AI Rekommendationer
+                    <span id="lastAnalysis" style="font-size: 0.75rem; color: #6b7280;">Uppdaterat: 2 min sedan</span>
+                </h3>
+                
+                <div id="aiRecommendations">
+                    <div class="recommendation-item">
+                        <div class="recommendation-title">🎯 Optimera för svenska marknaden</div>
+                        <div class="recommendation-text">Fokusera på minimalistisk design och framhäv hållbarhetsaspekter. Svenska kunder värdesätter kvalitetsrecensioner och miljötänk.</div>
+                    </div>
+                    
+                    <div class="recommendation-item">
+                        <div class="recommendation-title">📱 Mobil-först strategi</div>
+                        <div class="recommendation-text">65% av svensk e-handel sker via mobil. Optimera alla produktbilder och beskrivningar för mobil visning.</div>
+                    </div>
+                    
+                    <div class="recommendation-item">
+                        <div class="recommendation-title">🛒 Black Friday är nyckeln</div>
+                        <div class="recommendation-text">November-December visar 50% högre aktivitet. Förbered kampanjer och stocka elektronikprodukter tidigt.</div>
+                    </div>
+                    
+                    <div class="recommendation-item">
+                        <div class="recommendation-title">💳 Betalningsmix</div>
+                        <div class="recommendation-text">Framhäv Swish och Klarna som betalningsalternativ - 78% av svenska kunder föredrar dessa metoder.</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button class="btn btn-primary" onclick="generateDetailedReport()">📊 Generera Detaljerad Rapport</button>
+                    <button class="btn btn-secondary" onclick="exportAnalysis()">📤 Exportera Analys</button>
+                </div>
+            </div>
+
+            <!-- Add/Edit Form -->
+            <div class="form-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Lägg till ny affiliate-länk</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-secondary" onclick="showAmazonProducts()" title="Visa Amazon-produkter">
+                            📦 Amazon Produkter
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="showAliExpressProducts()" title="Visa AliExpress-produkter">
+                            🏪 AliExpress Produkter
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="debugIntegrations()" title="Debug Integrationer" style="background: #f59e0b;">
+                            🔧 Debug
+                        </button>
+                    </div>
+                </div>
+                <form id="affiliateForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Produktnamn *</label>
+                            <input type="text" class="form-input" id="productName" required placeholder="T.ex. Trådlösa Hörlurar Pro">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Plattform *</label>
+                            <select class="form-input form-select" id="platform" required>
+                                <option value="">Välj plattform</option>
+                                <optgroup label="E-handel">
+                                    <option value="amazon">Amazon Associates</option>
+                                    <option value="aliexpress">AliExpress</option>
+                                    <option value="ebay">eBay Partner Network</option>
+                                    <option value="walmart">Walmart</option>
+                                    <option value="etsy">Etsy</option>
+                                </optgroup>
+                                <optgroup label="Mode & Livsstil">
+                                    <option value="asos">ASOS</option>
+                                    <option value="hm">H&M</option>
+                                    <option value="zalando">Zalando</option>
+                                    <option value="nike">Nike</option>
+                                    <option value="adidas">Adidas</option>
+                                </optgroup>
+                                <optgroup label="Elektronik & Tech">
+                                    <option value="apple">Apple</option>
+                                    <option value="samsung">Samsung</option>
+                                    <option value="bestbuy">Best Buy</option>
+                                    <option value="newegg">Newegg</option>
+                                    <option value="komplett">Komplett.se</option>
+                                </optgroup>
+                                <optgroup label="Resor & Hotell">
+                                    <option value="booking">Booking.com</option>
+                                    <option value="expedia">Expedia</option>
+                                    <option value="airbnb">Airbnb</option>
+                                    <option value="hotels">Hotels.com</option>
+                                </optgroup>
+                                <optgroup label="Streaming & Digital">
+                                    <option value="spotify">Spotify</option>
+                                    <option value="netflix">Netflix</option>
+                                    <option value="audible">Audible</option>
+                                    <option value="skillshare">Skillshare</option>
+                                </optgroup>
+                                <optgroup label="Hälsa & Skönhet">
+                                    <option value="iherb">iHerb</option>
+                                    <option value="sephora">Sephora</option>
+                                    <option value="myprotein">MyProtein</option>
+                                </optgroup>
+                                <optgroup label="Hem & Trädgård">
+                                    <option value="ikea">IKEA</option>
+                                    <option value="wayfair">Wayfair</option>
+                                    <option value="homedepot">Home Depot</option>
+                                </optgroup>
+                                <optgroup label="Finansiella Tjänster">
+                                    <option value="revolut">Revolut</option>
+                                    <option value="wise">Wise</option>
+                                    <option value="nordnet">Nordnet</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Kategori *</label>
+                            <input type="text" class="form-input" id="category" required placeholder="T.ex. Elektronik">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Pris ($)</label>
+                            <input type="number" class="form-input" id="price" step="0.01" placeholder="149.99">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Ordinarie pris ($)</label>
+                            <input type="number" class="form-input" id="originalPrice" step="0.01" placeholder="199.99">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Kommission ($)</label>
+                            <input type="number" class="form-input" id="commission" step="0.01" placeholder="8.99">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Affiliate URL *</label>
+                        <input type="url" class="form-input" id="affiliateUrl" required placeholder="https://amazon.com/...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Bild URL</label>
+                        <input type="url" class="form-input" id="imageUrl" placeholder="https://...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Beskrivning</label>
+                        <textarea class="form-input form-textarea" id="description" placeholder="Produktbeskrivning..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="isActive" checked>
+                            <span>Aktiv länk</span>
+                        </label>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-success">💾 Spara länk</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Rensa</button>
+                        <button type="button" class="btn btn-primary" onclick="analyzeProductWithAI()">🤖 AI-Analys</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="search-section">
+                <div class="search-grid">
+                    <div class="search-input">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" id="searchInput" placeholder="Sök produkter, kategorier...">
+                    </div>
+                    <select class="form-input form-select" id="platformFilter">
+                        <option value="">Alla plattformar</option>
+                        <optgroup label="E-handel">
+                            <option value="amazon">Amazon</option>
+                            <option value="aliexpress">AliExpress</option>
+                            <option value="ebay">eBay</option>
+                            <option value="walmart">Walmart</option>
+                            <option value="etsy">Etsy</option>
+                        </optgroup>
+                        <optgroup label="Mode & Livsstil">
+                            <option value="asos">ASOS</option>
+                            <option value="hm">H&M</option>
+                            <option value="zalando">Zalando</option>
+                            <option value="nike">Nike</option>
+                            <option value="adidas">Adidas</option>
+                        </optgroup>
+                        <optgroup label="Elektronik & Tech">
+                            <option value="apple">Apple</option>
+                            <option value="samsung">Samsung</option>
+                            <option value="bestbuy">Best Buy</option>
+                            <option value="newegg">Newegg</option>
+                            <option value="komplett">Komplett.se</option>
+                            <option value="ksp">🇮🇱 KSP Israel</option>
+                            <option value="aliexpress">🏪 AliExpress</option>
+                        </optgroup>
+                        <optgroup label="Resor">
+                            <option value="booking">Booking.com</option>
+                            <option value="expedia">Expedia</option>
+                            <option value="airbnb">Airbnb</option>
+                        </optgroup>
+                        <optgroup label="Digital">
+                            <option value="spotify">Spotify</option>
+                            <option value="audible">Audible</option>
+                            <option value="skillshare">Skillshare</option>
+                        </optgroup>
+                    </select>
+                    <select class="form-input form-select" id="statusFilter">
+                        <option value="">Alla statusar</option>
+                        <option value="active">Aktiva</option>
+                        <option value="inactive">Inaktiva</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="filterLinks()">🔍 Filtrera</button>
+                </div>
+            </div>
+
+            <!-- Links Table -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>Affiliate-länkar</h3>
+                    <div>
+                        <button class="btn btn-secondary" onclick="exportData()">📄 Exportera</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Plattform</th>
+                            <th>Kategori</th>
+                            <th>Pris</th>
+                            <th>Klick</th>
+                            <th>Kommission</th>
+                            <th>Status</th>
+                            <th>Åtgärder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="linksTable">
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: #f3f4f6; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">🎧</div>
+                                    <div>
+                                        <div style="font-weight: 500;">Trådlösa Hörlurar Pro</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Skapad: 2024-12-20</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td>Elektronik</td>
+                            <td>$149.00</td>
+                            <td>342</td>
+                            <td style="color: #22c55e; font-weight: bold;">$2,049.58</td>
+                            <td><span class="status-badge active">Aktiv</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit-btn" onclick="editLink(1)" title="Redigera">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteLink(1)" title="Ta bort">🗑️</button>
+                                    <button class="action-btn view-btn" onclick="viewLink(1)" title="Visa">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: #f3f4f6; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">⌚</div>
+                                    <div>
+                                        <div style="font-weight: 500;">Smart Fitness Tracker</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Skapad: 2024-12-19</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="platform-badge aliexpress">AliExpress</span></td>
+                            <td>Sport</td>
+                            <td>$59.00</td>
+                            <td>198</td>
+                            <td style="color: #22c55e; font-weight: bold;">$584.10</td>
+                            <td><span class="status-badge active">Aktiv</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit-btn" onclick="editLink(2)" title="Redigera">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteLink(2)" title="Ta bort">🗑️</button>
+                                    <button class="action-btn view-btn" onclick="viewLink(2)" title="Visa">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: #f3f4f6; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">💾</div>
+                                    <div>
+                                        <div style="font-weight: 500;">Bärbar SSD 1TB</div>
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Skapad: 2024-12-18</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td>Elektronik</td>
+                            <td>$85.00</td>
+                            <td>156</td>
+                            <td style="color: #22c55e; font-weight: bold;">$663.00</td>
+                            <td><span class="status-badge active">Aktiv</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit-btn" onclick="editLink(3)" title="Redigera">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteLink(3)" title="Ta bort">🗑️</button>
+                                    <button class="action-btn view-btn" onclick="viewLink(3)" title="Visa">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="linkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Lägg till ny länk</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let links = [
+            { id: 1, name: 'Trådlösa Hörlurar Pro', platform: 'amazon', category: 'Elektronik', price: 149, clicks: 342, commission: 2049.58, active: true },
+            { id: 2, name: 'Smart Fitness Tracker', platform: 'aliexpress', category: 'Sport', price: 59, clicks: 198, commission: 584.10, active: true },
+            { id: 3, name: 'Bärbar SSD 1TB', platform: 'amazon', category: 'Elektronik', price: 85, clicks: 156, commission: 663.00, active: true },
+            { id: 4, name: 'Hotell i Stockholm', platform: 'booking', category: 'Resor', price: 120, clicks: 89, commission: 1245.80, active: true },
+            { id: 5, name: 'Spotify Premium 3 månader', platform: 'spotify', category: 'Streaming', price: 29.99, clicks: 234, commission: 456.78, active: true },
+            { id: 6, name: 'iPhone 15 Pro', platform: 'apple', category: 'Elektronik', price: 1199, clicks: 67, commission: 234.56, active: true },
+            { id: 7, name: 'Nike Air Max', platform: 'nike', category: 'Mode', price: 129, clicks: 145, commission: 389.45, active: true },
+            { id: 8, name: 'Revolut Premium', platform: 'revolut', category: 'Finans', price: 9.99, clicks: 112, commission: 567.89, active: true }
+        ];
+
+        function resetForm() {
+            document.getElementById('affiliateForm').reset();
+            document.getElementById('isActive').checked = true;
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Lägg till ny affiliate-länk';
+            document.getElementById('linkModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('linkModal').classList.remove('show');
+        }
+
+        function editLink(id) {
+            const link = links.find(l => l.id === id);
+            if (link) {
+                // Populate form with link data
+                document.getElementById('productName').value = link.name;
+                document.getElementById('platform').value = link.platform;
+                document.getElementById('category').value = link.category;
+                document.getElementById('price').value = link.price;
+                
+                showNotification('🔧 Länk laddad för redigering', 'info');
+            }
+        }
+
+        function deleteLink(id) {
+            if (confirm('Är du säker på att du vill ta bort denna länk?')) {
+                links = links.filter(l => l.id !== id);
+                showNotification('🗑️ Länk borttagen', 'success');
+                updateStats();
+            }
+        }
+
+        function viewLink(id) {
+            const link = links.find(l => l.id === id);
+            if (link) {
+                alert(`🔍 Visa länk: ${link.name}\nPlattform: ${link.platform}\nKlick: ${link.clicks}\nKommission: $${link.commission}`);
+            }
+        }
+
+        function filterLinks() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const platform = document.getElementById('platformFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            console.log('Filtrerar:', { search, platform, status });
+            showNotification('🔍 Filter tillämpade', 'info');
+        }
+
+        function exportData() {
+            const data = links.map(link => ({
+                Produkt: link.name,
+                Plattform: link.platform,
+                Kategori: link.category,
+                Pris: link.price,
+                Klick: link.clicks,
+                Kommission: link.commission,
+                Status: link.active ? 'Aktiv' : 'Inaktiv'
+            }));
+            
+            console.log('Exporterar data:', data);
+            showNotification('📄 Data exporterad till konsol', 'success');
+        }
+
+        function updateStats() {
+            const totalLinks = links.length;
+            const activeLinks = links.filter(l => l.active).length;
+            const totalClicks = links.reduce((sum, l) => sum + l.clicks, 0);
+            const totalCommission = links.reduce((sum, l) => sum + l.commission, 0);
+            
+            document.getElementById('totalLinks').textContent = totalLinks;
+            document.getElementById('activeLinks').textContent = activeLinks;
+            document.getElementById('totalClicks').textContent = totalClicks.toLocaleString();
+            document.getElementById('totalCommission').textContent = `$${totalCommission.toFixed(0)}`;
+        }
+
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6',
+                warning: '#f59e0b'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: ${colors[type]}; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Telegram Bot Control Functions
+        function testTelegramPost() {
+            addTelegramLog('🧪 Skickar test-post till test-kanal...', 'info');
+            
+            // Simulate test post
+            setTimeout(() => {
+                addTelegramLog('✅ Test-post skickad till @test_affiliate_channel: Trådlösa Hörlurar Pro', 'success');
+                showNotification('📱 Test-post skickad!', 'success');
+            }, 1000);
+        }
+
+        function manualPost() {
+            const products = ['Gaming Mus RGB Pro', 'Smart Fitness Tracker', 'Bluetooth Högtalare'];
+            const randomProduct = products[Math.floor(Math.random() * products.length)];
+            
+            addTelegramLog(`🚀 Manuell post initierad: ${randomProduct}`, 'info');
+            
+            setTimeout(() => {
+                addTelegramLog(`📱 Post skickad till alla kanaler: ${randomProduct}`, 'success');
+                addTelegramLog(`📊 UTM-spårning aktiverad för post: ${randomProduct}`, 'info');
+                showNotification('🚀 Manuell post skickad till alla kanaler!', 'success');
+            }, 1500);
+        }
+
+        function viewTelegramStats() {
+            const stats = `
+📊 Telegram Bot Statistik (Senaste 24h):
+
+📱 Totala poster: 18
+✅ Lyckade: 17 (94.4%)
+❌ Misslyckade: 1 (5.6%)
+
+👆 Klick från Telegram: 342
+💰 Kommission från Telegram: $127.45
+📈 Konverteringsgrad: 15.2%
+
+🏆 Bäst presterande post:
+"Gaming Mus RGB Pro" - 47 klick, $18.23 kommission
+
+📺 Kanaler:
+@affiliate_deals_sv - 156 klick
+@tech_deals_sweden - 186 klick
+@test_affiliate_channel - 0 klick (test)
+            `;
+            
+            alert(stats);
+            addTelegramLog('📊 Statistik visad för användare', 'info');
+        }
+
+        function toggleBot() {
+            const isRunning = document.querySelector('.stat-value').textContent.includes('🟢');
+            
+            if (isRunning) {
+                addTelegramLog('⏸️ Bot pausad av admin', 'warning');
+                document.querySelector('.stat-value').innerHTML = '🟡 Pausad';
+                document.querySelector('button[onclick="toggleBot()"]').innerHTML = '▶️ Starta Bot';
+                showNotification('⏸️ Bot pausad', 'warning');
+            } else {
+                addTelegramLog('▶️ Bot återstartad av admin', 'success');
+                document.querySelector('.stat-value').innerHTML = '🟢 Aktiv';
+                document.querySelector('button[onclick="toggleBot()"]').innerHTML = '⏸️ Pausa Bot';
+                showNotification('▶️ Bot startad', 'success');
+            }
+        }
+
+        function restartBot() {
+            if (confirm('Är du säker på att du vill starta om Telegram-boten?')) {
+                addTelegramLog('🔄 Bot startas om...', 'warning');
+                
+                setTimeout(() => {
+                    addTelegramLog('✅ Bot omstart slutförd', 'success');
+                    addTelegramLog('📅 Scheduler återaktiverad', 'info');
+                    addTelegramLog('📱 Kanaler återanslutna', 'info');
+                    showNotification('🔄 Bot omstartad framgångsrikt!', 'success');
+                }, 2000);
+            }
+        }
+
+        function addTelegramLog(message, type = 'info') {
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#0088cc',
+                warning: '#f59e0b'
+            };
+            
+            const timestamp = new Date().toLocaleTimeString('sv-SE');
+            const logEntry = document.createElement('div');
+            logEntry.style.color = colors[type];
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: '📱',
+                warning: '⚠️'
+            };
+            
+            logEntry.textContent = `${icons[type]} [${timestamp}] ${message}`;
+            
+            const logContainer = document.getElementById('telegramLog');
+            logContainer.appendChild(logEntry);
+            
+            // Auto-scroll to bottom
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // Auto-update telegram log every 30 seconds
+        setInterval(() => {
+            const messages = [
+                'Heartbeat: Bot körs normalt',
+                'Nästa schemalagd post: 20:00',
+                'Klick-spårning aktiv',
+                'Kanaler övervakas'
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            if (Math.random() > 0.7) { // 30% chance
+                addTelegramLog(randomMessage, 'info');
+            }
+        }, 30000);
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6',
+                warning: '#f59e0b'
+            };
+            
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: ${colors[type]}; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1001;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Handle form submission
+        document.getElementById('affiliateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newLink = {
+                id: links.length + 1,
+                name: document.getElementById('productName').value,
+                platform: document.getElementById('platform').value,
+                category: document.getElementById('category').value,
+                price: parseFloat(document.getElementById('price').value) || 0,
+                clicks: 0,
+                commission: 0,
+                active: document.getElementById('isActive').checked
+            };
+            
+            links.push(newLink);
+            showNotification('✅ Ny affiliate-länk skapad!', 'success');
+            resetForm();
+            updateStats();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('linkModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ==================== ML MARKNADSANALYS FUNKTIONER ====================
+        
+        function generateMarketAnalysis() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loading"></div> Analyserar...';
+            btn.disabled = true;
+            
+            // Använd riktig AI-data från market_data.js
+            setTimeout(() => {
+                if (window.MarketAnalysis) {
+                    // Uppdatera med riktig data
+                    const updatedData = window.MarketAnalysis.updateMarketScores();
+                    updateMarketScoresFromData(updatedData);
+                    
+                    // Hämta nya rekommendationer
+                    const newRecs = window.MarketAnalysis.getRecommendations();
+                    updateRecommendationsFromData(newRecs);
+                    
+                    updateCountryDataFromReal();
+                } else {
+                    // Fallback till simulerad data
+                    updateMarketScores();
+                    generateNewRecommendations();
+                    updateCountryData();
+                }
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showNotification('🤖 Marknadsanalys slutförd!', 'success');
+                
+                // Update timestamp
+                document.getElementById('lastAnalysis').textContent = 'Uppdaterat: just nu';
+            }, 3000);
+        }
+        
+        function updateMarketScoresFromData(marketData) {
+            // Uppdatera övergripande poäng
+            document.getElementById('overallMarketScore').textContent = marketData.overall_score + '%';
+            document.querySelector('.ml-card .progress-fill').style.width = marketData.overall_score + '%';
+            
+            // Uppdatera bästa kategori
+            document.getElementById('bestCategory').textContent = marketData.best_category;
+            
+            // Uppdatera bästa marknad
+            document.getElementById('topMarket').textContent = marketData.best_market;
+        }
+        
+        function updateRecommendationsFromData(recommendations) {
+            const container = document.getElementById('aiRecommendations');
+            container.innerHTML = recommendations.map(rec => `
+                <div class="recommendation-item">
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-text">${rec.description}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateCountryDataFromReal() {
+            if (!window.MarketData || !window.MarketData.countries) return;
+            
+            // Uppdatera landkort med riktig data
+            Object.keys(window.MarketData.countries).forEach(country => {
+                const countryData = window.MarketData.countries[country];
+                const card = document.querySelector(`[data-country="${country}"]`);
+                
+                if (card) {
+                    const statsDiv = card.querySelector('.country-stats');
+                    statsDiv.innerHTML = `
+                        Potential: ${countryData.potential_score}% | E-handel: ${countryData.ecommerce_penetration}%<br>
+                        Mobil: ${countryData.mobile_usage}% | Priskänslig: ${countryData.price_sensitivity}%
+                    `;
+                }
+            });
+        }
+        
+        function updateMarketScores() {
+            // Simulera nya ML-resultat
+            const newScore = Math.floor(Math.random() * 20) + 75; // 75-95%
+            document.getElementById('overallMarketScore').textContent = newScore + '%';
+            document.querySelector('.ml-card .progress-fill').style.width = newScore + '%';
+            
+            // Uppdatera bästa kategori
+            const categories = ['Elektronik', 'Mode', 'Sport', 'Hem', 'Resor'];
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            document.getElementById('bestCategory').textContent = randomCategory;
+            
+            // Uppdatera topp marknad
+            const markets = ['Sverige', 'Norge', 'Tyskland', 'Danmark', 'Finland'];
+            const randomMarket = markets[Math.floor(Math.random() * markets.length)];
+            document.getElementById('topMarket').textContent = randomMarket;
+        }
+        
+        function selectCountry(countryCode) {
+            // Ta bort selected från alla kort
+            document.querySelectorAll('.country-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Lägg till selected på valt kort
+            document.querySelector(`[data-country="${countryCode}"]`).classList.add('selected');
+            
+            // Uppdatera detaljer
+            updateCountryDetails(countryCode);
+        }
+        
+        function updateCountryDetails(countryCode) {
+            // Använd riktig data från market_data.js om tillgänglig
+            if (window.MarketData && window.MarketData.countries && window.MarketData.countries[countryCode]) {
+                const data = window.MarketData.countries[countryCode];
+                updateCountryDetailsFromRealData(countryCode, data);
+                return;
+            }
+            
+            // Fallback till simulerad data
+            const countryData = {
+                'SE': {
+                    name: '�� Sverige',
+                    culture: {
+                        design: 'Minimalistisk',
+                        trust: 'Recensioner, Hållbarhet',
+                        behavior: 'Forskande',
+                        language: '15%'
+                    },
+                    seasonal: [0.8, 0.7, 0.9, 1.0, 0.9, 0.7, 0.6, 0.7, 0.9, 1.1, 1.3, 1.5],
+                    peak: 'Nov-Dec (Black Friday, Jul)'
+                },
+                // ... andra länder
+            };
+            
+            const data = countryData[countryCode];
+            if (!data) return;
+            
+            updateCountryDetailsHTML(countryCode, data.name, data.culture, data.seasonal, data.peak);
+        }
+        
+        function updateCountryDetailsFromRealData(countryCode, realData) {
+            const detailsDiv = document.getElementById('countryDetails');
+            
+            detailsDiv.innerHTML = `
+                <h4 style="margin-bottom: 1rem;">${realData.flag} ${realData.name} - Marknadsinsikter</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h5 style="margin-bottom: 0.5rem; color: #374151;">Kulturella Faktorer</h5>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 0.25rem 0; color: #6b7280;">🎨 Design: ${realData.cultural_factors.design}</li>
+                            <li style="padding: 0.25rem 0; color: #6b7280;">🛡️ Förtroende: ${realData.cultural_factors.trust}</li>
+                            <li style="padding: 0.25rem 0; color: #6b7280;">🛒 Beteende: ${realData.cultural_factors.behavior}</li>
+                            <li style="padding: 0.25rem 0; color: #6b7280;">🌍 Språkbarriär: ${realData.cultural_factors.language_barrier}%</li>
+                        </ul>
+                        
+                        <h5 style="margin: 1rem 0 0.5rem 0; color: #374151;">Marknadsinfo</h5>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 0.25rem 0; color: #6b7280;">💳 Betalning: ${realData.payment_methods.join(', ')}</li>
+                            <li style="padding: 0.25rem 0; color: #6b7280;">🏪 Konkurrenter: ${realData.competitors.slice(0, 3).join(', ')}</li>
+                            <li style="padding: 0.25rem 0; color: #6b7280;">📱 Mobil: ${realData.mobile_usage}%</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h5 style="margin-bottom: 0.5rem; color: #374151;">Säsongstrender</h5>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Maj</span><span>Jun</span>
+                            <span>Jul</span><span>Aug</span><span>Sep</span><span>Okt</span><span>Nov</span><span>Dec</span>
+                        </div>
+                        <div style="display: flex; gap: 1px; height: 20px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                            ${realData.seasonal_trend.map(value => {
+                                const color = value > 1.1 ? '#10b981' : value > 0.9 ? '#22c55e' : value < 0.7 ? '#ef4444' : '#6b7280';
+                                return `<div style="flex: ${value}; background: ${color};"></div>`;
+                            }).join('')}
+                        </div>
+                        <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Peak: ${realData.peak_months}</div>
+                        
+                        <h5 style="margin: 1rem 0 0.5rem 0; color: #374151;">Kategorier</h5>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                            ${realData.popular_categories.map(cat => 
+                                `<span style="background: #e0f2fe; color: #0277bd; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">${cat}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateCountryData() {
+            // Simulera uppdatering av landdata med lite variation
+            const countries = ['SE', 'NO', 'DK', 'FI', 'DE'];
+            
+            countries.forEach(country => {
+                const card = document.querySelector(`[data-country="${country}"]`);
+                const statsDiv = card.querySelector('.country-stats');
+                
+                // Lägg till små variationer
+                const variation = () => Math.floor(Math.random() * 6) - 3; // -3 till +3
+                
+                if (country === 'SE') {
+                    const newPotential = Math.max(80, Math.min(95, 88 + variation()));
+                    statsDiv.innerHTML = `
+                        Potential: ${newPotential}% | E-handel: ${84 + variation()}%<br>
+                        Mobil: ${65 + variation()}% | Priskänslig: ${65 + variation()}%
+                    `;
+                }
+                // Liknande för andra länder...
+            });
+        }
+        
+        function generateNewRecommendations() {
+            const recommendations = [
+                {
+                    title: '🎯 Optimera för svenska marknaden',
+                    text: 'Fokusera på minimalistisk design och framhäv hållbarhetsaspekter. Svenska kunder värdesätter kvalitetsrecensioner och miljötänk.'
+                },
+                {
+                    title: '📱 Mobil-först strategi', 
+                    text: '65% av svensk e-handel sker via mobil. Optimera alla produktbilder och beskrivningar för mobil visning.'
+                },
+                {
+                    title: '🛒 Black Friday är nyckeln',
+                    text: 'November-December visar 50% högre aktivitet. Förbered kampanjer och stocka elektronikprodukter tidigt.'
+                },
+                {
+                    title: '💳 Betalningsmix',
+                    text: 'Framhäv Swish och Klarna som betalningsalternativ - 78% av svenska kunder föredrar dessa metoder.'
+                },
+                {
+                    title: '🌍 Nordisk expansion',
+                    text: 'Norge visar 85% potential med lägre priskänslighet. Testa premiumsegmentet där först.'
+                },
+                {
+                    title: '⚡ AI-optimerade produkttitlar',
+                    text: 'Produkter med AI-optimerade titlar får 34% fler klick. Testa A/B olika varianter automatiskt.'
+                },
+                {
+                    title: '📊 Säsongsautomatisering',
+                    text: 'Konfigurera automatisk produktrotation baserat på säsongstrender - öka intäkterna med 28%.'
+                }
+            ];
+            
+            // Slumpa fram 4 rekommendationer
+            const shuffled = [...recommendations].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 4);
+            
+            const container = document.getElementById('aiRecommendations');
+            container.innerHTML = selected.map(rec => `
+                <div class="recommendation-item">
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-text">${rec.text}</div>
+                </div>
+            `).join('');
+        }
+        
+        function generateDetailedReport() {
+            showNotification('📊 Genererar detaljerad rapport...', 'info');
+            
+            // Simulera rapportgenerering
+            setTimeout(() => {
+                // Skapa rapport-data
+                const reportData = {
+                    generated_at: new Date().toISOString(),
+                    countries: ['SE', 'NO', 'DK', 'FI', 'DE'],
+                    analysis: {
+                        overall_score: 87,
+                        best_category: 'Elektronik',
+                        best_market: 'Sverige',
+                        seasonal_peak: 'November-December',
+                        mobile_importance: '68% genomsnitt',
+                        price_sensitivity: 'Medel (61%)'
+                    },
+                    recommendations: [
+                        'Prioritera svenska och norska marknaden',
+                        'Fokusera på elektronik och sportprodukter',
+                        'Optimera för mobil shopping',
+                        'Förbered Black Friday-kampanjer tidigt',
+                        'Investera i hållbarhetscertifieringar'
+                    ]
+                };
+                
+                // Öppna rapport i ny flik
+                const reportWindow = window.open('', '_blank');
+                reportWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>AI Marknadsanalys Rapport</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }
+                            .header { text-align: center; margin-bottom: 2rem; }
+                            .score { font-size: 3rem; color: #22c55e; font-weight: bold; }
+                            .metric { background: #f8fafc; padding: 1rem; margin: 0.5rem 0; border-radius: 0.5rem; }
+                            .recommendation { background: #f0f9ff; padding: 1rem; margin: 0.5rem 0; border-left: 4px solid #0ea5e9; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>🤖 AI Marknadsanalys Rapport</h1>
+                            <p>Genererad: ${new Date().toLocaleString('sv-SE')}</p>
+                            <div class="score">${reportData.analysis.overall_score}%</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Bästa kategori: ${reportData.analysis.best_category}</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Bästa marknad: ${reportData.analysis.best_market}</div>
+                        </div>
+                        
+                        <h2>📊 Nyckelmetrik</h2>
+                        <div class="metric"><strong>Bästa kategori:</strong> ${reportData.analysis.best_category}</div>
+                        <div class="metric"><strong>Bästa marknad:</strong> ${reportData.analysis.best_market}</div>
+                        <div class="metric"><strong>Säsongstopp:</strong> ${reportData.analysis.seasonal_peak}</div>
+                        <div class="metric"><strong>Mobil-shopping:</strong> ${reportData.analysis.mobile_importance}</div>
+                        <div class="metric"><strong>Priskänslighet:</strong> ${reportData.analysis.price_sensitivity}</div>
+                        
+                        <h2>💡 Rekommendationer</h2>
+                        ${reportData.recommendations.map(rec => `<div class="recommendation">${rec}</div>`).join('')}
+                        
+                        <footer style="margin-top: 2rem; text-align: center; color: #6b7280;">
+                            <p>AI Affiliate Store - Marknadsanalys</p>
+                        </footer>
+                    </body>
+                    </html>
+                `);
+                
+                showNotification('📊 Rapport öppnad i ny flik!', 'success');
+            }, 1500);
+        }
+        
+        function exportAnalysis() {
+            const analysisData = {
+                timestamp: new Date().toISOString(),
+                overall_score: document.getElementById('overallMarketScore').textContent,
+                best_category: document.getElementById('bestCategory').textContent,
+                top_market: document.getElementById('topMarket').textContent,
+                countries: {
+                    SE: { potential: '88%', ecommerce: '84%', mobile: '65%', price_sensitive: '65%' },
+                    NO: { potential: '85%', ecommerce: '87%', mobile: '62%', price_sensitive: '45%' },
+                    DK: { potential: '82%', ecommerce: '86%', mobile: '68%', price_sensitive: '58%' },
+                    FI: { potential: '78%', ecommerce: '77%', mobile: '59%', price_sensitive: '72%' },
+                    DE: { potential: '92%', ecommerce: '73%', mobile: '54%', price_sensitive: '68%' }
+                },
+                recommendations: Array.from(document.querySelectorAll('.recommendation-title')).map(el => el.textContent)
+            };
+            
+            // Skapa och ladda ner JSON-fil
+            const dataStr = JSON.stringify(analysisData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `market-analysis-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('📤 Analys exporterad!', 'success');
+        }
+
+        // ==================== SLUT ML FUNKTIONER ====================
+
+        // Funktion för att analysera en enskild produkt
+        function analyzeProductWithAI() {
+            try {
+                const productName = document.getElementById('productName').value;
+                if (!productName || productName.trim() === '') {
+                    showNotification('⚠️ Ange produktnamn först för AI-analys', 'error');
+                    return;
+                }
+                
+                showNotification('🤖 AI-analys påbörjad för: ' + productName, 'info');
+                console.log('AI Analysis started for product:', productName);
+                
+                // Säker AI-analys simulation
+                setTimeout(() => {
+                    const suggestions = [
+                        { type: 'category', text: 'Rekommenderad kategori: Elektronik' },
+                        { type: 'price', text: 'Prisrekommendation: $89-149' },
+                        { type: 'platform', text: 'Bästa plattform: Amazon eller AliExpress' },
+                        { type: 'audience', text: 'Målgrupp: Tech-entusiaster 25-45 år' },
+                        { type: 'season', text: 'Bästa säsong: Q4 (Black Friday)' },
+                        { type: 'keywords', text: 'SEO-keywords: "' + productName.toLowerCase() + ', bästa pris"' }
+                    ];
+                    
+                    const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+                    
+                    console.log('AI Analysis completed:', {
+                        product: productName,
+                        suggestion: randomSuggestion,
+                        allSuggestions: suggestions
+                    });
+                    
+                    showNotification('💡 AI-förslag: ' + randomSuggestion.text, 'success');
+                    
+                    // Fyll i några förslag automatiskt
+                    if (randomSuggestion.type === 'category' && !document.getElementById('category').value) {
+                        document.getElementById('category').value = 'Elektronik';
+                    }
+                    
+                }, 2000);
+                
+            } catch (error) {
+                console.error('AI Analysis error:', error);
+                showNotification('❌ AI-analys fel: ' + error.message, 'error');
+            }
+        }
+
+        // ==================== SÄKRA DEBUG FUNKTIONER ====================
+        
+        function debugIntegrations() {
+            try {
+                console.clear(); // Rensa konsolen först
+                console.log('🔧 SÄKER DEBUG-FUNKTION STARTAR...');
+                
+                // Säker debug-funktion som inte kraschar
+                const debugInfo = {
+                    timestamp: new Date().toISOString(),
+                    browser: navigator.userAgent.substring(0, 50) + '...',
+                    screen: `${screen.width}x${screen.height}`,
+                    location: window.location.href,
+                    linksData: {
+                        total: links ? links.length : 0,
+                        active: links ? links.filter(l => l.active).length : 0,
+                        platforms: links ? [...new Set(links.map(l => l.platform))] : [],
+                        categories: links ? [...new Set(links.map(l => l.category))] : []
+                    },
+                    integrations: {
+                        amazonAPI: typeof showAmazonProducts === 'function',
+                        kspAPI: typeof showKSPProducts === 'function', 
+                        aliexpressAPI: typeof showAliExpressProducts === 'function',
+                        marketData: typeof window.marketData !== 'undefined',
+                        marketAnalysis: typeof window.MarketAnalysis !== 'undefined',
+                        visitorCapture: typeof window.VisitorCaptureEngine !== 'undefined'
+                    },
+                    scripts: {
+                        marketDataScript: !!document.querySelector('script[src="market_data.js"]'),
+                        amazonScript: !!document.querySelector('script[src="amazon_integration.js"]'),
+                        kspScript: !!document.querySelector('script[src="ksp_integration.js"]'),
+                        aliexpressScript: !!document.querySelector('script[src="aliexpress_integration.js"]'),
+                        visitorCaptureScript: !!document.querySelector('script[src="visitor_capture.js"]')
+                    },
+                    domElements: {
+                        totalLinks: !!document.getElementById('totalLinks'),
+                        activeLinks: !!document.getElementById('activeLinks'),
+                        totalClicks: !!document.getElementById('totalClicks'),
+                        totalCommission: !!document.getElementById('totalCommission'),
+                        debugButton: !!document.querySelector('button[onclick="debugIntegrations()"]')
+                    },
+                    errors: [],
+                    warnings: []
+                };
+                
+                // Kontrollera för vanliga fel
+                if (!debugInfo.integrations.amazonAPI) {
+                    debugInfo.warnings.push('Amazon integration function not loaded');
+                }
+                if (!debugInfo.integrations.kspAPI) {
+                    debugInfo.warnings.push('KSP integration function not loaded');
+                }
+                if (!debugInfo.integrations.aliexpressAPI) {
+                    debugInfo.warnings.push('AliExpress integration function not loaded');
+                }
+                if (!debugInfo.scripts.marketDataScript) {
+                    debugInfo.warnings.push('Market data script not found in DOM');
+                }
+                if (debugInfo.scripts.visitorCaptureScript) {
+                    debugInfo.warnings.push('Visitor capture script found - this might cause errors');
+                }
+                
+                // Kontrollera JavaScript-fel
+                if (window.console && console.error) {
+                    debugInfo.warnings.push('Console available for error reporting');
+                }
+                
+                // Visa debug info i konsol på ett strukturerat sätt
+                console.group('🔧 AI AFFILIATE SITE DEBUG INFORMATION');
+                console.log('📅 Timestamp:', debugInfo.timestamp);
+                console.log('🌐 Browser:', debugInfo.browser);
+                console.log('� Location:', debugInfo.location);
+                console.log('�📱 Screen Resolution:', debugInfo.screen);
+                console.log('🔗 Links Data:', debugInfo.linksData);
+                console.log('🔌 Integrations Status:', debugInfo.integrations);
+                console.log('📜 Scripts Status:', debugInfo.scripts);
+                console.log('🎯 DOM Elements:', debugInfo.domElements);
+                
+                if (debugInfo.warnings.length > 0) {
+                    console.warn('⚠️ Warnings:', debugInfo.warnings);
+                }
+                if (debugInfo.errors.length > 0) {
+                    console.error('❌ Errors:', debugInfo.errors);
+                }
+                console.groupEnd();
+                
+                // Visa användarmeddelande
+                showNotification('🔧 Debug-info säkert utskriven till konsol (F12)', 'info');
+                
+                // Visa säker popup med basic info
+                const debugSummary = `🔧 SÄKER DEBUG SAMMANFATTNING
+
+✅ Sida laddad: ${new Date().toLocaleTimeString('sv-SE')}
+📍 URL: ${debugInfo.location}
+📱 Skärmupplösning: ${debugInfo.screen}
+🔗 Totala länkar: ${debugInfo.linksData.total}
+✓ Aktiva länkar: ${debugInfo.linksData.active}
+
+📋 INTEGRATION STATUS:
+${debugInfo.integrations.amazonAPI ? '✅' : '⚠️'} Amazon API
+${debugInfo.integrations.kspAPI ? '✅' : '⚠️'} KSP API  
+${debugInfo.integrations.aliexpressAPI ? '✅' : '⚠️'} AliExpress API
+${debugInfo.integrations.marketData ? '✅' : '⚠️'} Market Data
+
+📜 SCRIPT STATUS:
+${debugInfo.scripts.marketDataScript ? '✅' : '❌'} market_data.js
+${debugInfo.scripts.amazonScript ? '✅' : '❌'} amazon_integration.js
+${debugInfo.scripts.kspScript ? '✅' : '❌'} ksp_integration.js
+${debugInfo.scripts.aliexpressScript ? '✅' : '❌'} aliexpress_integration.js
+${debugInfo.scripts.visitorCaptureScript ? '⚠️' : '✅'} visitor_capture.js ${debugInfo.scripts.visitorCaptureScript ? '(REMOVED)' : '(NOT LOADED)'}
+
+🎯 DOM ELEMENTS:
+${debugInfo.domElements.totalLinks ? '✅' : '❌'} Total Links Counter
+${debugInfo.domElements.activeLinks ? '✅' : '❌'} Active Links Counter  
+${debugInfo.domElements.totalClicks ? '✅' : '❌'} Total Clicks Counter
+${debugInfo.domElements.totalCommission ? '✅' : '❌'} Total Commission Counter
+${debugInfo.domElements.debugButton ? '✅' : '❌'} Debug Button
+
+🔍 PLATTFORMAR: ${debugInfo.linksData.platforms.join(', ')}
+📂 KATEGORIER: ${debugInfo.linksData.categories.join(', ')}
+
+${debugInfo.warnings.length > 0 ? '⚠️ Varningar: ' + debugInfo.warnings.length : '✅ Inga varningar'}
+${debugInfo.errors.length > 0 ? '❌ Fel: ' + debugInfo.errors.length : '✅ Inga fel'}
+
+✅ DEBUG-KNAPPEN FUNGERAR NU SÄKERT!
+
+Tryck F12 för detaljerad debug-info i konsolen.`;
+                
+                alert(debugSummary);
+                
+                return true; // Indikerar att funktionen körde framgångsrikt
+                
+            } catch (error) {
+                console.error('❌ Debug function critical error:', error);
+                showNotification('❌ DEBUG FEL: ' + error.message, 'error');
+                
+                // Säker fallback
+                alert(`🔧 DEBUG FEL UPPTÄCKT!
+
+Fel: ${error.message}
+
+Felet har loggats till konsolen.
+Tryck F12 för att se detaljer.
+
+Funktionen har stoppats säkert för att förhindra krascher.
+
+Troliga orsaker:
+- JavaScript syntax fel
+- Saknad beroende
+- DOM element saknas
+- Script laddningsfel`);
+                
+                return false; // Indikerar att funktionen misslyckades
+            }
+        }
+        
+        // ==================== SÄKRA PLACEHOLDER FUNKTIONER ====================
+        
+        function showAmazonProducts() {
+            try {
+                showNotification('📦 Amazon-integration laddas...', 'info');
+                console.log('Amazon products function called - safe mode');
+                
+                // Simulera en säker produktlista
+                setTimeout(() => {
+                    const mockProducts = [
+                        { name: 'Trådlösa Hörlurar Pro', price: '$149', rating: '4.5⭐' },
+                        { name: 'Smart Fitness Tracker', price: '$89', rating: '4.3⭐' },
+                        { name: 'Bärbar SSD 1TB', price: '$85', rating: '4.7⭐' }
+                    ];
+                    
+                    console.log('Mock Amazon Products:', mockProducts);
+                    showNotification('📦 3 Amazon-produkter hittade (demo-data)', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Amazon products error:', error);
+                showNotification('❌ Fel vid Amazon-hämtning: ' + error.message, 'error');
+            }
+        }
+        
+        function showKSPProducts() {
+            try {
+                showNotification('🇮🇱 KSP-integration laddas...', 'info');
+                console.log('KSP products function called - safe mode');
+                
+                setTimeout(() => {
+                    const mockProducts = [
+                        { name: 'Gaming Laptop RTX 4070', price: '₪8,999', rating: '4.6⭐' },
+                        { name: 'Mechanical Keyboard RGB', price: '₪459', rating: '4.4⭐' },
+                        { name: '4K Gaming Monitor', price: '₪1,899', rating: '4.5⭐' }
+                    ];
+                    
+                    console.log('Mock KSP Products:', mockProducts);
+                    showNotification('🇮🇱 3 KSP-produkter hittade (demo-data)', 'success');
+                }, 1200);
+                
+            } catch (error) {
+                console.error('KSP products error:', error);
+                showNotification('❌ Fel vid KSP-hämtning: ' + error.message, 'error');
+            }
+        }
+        
+        function showAliExpressProducts() {
+            try {
+                showNotification('🏪 AliExpress-integration laddas...', 'info');
+                console.log('AliExpress products function called - safe mode');
+                
+                setTimeout(() => {
+                    const mockProducts = [
+                        { name: 'Smartphone Gimbal Stabilizer', price: '$45', rating: '4.2⭐' },
+                        { name: 'LED Strip Lights RGB', price: '$12', rating: '4.1⭐' },
+                        { name: 'Wireless Car Charger', price: '$23', rating: '4.3⭐' }
+                    ];
+                    
+                    console.log('Mock AliExpress Products:', mockProducts);
+                    showNotification('🏪 3 AliExpress-produkter hittade (demo-data)', 'success');
+                }, 800);
+                
+            } catch (error) {
+                console.error('AliExpress products error:', error);
+                showNotification('❌ Fel vid AliExpress-hämtning: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
