@@ -40,11 +40,40 @@ export default function ProductDashboard() {
 
   const loadProducts = async () => {
     try {
-      // Ladda riktiga affiliate produkter
-      const affiliateProducts = affiliateManager.getAllTrendingProducts()
-      setProducts(affiliateProducts)
+      // Hämta produkter från MongoDB via API
+      const response = await fetch('/api/products?limit=50')
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data.products) {
+          // Transform products to match existing interface
+          const transformedProducts = result.data.products.map((product: any) => ({
+            id: product.id,
+            title: product.title,
+            category: product.category,
+            price: `${product.price.toLocaleString()} kr`,
+            affiliateUrl: product.affiliateUrl,
+            platform: product.platform,
+            source: product.platform,
+            trending: product.stats.totalClicks > 5, // Consider trending if > 5 clicks
+            keywords: [product.category, product.platform],
+            buttonText: `Köp på ${product.platform === 'amazon' ? 'Amazon' : 'AliExpress'}`,
+            disclaimer: 'Denna länk innehåller affiliate-information',
+            commission: product.commission ? `${product.commission} kr` : undefined,
+            discount: product.discount,
+            originalPrice: product.originalPrice ? `${product.originalPrice.toLocaleString()} kr` : undefined
+          }))
+          setProducts(transformedProducts)
+        } else {
+          console.error('Invalid API response:', result)
+          setProducts([])
+        }
+      } else {
+        console.error('Failed to fetch products from API')
+        setProducts([])
+      }
     } catch (error) {
       console.error('Error loading products:', error)
+      setProducts([])
     } finally {
       setLoading(false)
     }

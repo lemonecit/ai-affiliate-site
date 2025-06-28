@@ -30,18 +30,17 @@ export default function AffiliateButton({ link, className = '' }: Props) {
     setIsTracking(true)
 
     try {
-      // Track the click
-      await fetch('/api/clicks', {
+      // Track the click using analytics API for consistency
+      await fetch('/api/analytics', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: link.url,
-          platform: link.platform,
           productId: link.id,
-          productName: link.productName,
-          commission: link.commission
+          platform: link.platform,
+          category: link.category,
+          source: 'website'
         }),
       })
 

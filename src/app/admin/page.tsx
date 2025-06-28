@@ -20,6 +20,12 @@ interface ActionStatus {
   type: 'success' | 'error' | 'info'
 }
 
+interface TrendData {
+  trendingKeywords: string[];
+  trendingCategories: string[];
+  calculatedAt: string;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats>({
     totalClicks: 0,
@@ -33,22 +39,31 @@ export default function AdminDashboard() {
     message: '',
     type: 'info'
   })
+  const [trends, setTrends] = useState<TrendData | null>(null);
 
   useEffect(() => {
     fetchRealStats()
+    fetchTrends()
   }, [])
 
   const fetchRealStats = async () => {
     try {
-      // Hämta riktig data från analytics API
-      const response = await fetch('/api/analytics-simple')
+      // Hämta riktig data från analytics API (MongoDB)
+      const response = await fetch('/api/analytics')
       if (response.ok) {
-        const data = await response.json()
+        const result = await response.json()
+        const data = result.data
+        
         setStats({
-          totalClicks: data.totalClicks || 0,
-          totalConversions: data.totalConversions || 0,
-          revenue: data.revenue || 0,
-          topProducts: data.topProducts || []
+          totalClicks: data.overview.totalClicks || 0,
+          totalConversions: data.overview.totalConversions || 0,
+          revenue: data.overview.totalCommissions || 0,
+          topProducts: data.topProducts?.map((product: any) => ({
+            id: product.productId,
+            title: product.product?.title || `Product ${product.productId}`,
+            clicks: product.clicks,
+            conversions: product.conversions
+          })) || []
         })
       } else {
         // Fallback till nollställda värden
@@ -73,11 +88,30 @@ export default function AdminDashboard() {
     }
   }
 
+  const fetchTrends = async () => {
+    try {
+      const response = await fetch('/api/trends');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          setTrends(result.data);
+        } else {
+          setTrends(null);
+        }
+      } else {
+        setTrends(null);
+      }
+    } catch (error) {
+      console.error('Error fetching trends:', error);
+      setTrends(null);
+    }
+  };
+
   const handleUpdateProducts = async () => {
     setActionStatus({ isLoading: true, message: 'Uppdaterar produkter...', type: 'info' })
     
     try {
-      const response = await fetch('/api/admin/update-products', {
+      const response = await fetch('/api/db/update-products', {
         method: 'POST'
       })
       
@@ -120,7 +154,9 @@ export default function AdminDashboard() {
           message: 'Trends-analys slutförd!', 
           type: 'success' 
         })
+        // Uppdatera stats och trender efter analys
         fetchRealStats()
+        fetchTrends()
       } else {
         throw new Error('Failed to run trends analysis')
       }
@@ -194,6 +230,43 @@ export default function AdminDashboard() {
       setActionStatus({ 
         isLoading: false, 
         message: 'Fel vid nollställning av analytics', 
+        type: 'error' 
+      })
+    }
+    
+    setTimeout(() => {
+      setActionStatus({ isLoading: false, message: '', type: 'info' })
+    }, 3000)
+  }
+
+  const handleSetupDatabase = async () => {
+    if (!confirm('Detta kommer att ersätta all befintlig data med sample-data. Fortsätt?')) {
+      return
+    }
+
+    setActionStatus({ isLoading: true, message: 'Initialiserar databas med sample-data...', type: 'info' })
+    
+    try {
+      const response = await fetch('/api/db/setup', {
+        method: 'POST'
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        setActionStatus({ 
+          isLoading: false, 
+          message: `Databas initialiserad! ${result.data.products} produkter, ${result.data.clicks} klick skapade`, 
+          type: 'success' 
+        })
+        // Uppdatera stats efter setup
+        fetchRealStats()
+      } else {
+        throw new Error('Failed to setup database')
+      }
+    } catch (error) {
+      setActionStatus({ 
+        isLoading: false, 
+        message: 'Fel vid initialisering av databas', 
         type: 'error' 
       })
     }
@@ -409,7 +482,50 @@ export default function AdminDashboard() {
                   'Nollställ Analytics'
                 )}
               </button>
+              <button 
+                onClick={handleSetupDatabase}
+                disabled={actionStatus.isLoading}
+                className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {actionStatus.isLoading && actionStatus.message.includes('databas') ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Initialiserar...
+                  </div>
+                ) : (
+                  '🚀 Setup Database (Sample Data)'
+                )}
+              </button>
             </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Senaste Trendanalys</h3>
+            {trends && trends.calculatedAt ? (
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="font-medium text-gray-700">🔥 Heta Sökord:</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {(trends.trendingKeywords || []).map(keyword => (
+                      <span key={keyword} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{keyword}</span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">📊 Heta Kategorier:</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {(trends.trendingCategories || []).map(category => (
+                      <span key={category} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">{category}</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 pt-2">
+                  Senast beräknad: {new Date(trends.calculatedAt).toLocaleString('sv-SE')}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">Ingen trenddata tillgänglig. Kör en analys för att se resultat.</p>
+            )}
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">

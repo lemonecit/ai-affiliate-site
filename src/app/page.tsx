@@ -17,13 +17,10 @@ export default function HomePage() {
             </p>
             <div className="flex justify-center space-x-4 animate-slide-up">
               <Link href="/products" className="bg-white text-primary-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                Se Trending Produkter
+                Upptäck Produkter
               </Link>
               <Link href="/dashboard" className="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-primary-600 transition-colors">
-                Analytics Dashboard
-              </Link>
-              <Link href="/admin" className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition-colors">
-                Admin Panel
+                Se Dashboard
               </Link>
             </div>
           </div>
