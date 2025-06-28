@@ -1,0 +1,36 @@
+"""
+Telegram Bot Setup-guide - SNABBSTART
+=====================================
+
+STEG 1: Skapa Telegram Bot
+---------------------------
+1. Öppna Telegram
+2. Sök efter @BotFather
+3. Skriv: /newbot
+4. Följ instruktionerna
+5. Kopiera din BOT_TOKEN
+
+STEG 2: Uppdatera Konfiguration
+------------------------------
+Redigera telegram_config.py och ersätt:
+BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+
+Med din riktiga token:
+BOT_TOKEN = "1234567890:ABCdef1234567890ABCdef1234567890ABC"
+
+STEG 3: Skapa Test-kanal
+------------------------
+1. Skapa privat kanal i Telegram
+2. Lägg till din bot som admin
+3. Uppdatera TEST_CHANNEL i telegram_config.py
+
+STEG 4: Testa Bot
+-----------------
+python start_telegram_bot.py
+Välj "1" för att testa
+
+FÄRDIG! 🎉
+----------
+Efter test kan du starta automatiska poster och skapa publika kanaler.
+
+VIKTIGT: Håll BOT_TOKEN hemlig!

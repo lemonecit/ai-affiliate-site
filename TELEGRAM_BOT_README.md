@@ -1,6 +1,34 @@
 # 🤖 AI Affiliate Telegram Bot
 
-En avancerad Telegram-bot som automatiskt postar affiliate-deals från din webbsida för att öka klick och försäljning.
+En avancerad Telegr# Testa bot först
+python telegram_bot.py test
+
+# Skicka manuell post
+python telegram_bot.py manual
+
+# Starta automatisk bot
+python telegram_bot.py
+
+# Eller använd launcher
+python start_telegram_bot.py
+```
+
+### 4. Skapa Telegram-kanaler
+```bash
+# Skapa en privat test-kanal först:
+# 1. Öppna Telegram
+# 2. Ny kanal -> Privat
+# 3. Namn: "Test Affiliate Deals" 
+# 4. Lägg till din bot som admin
+# 5. Kopiera kanal-länken (t.ex. @test_affiliate_deals)
+
+# För publika kanaler:
+# 1. Skapa publik kanal
+# 2. Lägg till bot som admin med post-rättigheter
+# 3. Uppdatera LIVE_CHANNELS i telegram_config.py
+```
+
+## 🔧 Konfigurationt som automatiskt postar affiliate-deals från din webbsida för att öka klick och försäljning.
 
 ## ✨ Funktioner
 
@@ -46,7 +74,10 @@ LIVE_CHANNELS = ["@din_publika_kanal"]
 ### 3. Installera & Starta
 ```bash
 # Installera dependencies
-pip install python-telegram-bot aiohttp
+pip install -r requirements.txt
+
+# Eller använd starter-skriptet
+python start_telegram_bot.py
 
 # Starta boten
 python telegram_bot.py
@@ -183,38 +214,156 @@ LOG_LEVEL = "INFO"  # DEBUG, INFO, WARNING, ERROR
 ### Bot startar inte
 ```bash
 # Kontrollera BOT_TOKEN
-python -c "from telegram_config import BOT_TOKEN; print(BOT_TOKEN)"
+python -c "from telegram_config import BOT_TOKEN; print('Token OK' if BOT_TOKEN != 'YOUR_TELEGRAM_BOT_TOKEN_HERE' else 'Token saknas')"
 
-# Kontrollera internetanslutning
-ping telegram.org
+# Testa bot-anslutning
+python telegram_bot.py test
 ```
 
+### Får "Chat not found" fel
+- Bot måste vara admin i kanalen
+- Kanal-namn måste börja med @ (t.ex. @min_kanal)
+- För privata kanaler: Lägg till bot först, sedan gör admin
+
 ### Inga poster visas
-- Kontrollera att bot är admin i kanalen
-- Kontrollera kanal-namn (måste börja med @)
-- Kontrollera att produkter finns tillgängliga
+- Kontrollera att `affiliate_suggestions.json` finns och innehåller produkter
+- Kolla loggar: Kör med `python telegram_bot.py` för att se felmeddelanden
+- Testa manuell post: `python telegram_bot.py manual`
 
 ### Dependencies-problem
 ```bash
-pip install --upgrade python-telegram-bot aiohttp
+# Installera på nytt
+pip install --force-reinstall -r requirements.txt
+
+# Eller específik version
+pip install python-telegram-bot==20.7
 ```
+
+### "No module named" fel
+```bash
+# Kontrollera Python-path
+python -c "import sys; print(sys.path)"
+
+# Installera i rätt environment
+python -m pip install -r requirements.txt
+```
+
+## 🎯 Setup-Guide Steg-för-Steg
+
+### Steg 1: Skapa Telegram Bot
+1. Öppna Telegram och sök efter `@BotFather`
+2. Skriv `/newbot`
+3. Följ instruktionerna och få din `BOT_TOKEN`
+4. Kopiera token till `telegram_config.py`
+
+### Steg 2: Skapa Test-kanal
+1. Skapa ny privat kanal i Telegram
+2. Namn: "Test Affiliate" 
+3. Lägg till din bot (sök efter bot-namnet)
+4. Gör bot till admin med post-rättigheter
+5. Kopiera kanal-länk till `TEST_CHANNEL` i config
+
+### Steg 3: Testa Setup
+```bash
+# Kör test
+python start_telegram_bot.py
+# Välj alternativ 1 (Testa bot)
+```
+
+### Steg 4: Skicka Test-post
+```bash
+# Kör manuell post
+python start_telegram_bot.py  
+# Välj alternativ 2 (Manuell post)
+```
+
+### Steg 5: Gå Live
+1. Skapa publik kanal för riktiga poster
+2. Lägg till i `LIVE_CHANNELS` 
+3. Starta automatisk bot: `python telegram_bot.py`
+
+## 📊 Analytics & Tracking
+
+### UTM-parametrar
+Alla länkar får automatiska UTM-parametrar:
+```
+?utm_source=telegram
+&utm_medium=bot  
+&utm_campaign=auto_deals
+```
+
+### Click Tracking
+Bot kopplar till din sites click-tracking API för att mäta:
+- Klick från Telegram vs andra källor
+- Konverteringsrate per kanal
+- Bästa produkter och kategorier
+
+### Rapporter
+Använd Google Analytics för att se:
+- Traffic från `utm_source=telegram`
+- Conversion rate per kampanj
+- Revenue attribution
+
+## 🚀 Avancerade Funktioner
+
+### Custom Scheduling
+```python
+# I telegram_config.py - lägg till egen schema
+CUSTOM_POSTS = {
+    "monday": {"time": "10:00", "category": "Elektronik"},
+    "wednesday": {"time": "14:00", "category": "Gaming"},
+    "friday": {"time": "16:00", "type": "high_discount"}
+}
+```
+
+### A/B Testing
+```python
+# Testa olika meddelande-format
+MESSAGE_VARIANTS = [
+    "standard",  # Nuvarande format  
+    "short",     # Kortare meddelanden
+    "emoji_heavy" # Fler emojis
+]
+```
+
+### Smart Product Selection
+Bot väljer produkter baserat på:
+- **Rabatt** (högre = bättre)
+- **Rating** (4+ stjärnor prioriteras)
+- **Kategori-popularity** (trender)
+- **Tidigare klickrate** (lär sig vad som fungerar)
 
 ## 📈 Optimering för Bästa Resultat
 
 ### 1. Timing
-- Testa olika posting-tider
-- Anpassa efter din målgrupps aktivitet
-- Använd analytics för att hitta bästa tiderna
+- **Morgon**: 09:00 - Deals för dagen
+- **Lunch**: 12:00 - Kategori-specifikt  
+- **Kväll**: 20:00 - Premium-produkter
+- **Helger**: Specialerbjudanden med högre rabatter
 
-### 2. Innehåll
-- Fokusera på höga rabatter (25%+)
-- Välj produkter med höga ratings (4.5+)
-- Använd engagerande beskrivningar
+### 2. Innehåll som Fungerar
+- ✅ Rabatter över 25%
+- ✅ Produkter med 4.5+ stjärnor
+- ✅ Trending kategorier (gaming, elektronik)
+- ✅ Begränsad tid ("Idag endast!")
 
-### 3. Frekvens
-- Börja med färre poster (2-3/dag)
-- Öka gradvis baserat på engagement
-- Undvik spam - kvalitet över kvantitet
+### 3. Kanal-hantering
+- Börja med 1 test-kanal
+- Lägg till publika kanaler gradvis
+- Monitora engagement-rate
+- Ta bort underpresterande kanaler
+
+### 4. Följ Up med Analytics
+```bash
+# Kolla klick-statistik varje vecka
+python -c "
+import json
+with open('click_stats.json') as f:
+    stats = json.load(f)
+    telegram_clicks = [c for c in stats if c['source'] == 'telegram']
+    print(f'Telegram klick senaste veckan: {len(telegram_clicks)}')
+"
+```
 
 ### 4. Kanaler
 - Börja med en test-kanal

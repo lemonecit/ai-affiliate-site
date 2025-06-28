@@ -150,6 +150,7 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  timestamp?: string;
 }
 
 // API Request types
@@ -183,4 +184,69 @@ export interface ProductSearchQuery {
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
+}
+
+// Analytics and tracking types
+export interface ClickData {
+  productId: string;
+  platform: string;
+  category: string;
+  source?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  clientId?: string;
+  userIp?: string;
+  userAgent?: string;
+}
+
+export interface ClickStats {
+  period_days: number;
+  total_clicks: number;
+  total_conversions: number;
+  total_revenue: number;
+  conversion_rate: number;
+  sources: {
+    [key: string]: {
+      clicks: number;
+      conversions: number;
+      revenue: number;
+      conversion_rate: number;
+      products: ProductStats[];
+    };
+  };
+}
+
+export interface ProductStats {
+  product_id: string;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  conversion_rate: number;
+  sources: string[];
+}
+
+export interface GoogleAnalyticsEvent {
+  client_id: string;
+  event_name: string;
+  parameters: {
+    [key: string]: any;
+  };
+}
+
+export interface MongoClickRecord {
+  _id?: string;
+  product_id: string;
+  source: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  user_ip?: string;
+  user_agent?: string;
+  timestamp: Date;
+  converted: boolean;
+  conversion_timestamp?: Date;
+  revenue?: number;
+  platform?: string;
+  category?: string;
 }

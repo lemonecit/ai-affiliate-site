@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Navigation from '@/components/Navigation'
 
 export const metadata: Metadata = {
   title: 'AI Affiliate Store - Smart Product Recommendations',
@@ -17,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="sv">
       <body className="min-h-screen bg-gray-50">
+        <Navigation />
         {children}
       </body>
     </html>

@@ -1,0 +1,62 @@
+{
+  "website": {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AI Affiliate Platform",
+    "description": "AI-driven affiliate platform med trending produkter från Amazon och AliExpress",
+    "url": "https://ai-affiliate-site.vercel.app",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ai-affiliate-site.vercel.app/products/advanced?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "AI Affiliate Platform"
+    }
+  },
+  "organization": {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "AI Affiliate Platform",
+    "description": "AI-driven affiliate platform med trending produkter från Amazon och AliExpress",
+    "url": "https://ai-affiliate-site.vercel.app",
+    "logo": "https://ai-affiliate-site.vercel.app/logo.png",
+    "sameAs": [],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "email": "info@ai-affiliate-platform.com"
+    }
+  },
+  "product": {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Premium Bluetooth Hörlurar",
+    "description": "",
+    "image": "",
+    "sku": "example_product",
+    "brand": {
+      "@type": "Brand",
+      "name": "Amazon"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "299",
+      "priceCurrency": "SEK",
+      "availability": "https://schema.org/InStock",
+      "url": "",
+      "seller": {
+        "@type": "Organization",
+        "name": "Amazon"
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 4.6,
+      "ratingCount": 150,
+      "bestRating": 5,
+      "worstRating": 1
+    }
+  }
+}

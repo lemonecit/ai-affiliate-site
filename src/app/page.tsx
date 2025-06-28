@@ -4,36 +4,6 @@ import { ShoppingBag, TrendingUp, Users, BarChart3 } from 'lucide-react'
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <ShoppingBag className="h-8 w-8 text-primary-500" />
-              <span className="ml-2 text-xl font-bold text-gray-900">AI Affiliate Store</span>
-            </div>
-            
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-primary-500 transition-colors">
-                Hem
-              </Link>
-              <Link href="/products" className="text-gray-700 hover:text-primary-500 transition-colors">
-                Produkter
-              </Link>
-              <Link href="/categories" className="text-gray-700 hover:text-primary-500 transition-colors">
-                Kategorier
-              </Link>
-              <Link href="/dashboard" className="text-gray-700 hover:text-primary-500 transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin" className="btn-primary">
-                Admin
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-500 to-primary-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -46,14 +16,14 @@ export default function HomePage() {
               Få personliga rekommendationer, prisjämförelser och exklusiva erbjudanden.
             </p>
             <div className="flex justify-center space-x-4 animate-slide-up">
-              <Link href="/products" className="btn-secondary">
+              <Link href="/products" className="bg-white text-primary-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
                 Se Trending Produkter
               </Link>
-              <Link href="/dashboard" className="btn-outline">
+              <Link href="/dashboard" className="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-primary-600 transition-colors">
                 Analytics Dashboard
               </Link>
-              <Link href="/dashboard" className="bg-white text-primary-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                Se Analytics
+              <Link href="/admin" className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition-colors">
+                Admin Panel
               </Link>
             </div>
           </div>

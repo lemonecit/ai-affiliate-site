@@ -1,4 +1,4 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, Collection } from 'mongodb';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please add your MongoDB URI to .env.local');
@@ -9,6 +9,15 @@ const options = {};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
+
+export const COLLECTIONS = {
+  CLICKS: 'clicks',
+  PRODUCTS: 'products', 
+  USERS: 'users',
+  ANALYTICS: 'analytics',
+  AFFILIATE_LINKS: 'affiliate_links',
+  AI_INSIGHTS: 'ai_insights'
+}
 
 if (process.env.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value
@@ -39,7 +48,7 @@ export async function getDatabase(): Promise<Db> {
 }
 
 // Database collections
-export const COLLECTIONS = {
+export const DB_COLLECTIONS = {
   PRODUCTS: 'products',
   USERS: 'users',
   CLICKS: 'clicks',
@@ -47,3 +56,142 @@ export const COLLECTIONS = {
   ANALYTICS: 'analytics',
   AI_INSIGHTS: 'ai_insights'
 } as const;
+
+// Analytics-specifika funktioner
+export class AnalyticsDB {
+  private static instance: AnalyticsDB
+  private db: Db | null = null
+
+  private constructor() {}
+
+  public static getInstance(): AnalyticsDB {
+    if (!AnalyticsDB.instance) {
+      AnalyticsDB.instance = new AnalyticsDB()
+    }
+    return AnalyticsDB.instance
+  }
+
+  async init() {
+    this.db = await getDatabase()
+  }
+
+  async trackClick(data: {
+    productId: string
+    source: string
+    utmSource?: string
+    utmMedium?: string  
+    utmCampaign?: string
+    userIp?: string
+    userAgent?: string
+  }) {
+    if (!this.db) await this.init()
+    
+    const clicksCollection = this.db!.collection(COLLECTIONS.CLICKS)
+    
+    const clickData = {
+      product_id: data.productId,
+      source: data.source,
+      utm_source: data.utmSource,
+      utm_medium: data.utmMedium,
+      utm_campaign: data.utmCampaign,
+      user_ip: data.userIp,
+      user_agent: data.userAgent,
+      timestamp: new Date(),
+      converted: false
+    }
+
+    try {
+      const result = await clicksCollection.insertOne(clickData)
+      return !!result.insertedId
+    } catch (error) {
+      console.error('MongoDB click tracking error:', error)
+      return false
+    }
+  }
+
+  async getClickStats(days: number = 7) {
+    if (!this.db) await this.init()
+    
+    const clicksCollection = this.db!.collection(COLLECTIONS.CLICKS)
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+
+    try {
+      const pipeline = [
+        { $match: { timestamp: { $gte: startDate } } },
+        {
+          $group: {
+            _id: '$source',
+            total_clicks: { $sum: 1 },
+            unique_products: { $addToSet: '$product_id' },
+            conversions: {
+              $sum: { $cond: [{ $eq: ['$converted', true] }, 1, 0] }
+            }
+          }
+        }
+      ]
+
+      const results = await clicksCollection.aggregate(pipeline).toArray()
+      
+      return {
+        period_days: days,
+        sources: results.reduce((acc: any, result: any) => {
+          acc[result._id] = {
+            clicks: result.total_clicks,
+            unique_products: result.unique_products.length,
+            conversions: result.conversions,
+            conversion_rate: result.total_clicks > 0 
+              ? (result.conversions / result.total_clicks * 100).toFixed(2)
+              : 0
+          }
+          return acc
+        }, {})
+      }
+    } catch (error) {
+      console.error('MongoDB stats error:', error)
+      return { period_days: days, sources: {} }
+    }
+  }
+
+  async getTrendingProducts(days: number = 7, limit: number = 10) {
+    if (!this.db) await this.init()
+    
+    const clicksCollection = this.db!.collection(COLLECTIONS.CLICKS)
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+
+    try {
+      const pipeline = [
+        { $match: { timestamp: { $gte: startDate } } },
+        {
+          $group: {
+            _id: '$product_id',
+            clicks: { $sum: 1 },
+            sources: { $addToSet: '$source' },
+            conversions: {
+              $sum: { $cond: [{ $eq: ['$converted', true] }, 1, 0] }
+            }
+          }
+        },
+        { $sort: { clicks: -1 } },
+        { $limit: limit }
+      ]
+
+      const results = await clicksCollection.aggregate(pipeline).toArray()
+      return results.map((result: any) => ({
+        product_id: result._id,
+        clicks: result.clicks,
+        sources: result.sources,
+        conversions: result.conversions,
+        conversion_rate: result.clicks > 0 
+          ? (result.conversions / result.clicks * 100).toFixed(2)
+          : 0
+      }))
+    } catch (error) {
+      console.error('MongoDB trending error:', error)
+      return []
+    }
+  }
+}
+
+export const analytics = AnalyticsDB.getInstance()

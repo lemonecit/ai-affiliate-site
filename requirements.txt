@@ -1,0 +1,11 @@
+# Telegram Bot Dependencies
+python-telegram-bot==20.7
+aiohttp==3.9.1
+schedule==1.2.0
+
+# Existing dependencies
+requests
+beautifulsoup4
+lxml
+python-dotenv
+pytrends
