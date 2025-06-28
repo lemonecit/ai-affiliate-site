@@ -239,6 +239,43 @@ export default function AdminDashboard() {
     }, 3000)
   }
 
+  const testApiConnectivity = async () => {
+    setActionStatus({ isLoading: true, message: 'Testar MongoDB-anslutning...', type: 'info' })
+    
+    try {
+      const response = await fetch('/api/test-mongo', {
+        method: 'POST'
+      })
+      const result = await response.json()
+      console.log('MongoDB test result:', result)
+      
+      if (response.ok && result.success) {
+        setActionStatus({ 
+          isLoading: false, 
+          message: `MongoDB fungerar! Miljö: ${result.debug?.vercelEnv || result.debug?.nodeEnv}`, 
+          type: 'success' 
+        })
+      } else {
+        setActionStatus({ 
+          isLoading: false, 
+          message: `MongoDB-fel: ${result.error}`, 
+          type: 'error' 
+        })
+      }
+    } catch (error) {
+      console.error('MongoDB test error:', error)
+      setActionStatus({ 
+        isLoading: false, 
+        message: `Test misslyckades: ${error instanceof Error ? error.message : 'Okänt fel'}`, 
+        type: 'error' 
+      })
+    }
+    
+    setTimeout(() => {
+      setActionStatus({ isLoading: false, message: '', type: 'info' })
+    }, 5000)
+  }
+
   const handleSetupDatabase = async () => {
     if (!confirm('Detta kommer att ersätta all befintlig data med sample-data. Fortsätt?')) {
       return
@@ -247,33 +284,54 @@ export default function AdminDashboard() {
     setActionStatus({ isLoading: true, message: 'Initialiserar databas med sample-data...', type: 'info' })
     
     try {
-      const response = await fetch('/api/db/setup', {
-        method: 'POST'
+      console.log('Calling /api/final-setup...')
+      const response = await fetch('/api/final-setup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
+      
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
       
       if (response.ok) {
         const result = await response.json()
+        console.log('Setup result:', result)
         setActionStatus({ 
           isLoading: false, 
-          message: `Databas initialiserad! ${result.data.products} produkter, ${result.data.clicks} klick skapade`, 
+          message: `Databas initialiserad! ${result.data?.products || 'Okänt antal'} produkter, ${result.data?.clicks || 'Okänt antal'} klick skapade`, 
           type: 'success' 
         })
         // Uppdatera stats efter setup
         fetchRealStats()
+        fetchTrends()
       } else {
-        throw new Error('Failed to setup database')
+        const responseText = await response.text()
+        console.error('Setup failed with status:', response.status)
+        console.error('Response text:', responseText)
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText)
+        } catch {
+          errorData = { error: responseText || `HTTP ${response.status}` }
+        }
+        
+        throw new Error(errorData.error || `HTTP ${response.status}: ${errorData.details || 'Unknown error'}`)
       }
     } catch (error) {
+      console.error('Setup database error:', error)
       setActionStatus({ 
         isLoading: false, 
-        message: 'Fel vid initialisering av databas', 
+        message: `Fel vid initialisering av databas: ${error instanceof Error ? error.message : 'Okänt fel'}`, 
         type: 'error' 
       })
     }
     
     setTimeout(() => {
       setActionStatus({ isLoading: false, message: '', type: 'info' })
-    }, 3000)
+    }, 5000)
   }
 
   const conversionRate = stats.totalClicks > 0 
@@ -496,6 +554,33 @@ export default function AdminDashboard() {
                   '🚀 Setup Database (Sample Data)'
                 )}
               </button>
+              
+              {/* MongoDB Test Button */}
+              <button
+                onClick={testApiConnectivity}
+                disabled={actionStatus.isLoading}
+                className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              >
+                {actionStatus.isLoading && actionStatus.message.includes('MongoDB') ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Testar...
+                  </div>
+                ) : (
+                  '🔍 Test MongoDB Connection'
+                )}
+              </button>
+              
+              {/* Quick Test Link */}
+              <div className="mt-2">
+                <a 
+                  href="/api/test-mongo" 
+                  target="_blank" 
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  🔗 Test MongoDB direkt (öppnar nytt fönster)
+                </a>
+              </div>
             </div>
           </div>
 
