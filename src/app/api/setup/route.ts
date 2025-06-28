@@ -1,5 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
+export async function POST() {
+  try {
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (!mongoUri) {
+      return NextResponse.json({
+        success: false,
+        error: 'MongoDB URI saknas'
+      }, { status: 500 });
+    }
+
+    const { MongoClient } = await import('mongodb');
+    const client = new MongoClient(mongoUri);
+    
+    await client.connect();
+    const db = client.db('affiliate-store');
+    
+    await db.collection('products').deleteMany({});
+    await db.collection('clicks').deleteMany({});
+    
+    const product = {
+      title: 'Gaming Laptop',
+      price: 899.99,
+      platform: 'amazon',
+      category: 'Electronics'
+    };
+    
+    const click = {
+      productId: 'test-1',
+      platform: 'amazon',
+      timestamp: new Date(),
+      converted: true
+    };
+    
+    await db.collection('products').insertOne(product);
+    await db.collection('clicks').insertOne(click);
+    await client.close();
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Databas initialiserad!',
+      data: { products: 1, clicks: 1 }
+    });
+    
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Okänt fel'
+    }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  return NextResponse.json({ status: 'ready' });
+}
+
 // Force dynamic rendering - prevent static generation
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
