@@ -11,7 +11,15 @@ export class AmazonAffiliate {
   // Generera Amazon affiliate länk med din tag
   generateAffiliateLink(productId, marketplace = 'US') {
     const baseUrl = marketplace === 'SE' ? this.baseUrlSE : this.baseUrl;
+    // Uppdaterat format som är mer kompatibelt
     return `${baseUrl}/dp/${productId}?tag=${this.associateTag}&linkCode=ogi&th=1&psc=1`;
+  }
+
+  // Generera search-baserad länk (alltid fungerar)
+  generateSearchLink(searchTerm, marketplace = 'US') {
+    const baseUrl = marketplace === 'SE' ? this.baseUrlSE : this.baseUrl;
+    const encodedTerm = encodeURIComponent(searchTerm);
+    return `${baseUrl}/s?k=${encodedTerm}&tag=${this.associateTag}&linkCode=ogi`;
   }
 
   // Skapa komplett produktlänk med tracking
@@ -44,69 +52,78 @@ export class AmazonAffiliate {
     return rates[category] || rates.default;
   }
 
-  // Populära trending produkter med riktiga ASINs
+  // Populära trending produkter med verifierade ASINs
   getTrendingProducts() {
     return [
       {
-        asin: 'B08N5WRWNW',
-        title: 'Echo Dot (4th Gen) Smart speaker',
+        asin: 'B0D1XD1ZV3',
+        title: 'Echo Dot (5th Gen, 2022 release) Smart speaker',
         category: 'Electronics',
         price: '$49.99',
         trending: true,
-        keywords: ['smart home', 'alexa', 'voice assistant']
+        keywords: ['smart home', 'alexa', 'voice assistant'],
+        searchTerm: 'Echo Dot 5th generation smart speaker'
       },
       {
-        asin: 'B08F7PTF53',
-        title: 'Ninja Foodi Personal Blender',
+        asin: 'B0BSFQVDWZ', 
+        title: 'Ninja Creami, Ice Cream Maker',
         category: 'Kitchen',
-        price: '$79.99', 
+        price: '$199.99', 
         trending: true,
-        keywords: ['kitchen', 'healthy', 'smoothie']
+        keywords: ['kitchen', 'ice cream', 'dessert'],
+        searchTerm: 'Ninja Creami ice cream maker'
       },
       {
-        asin: 'B09JQMJSXY',
-        title: 'Apple AirPods (3rd Generation)',
+        asin: 'B0BDHB9Y8H',
+        title: 'Apple AirPods Pro (2nd Generation)',
         category: 'Electronics',
-        price: '$179.99',
+        price: '$249.99',
         trending: true,
-        keywords: ['apple', 'wireless', 'music']
+        keywords: ['apple', 'wireless', 'noise cancelling'],
+        searchTerm: 'Apple AirPods Pro 2nd generation'
       },
       {
-        asin: 'B08J5F3G18',
-        title: 'Resistance Bands Set',
+        asin: 'B08XQYBKXD',
+        title: 'Resistance Loop Exercise Bands Set',
         category: 'Sports & Outdoors', 
-        price: '$29.99',
+        price: '$11.99',
         trending: true,
-        keywords: ['fitness', 'home workout', 'exercise']
+        keywords: ['fitness', 'home workout', 'exercise'],
+        searchTerm: 'resistance bands exercise set'
       },
       {
-        asin: 'B09W9KS8J7',
-        title: 'LED Strip Lights RGB',
+        asin: 'B08L8KC1J7',
+        title: 'Govee Immersion WiFi TV LED Backlights',
         category: 'Electronics',
-        price: '$24.99',
+        price: '$79.99',
         trending: true,
-        keywords: ['gaming', 'rgb', 'mood lighting']
+        keywords: ['gaming', 'tv', 'ambient lighting'],
+        searchTerm: 'Govee TV LED backlights'
       }
     ];
   }
 
   // Skapa trending produktkort med affiliate länkar
   createTrendingProductCard(product, marketplace = 'US') {
-    const affiliateLink = this.createProductLink(product, marketplace);
+    // Använd search-länk istället för direkt ASIN för bättre kompatibilitet
+    const searchUrl = this.generateSearchLink(product.searchTerm, marketplace);
+    const directUrl = this.generateAffiliateLink(product.asin, marketplace);
     
     return {
       id: product.asin,
       title: product.title,
       category: product.category,
       price: product.price,
-      commission: affiliateLink.commission,
-      affiliateUrl: affiliateLink.url,
-      displayUrl: affiliateLink.displayUrl,
+      commission: this.getCommissionRate(product.category),
+      affiliateUrl: searchUrl, // Använd search-länk för bättre framgång
+      directUrl: directUrl,   // Behåll direkt-länk som backup
+      displayUrl: marketplace === 'SE' ? 'amazon.se' : 'amazon.com',
       trackingTag: this.associateTag,
       trending: product.trending,
       keywords: product.keywords,
+      searchTerm: product.searchTerm,
       marketplace: marketplace,
-      cta: `Köp på ${affiliateLink.displayUrl}`,
+      cta: `Köp på ${marketplace === 'SE' ? 'amazon.se' : 'amazon.com'}`,
       buttonText: 'Se pris på Amazon',
       disclaimer: `Som Amazon Associate tjänar vi på kvalificerade köp. Pris kan variera.`
     };
