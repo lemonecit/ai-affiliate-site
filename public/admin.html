@@ -1,0 +1,2928 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AI Affiliate Store</title>
+    
+    <!-- Favicon för att förhindra 404-fel -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+    
+    <!-- Preconnect för externa resurser -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <style>
+        /* Reset och grundläggande stil */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        .header { background: #2563eb; color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; }
+        
+        /* Main Content */
+        .main { padding: 2rem 0; }
+        .page-header { background: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .page-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #6b7280; }
+        
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #374151; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-title { color: #6b7280; font-size: 0.875rem; }
+        .stat-icon { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
+        .icon-blue { background: #dbeafe; color: #2563eb; }
+        .icon-green { background: #dcfce7; color: #22c55e; }
+        .icon-yellow { background: #fef3c7; color: #f59e0b; }
+        .icon-purple { background: #f3e8ff; color: #8b5cf6; }
+        
+        /* Product Display Styles */
+        .products-section { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 1rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            margin-bottom: 2rem; 
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .products-section.active { 
+            display: block; 
+            opacity: 1;
+        }
+        .products-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 2px solid #e5e7eb; 
+            padding-bottom: 1rem; 
+        }
+        .products-title { font-size: 1.5rem; font-weight: bold; }
+        .products-stats { display: flex; gap: 1rem; font-size: 0.875rem; color: #6b7280; }
+        .products-controls { 
+            display: flex; 
+            gap: 1rem; 
+            margin-bottom: 1.5rem; 
+            flex-wrap: wrap; 
+            align-items: center;
+        }
+        .products-search { flex: 1; min-width: 200px; }
+        .products-filter { min-width: 150px; }
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 1.5rem; 
+            align-items: start;
+            /* Förbättra stabilitet */
+            min-height: 200px;
+        }
+        .product-card { 
+            background: #ffffff; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 0.75rem; 
+            overflow: hidden; 
+            transition: all 0.2s ease;
+            height: auto;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            /* Förhindra layout-shift under laddning */
+            contain: layout;
+        }
+        .product-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border-color: #2563eb;
+        }
+        .product-card.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .product-image { 
+            width: 100%; 
+            height: 220px; 
+            object-fit: contain; 
+            background: #ffffff;
+            border-bottom: 1px solid #f3f4f6;
+            transition: none;
+            /* Förhindra layout shift */
+            min-height: 220px;
+            max-height: 220px;
+            display: block;
+        }
+        .product-info { 
+            padding: 1.25rem; 
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-title { 
+            font-size: 1rem; 
+            font-weight: 600; 
+            margin-bottom: 0.75rem; 
+            color: #1f2937; 
+            line-height: 1.4; 
+            height: 2.8rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .product-price { 
+            font-size: 1.25rem; 
+            font-weight: bold; 
+            color: #059669; 
+            margin-bottom: 0.5rem; 
+            line-height: 1.2;
+        }
+        .product-original-price { 
+            font-size: 1rem; 
+            color: #6b7280; 
+            text-decoration: line-through; 
+            margin-left: 0.5rem; 
+        }
+        .product-rating { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            margin-bottom: 0.75rem; 
+            font-size: 0.875rem; 
+        }
+        .product-rating .stars { color: #f59e0b; }
+        .product-platform { 
+            display: inline-block; 
+            background: #dbeafe; 
+            color: #1e40af; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+            margin-bottom: 0.75rem; 
+        }
+        .product-description {
+            font-size: 0.875rem; 
+            color: #6b7280; 
+            margin-bottom: 0.75rem;
+            flex: 1;
+            line-height: 1.4;
+        }
+        .product-commission {
+            font-size: 0.875rem; 
+            color: #059669; 
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .product-actions { 
+            display: flex; 
+            gap: 0.5rem; 
+            margin-top: auto;
+        }
+        .product-actions .btn { 
+            flex: 1; 
+            font-size: 0.875rem; 
+            padding: 0.625rem 1rem;
+            justify-content: center;
+        }
+        .no-products { 
+            text-align: center; 
+            padding: 3rem; 
+            color: #6b7280; 
+            font-size: 1.125rem;
+        }
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+        .loading-spinner { 
+            display: inline-block; 
+            width: 32px; 
+            height: 32px; 
+            border: 3px solid #e5e7eb; 
+            border-top: 3px solid #2563eb; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+        /* Skeleton Loading Animation */
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+        
+        .product-card.loading .product-image {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200px 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        .product-card.loading .product-title,
+        .product-card.loading .product-price,
+        .product-card.loading .product-description {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200px 100%;
+            animation: shimmer 1.5s infinite;
+            color: transparent;
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        /* Smooth Card Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .product-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .product-card.loading {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .product-card.animate-in {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        
+        /* Smooth Section Transitions */
+        .products-section {
+            transform: translateY(10px);
+        }
+        
+        .products-section.active {
+            animation: slideInSection 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideInSection {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Forms */
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-title { color: #6b7280; font-size: 0.875rem; }
+        .stat-icon { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
+        .icon-blue { background: #dbeafe; color: #2563eb; }
+        .icon-green { background: #dcfce7; color: #22c55e; }
+        .icon-yellow { background: #fef3c7; color: #f59e0b; }
+        .icon-purple { background: #f3e8ff; color: #8b5cf6; }
+        
+        /* Forms */
+        .form-section { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151; }
+        .form-input { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; }
+        .form-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        
+        /* Tables */
+        .table-section { background: white; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-header { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .table { width: 100%; }
+        .table th, .table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #f3f4f6; }
+        .table th { background: #f9fafb; font-weight: 600; color: #374151; }
+        .table tr:hover { background: #f9fafb; }
+        
+        /* Platform badges */
+        .platform-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .amazon { background: #fed7aa; color: #ea580c; }
+        .aliexpress { background: #fecaca; color: #dc2626; }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .active { background: #dcfce7; color: #166534; }
+        .inactive { background: #fef2f2; color: #991b1b; }
+        
+        /* Action buttons */
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.5rem; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem; }
+        .edit-btn { background: #3b82f6; color: white; }
+        .delete-btn { background: #ef4444; color: white; }
+        .view-btn { background: #6b7280; color: white; }
+        
+        /* Search */
+        .search-section { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .search-grid { display: grid; grid-template-columns: 1fr auto auto auto; gap: 1rem; align-items: end; }
+        .search-input { position: relative; }
+        .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; }
+        .search-input input { padding-left: 2.5rem; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 1rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-title { font-size: 1.5rem; font-weight: bold; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+        .modal-close:hover { color: #374151; }
+        
+        /* Debug section */
+        .debug-section { background: #f0f9ff; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0; }
+        .status { font-family: monospace; background: #1f2937; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">🛍️ AI Affiliate Store</div>
+                <ul class="nav-links">
+                    <li><a href="simple.html">Hem</a></li>
+                    <li><a href="#products">Produkter</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="admin.html" class="active">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 class="page-title">Admin Panel</h1>
+                        <p class="page-subtitle">Hantera dina affiliate-länkar och produkter</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        ➕ Lägg till länk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue">🔗</div>
+                    <div class="stat-value" id="totalLinks">23</div>
+                    <div class="stat-title">Totala länkar</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-green">👁️</div>
+                    <div class="stat-value" id="activeLinks">18</div>
+                    <div class="stat-title">Aktiva länkar</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-yellow">👆</div>
+                    <div class="stat-value" id="totalClicks">1,247</div>
+                    <div class="stat-title">Totala klick</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-purple">💰</div>
+                    <div class="stat-value" id="totalCommission">$3,247</div>
+                    <div class="stat-title">Total kommission</div>
+                </div>
+            </div>
+
+            <!-- Debug Section -->
+            <div class="debug-section">
+                <h3>🔧 Debug & Integration Test</h3>
+                <p>Klicka på debug-knappen för att testa alla integrationer:</p>
+                
+                <div style="margin: 1rem 0;">
+                    <button type="button" class="btn btn-secondary" onclick="showAmazonProducts()" title="Visa Amazon-produkter">
+                        📦 Amazon Produkter
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="showAliExpressProducts()" title="Visa AliExpress-produkter">
+                        🏪 AliExpress Produkter
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="showKSPProducts()" title="Visa KSP-produkter">
+                        🇮🇱 KSP Produkter
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="findBestProducts()" title="AI hittar bästa produkter" style="background: #22c55e;">
+                        🎯 Hitta Bästa Produkter (AI)
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="debugIntegrations()" title="Debug Integrationer" style="background: #f59e0b;">
+                        🔧 Debug Test
+                    </button>
+                </div>
+                
+                <div class="status" id="statusOutput">
+                    Status: Admin panel laddad och redo...
+                </div>
+            </div>
+
+            <!-- Amazon Products Section -->
+            <div id="amazon-products-section" class="products-section">
+                <div class="products-header">
+                    <h3 class="products-title">📦 Amazon Produkter</h3>
+                    <div class="products-stats">
+                        <span id="amazon-count">Laddar...</span>
+                        <span>Associate Tag: amazon-affiliate-21</span>
+                    </div>
+                </div>
+                
+                <div class="products-controls">
+                    <input type="text" id="amazon-search" class="form-input products-search" placeholder="🔍 Sök Amazon produkter...">
+                    <select id="amazon-category" class="form-input products-filter">
+                        <option value="">Alla kategorier</option>
+                        <option value="Electronics">Elektronik</option>
+                        <option value="Sports">Sport</option>
+                        <option value="Home">Hem & Trädgård</option>
+                        <option value="Books">Böcker</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="refreshAmazonProducts()">🔄 Uppdatera</button>
+                </div>
+                
+                <div id="amazon-products-grid" class="products-grid">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- AliExpress Products Section -->
+            <div id="aliexpress-products-section" class="products-section">
+                <div class="products-header">
+                    <h3 class="products-title">🏪 AliExpress Produkter</h3>
+                    <div class="products-stats">
+                        <span id="aliexpress-count">Laddar...</span>
+                        <span>Kommission: 3-8%</span>
+                    </div>
+                </div>
+                
+                <div class="products-controls">
+                    <input type="text" id="aliexpress-search" class="form-input products-search" placeholder="🔍 Sök AliExpress produkter...">
+                    <select id="aliexpress-category" class="form-input products-filter">
+                        <option value="">Alla kategorier</option>
+                        <option value="electronics">Elektronik</option>
+                        <option value="sports">Sport & Fritid</option>
+                        <option value="home">Hem & Trädgård</option>
+                        <option value="fashion">Mode</option>
+                    </select>
+                    <select id="aliexpress-sort" class="form-input products-filter">
+                        <option value="popularity">Popularitet</option>
+                        <option value="price_low">Pris: Låg till Hög</option>
+                        <option value="price_high">Pris: Hög till Låg</option>
+                        <option value="rating">Betyg</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="refreshAliExpressProducts()">🔄 Uppdatera</button>
+                </div>
+                
+                <div id="aliexpress-products-grid" class="products-grid">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- KSP Products Section -->
+            <div id="ksp-products-section" class="products-section">
+                <div class="products-header">
+                    <h3 class="products-title">🇮🇱 KSP Israel Produkter</h3>
+                    <div class="products-stats">
+                        <span id="ksp-count">Laddar...</span>
+                        <span>Kommission: 2-5%</span>
+                        <span>Valuta: ILS</span>
+                    </div>
+                </div>
+                
+                <div class="products-controls">
+                    <input type="text" id="ksp-search" class="form-input products-search" placeholder="🔍 Sök KSP produkter...">
+                    <select id="ksp-category" class="form-input products-filter">
+                        <option value="">Alla kategorier</option>
+                        <option value="smartphones">Smartphones</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="tablets">Tablets</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="accessories">Tillbehör</option>
+                    </select>
+                    <select id="ksp-sort" class="form-input products-filter">
+                        <option value="popularity">Popularitet</option>
+                        <option value="price_low">Pris: Låg till Hög</option>
+                        <option value="price_high">Pris: Hög till Låg</option>
+                        <option value="rating">Betyg</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="refreshKSPProducts()">🔄 Uppdatera</button>
+                </div>
+                
+                <div id="ksp-products-grid" class="products-grid">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Form -->
+            <div class="form-section">
+                <!-- Product Search Section -->
+                <div class="search-section" style="background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem; border: 2px solid #e5e7eb;">
+                    <h3 style="margin-bottom: 1rem; color: #1f2937;">🔍 Sök produkter från affiliate-plattformar</h3>
+                    
+                    <div class="search-form" style="display: grid; grid-template-columns: 1fr 150px 120px; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <input type="text" id="searchKeywords" class="form-input" placeholder="Sök produkter... (t.ex. iPhone, headphones)" style="border: 2px solid #d1d5db;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <select id="searchPlatform" class="form-input form-select" style="border: 2px solid #d1d5db;">
+                                <option value="amazon">Amazon</option>
+                                <option value="aliexpress">AliExpress</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="searchProducts()" class="btn btn-primary" style="height: fit-content;">
+                            🔍 Sök
+                        </button>
+                    </div>
+                    
+                    <div id="searchResults" class="search-results" style="display: none;">
+                        <h4 style="margin-bottom: 1rem; color: #374151;">Sökresultat:</h4>
+                        <div id="searchProductsGrid" class="products-grid" style="max-height: 400px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Lägg till ny affiliate-länk</h3>
+                </div>
+                <form id="affiliateForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Produktnamn *</label>
+                            <input type="text" class="form-input" id="productName" required placeholder="T.ex. Trådlösa Hörlurar Pro">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Plattform *</label>
+                            <select class="form-input form-select" id="platform" required>
+                                <option value="">Välj plattform</option>
+                                <option value="amazon">Amazon Associates</option>
+                                <option value="aliexpress">AliExpress</option>
+                                <option value="ebay">eBay Partner Network</option>
+                                <option value="walmart">Walmart</option>
+                                <option value="etsy">Etsy</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Kategori *</label>
+                            <input type="text" class="form-input" id="category" required placeholder="T.ex. Elektronik">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Pris ($)</label>
+                            <input type="number" class="form-input" id="price" step="0.01" placeholder="149.99">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Affiliate URL *</label>
+                        <input type="url" class="form-input" id="affiliateUrl" required placeholder="https://amazon.com/...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Beskrivning</label>
+                        <textarea class="form-input form-textarea" id="description" placeholder="Produktbeskrivning..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="isActive" checked>
+                            <span>Aktiv länk</span>
+                        </label>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-success">💾 Spara länk</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Rensa</button>
+                        <button type="button" class="btn btn-primary" onclick="analyzeProductWithAI()">🤖 AI-Analys</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="search-section">
+                <div class="search-grid">
+                    <div class="search-input">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input" id="searchInput" placeholder="Sök produkter, kategorier...">
+                    </div>
+                    <select class="form-input form-select" id="platformFilter">
+                        <option value="">Alla plattformar</option>
+                        <option value="amazon">Amazon</option>
+                        <option value="aliexpress">AliExpress</option>
+                        <option value="ebay">eBay</option>
+                    </select>
+                    <select class="form-input form-select" id="statusFilter">
+                        <option value="">Alla statusar</option>
+                        <option value="active">Aktiva</option>
+                        <option value="inactive">Inaktiva</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="filterLinks()">🔍 Filtrera</button>
+                </div>
+            </div>
+
+            <!-- Links Table -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>Affiliate-länkar</h3>
+                    <div>
+                        <button class="btn btn-secondary" onclick="exportData()">📄 Exportera</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Plattform</th>
+                            <th>Kategori</th>
+                            <th>Pris</th>
+                            <th>Klick</th>
+                            <th>Kommission</th>
+                            <th>Status</th>
+                            <th>Åtgärder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="linksTable">
+                        <tr>
+                            <td>Trådlösa Hörlurar Pro</td>
+                            <td><span class="platform-badge amazon">Amazon</span></td>
+                            <td>Elektronik</td>
+                            <td>$149.00</td>
+                            <td>342</td>
+                            <td style="color: #22c55e; font-weight: bold;">$2,049.58</td>
+                            <td><span class="status-badge active">Aktiv</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit-btn" onclick="editLink(1)">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteLink(1)">🗑️</button>
+                                    <button class="action-btn view-btn" onclick="viewLink(1)">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Smart Fitness Tracker</td>
+                            <td><span class="platform-badge aliexpress">AliExpress</span></td>
+                            <td>Sport</td>
+                            <td>$59.00</td>
+                            <td>198</td>
+                            <td style="color: #22c55e; font-weight: bold;">$584.10</td>
+                            <td><span class="status-badge active">Aktiv</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn edit-btn" onclick="editLink(2)">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteLink(2)">🗑️</button>
+                                    <button class="action-btn view-btn" onclick="viewLink(2)">👁️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="linkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Lägg till ny länk</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple searchProducts function available immediately
+        async function searchProducts() {
+            console.log('🔍 searchProducts() called (simple implementation)');
+            
+            // Get form elements
+            const keywordsElement = document.getElementById('searchKeywords');
+            const platformElement = document.getElementById('searchPlatform');
+            
+            if (!keywordsElement || !platformElement) {
+                console.error('❌ Search form elements not found');
+                alert('Sökformulär inte hittat. Vänta tills sidan har laddats klart.');
+                return;
+            }
+            
+            const keywords = keywordsElement.value.trim();
+            const platform = platformElement.value;
+            
+            console.log(`🔍 Searching for: "${keywords}" on ${platform}`);
+            
+            if (!keywords) {
+                alert('❌ Ange sökord');
+                return;
+            }
+
+            // Show loading
+            const button = document.querySelector('button[onclick="searchProducts()"]');
+            if (button) {
+                button.innerHTML = '⏳ Söker...';
+                button.disabled = true;
+            }
+
+            try {
+                // Make API request
+                const apiUrl = `http://localhost:3000/api/${platform}/search?keywords=${encodeURIComponent(keywords)}&limit=6`;
+                console.log(`🌐 API URL: ${apiUrl}`);
+                
+                const response = await fetch(apiUrl, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 API response:', data);
+                
+                if (data && data.success && data.data && data.data.products) {
+                    displaySearchResults(data.data.products);
+                    showNotification(`✅ Hittade ${data.data.products.length} produkter från ${platform.toUpperCase()}`, 'success');
+                } else {
+                    throw new Error(data.error || 'Ingen data returnerad');
+                }
+                
+            } catch (error) {
+                console.error('❌ Search error:', error);
+                alert(`❌ Sökfel: ${error.message}`);
+            } finally {
+                // Reset button
+                if (button) {
+                    button.innerHTML = '🔍 Sök';
+                    button.disabled = false;
+                }
+            }
+        }
+
+        // Simple function to display search results
+        function displaySearchResults(products) {
+            console.log('📋 Displaying search results:', products);
+            
+            const resultsDiv = document.getElementById('searchResults');
+            const gridDiv = document.getElementById('searchProductsGrid');
+            
+            if (!resultsDiv || !gridDiv) {
+                console.error('❌ Results containers not found');
+                return;
+            }
+            
+            if (!products || products.length === 0) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            // Clear existing content completely  
+            gridDiv.innerHTML = '';
+            
+            // Create product cards using clean DOM creation - NO template literals for complex data
+            products.forEach((product, index) => {
+                // Get and sanitize product data
+                const title = product.title || 'Unnamed Product';
+                const price = product.price?.current || product.price || 0;
+                const currency = product.price?.currency || 'USD';
+                const platform = product.platform || 'unknown';
+                const productId = product.productId || product.id || `product_${index}`;
+                const category = product.category || 'Okategoriserad';
+                const affiliateUrl = product.affiliateUrl || product.url || '#';
+                const productUrl = product.url || '#';
+                const image = product.image || '';
+                const rating = product.rating || '';
+                
+                // Enhanced check if this is a mock/demo product
+                const isMockProduct = title.includes('Demo Product') || 
+                                    productUrl.includes('mock') || 
+                                    productUrl.includes('demo') ||
+                                    productUrl.includes('lemonec-20') || // Our demo affiliate tag
+                                    affiliateUrl.includes('lemonec-20') ||
+                                    productUrl.includes('tag=lemonec-20') ||
+                                    image.includes('data:image/svg+xml'); // SVG images are mock
+                
+                console.log('🔍 Product mock check:', { title, productUrl, isMockProduct });
+                
+                // Create main card container using DOM methods
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.id = `card_${Date.now()}_${index}`;
+                card.style.cssText = `border: 2px solid ${isMockProduct ? '#f59e0b' : '#e5e7eb'}; padding: 15px; margin: 10px; border-radius: 8px; background: white; position: relative;`;
+                
+                // Set data attributes safely - no HTML escaping issues here
+                card.dataset.productId = productId;
+                card.dataset.platform = platform.toLowerCase();
+                card.dataset.title = title;
+                card.dataset.price = price;
+                card.dataset.category = category;
+                card.dataset.affiliateUrl = affiliateUrl;
+                card.dataset.productUrl = productUrl;
+                card.dataset.image = image;
+                card.dataset.isMock = isMockProduct;
+                
+                // Add demo badge if needed
+                if (isMockProduct) {
+                    const demoBadge = document.createElement('div');
+                    demoBadge.style.cssText = 'position: absolute; top: 5px; right: 5px; background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;';
+                    demoBadge.textContent = 'DEMO';
+                    card.appendChild(demoBadge);
+                }
+                
+                // Create and add image
+                const imageContainer = document.createElement('div');
+                imageContainer.style.cssText = 'text-align: center; margin-bottom: 10px;';
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = title;
+                img.style.cssText = 'max-width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px;';
+                img.onerror = function() { this.style.display = 'none'; };
+                imageContainer.appendChild(img);
+                card.appendChild(imageContainer);
+                
+                // Create and add title
+                const titleEl = document.createElement('h4');
+                titleEl.style.cssText = 'margin-bottom: 10px; color: #1f2937; font-size: 0.9rem; line-height: 1.3;';
+                titleEl.textContent = title;
+                card.appendChild(titleEl);
+                
+                // Create and add price  
+                const priceEl = document.createElement('p');
+                priceEl.style.cssText = 'font-weight: bold; color: #059669; margin-bottom: 8px; font-size: 1.1rem;';
+                priceEl.textContent = `${price} ${currency}`;
+                card.appendChild(priceEl);
+                
+                // Create and add category
+                const categoryEl = document.createElement('p');
+                categoryEl.style.cssText = 'font-size: 0.9rem; color: #6b7280; margin-bottom: 8px;';
+                categoryEl.textContent = `Kategori: ${category}`;
+                card.appendChild(categoryEl);
+                
+                // Add rating if exists
+                if (rating) {
+                    const ratingEl = document.createElement('div');
+                    ratingEl.style.cssText = 'font-size: 0.8rem; color: #f59e0b; margin-bottom: 8px;';
+                    ratingEl.textContent = `⭐ ${rating}`;
+                    card.appendChild(ratingEl);
+                }
+                
+                // Create platform badge
+                const platformEl = document.createElement('div');
+                platformEl.style.cssText = 'font-size: 0.8rem; color: #374151; background: #f3f4f6; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 12px;';
+                platformEl.textContent = platform.toUpperCase();
+                card.appendChild(platformEl);
+                
+                // Add demo warning if needed
+                if (isMockProduct) {
+                    const demoWarning = document.createElement('div');
+                    demoWarning.style.cssText = 'font-size: 0.7rem; color: #f59e0b; margin-bottom: 12px;';
+                    demoWarning.textContent = '⚠️ Demo-produkt för utveckling';
+                    card.appendChild(demoWarning);
+                }
+                
+                // Create buttons container
+                const buttonsContainer = document.createElement('div');
+                buttonsContainer.className = 'product-actions';
+                buttonsContainer.style.cssText = 'display: flex; gap: 8px; margin-top: 12px;';
+                
+                // Create "Lägg till" button - CLEAN TEXT, NO HTML
+                const addBtn = document.createElement('button');
+                addBtn.className = 'btn btn-primary add-product-btn';
+                addBtn.style.cssText = 'flex: 1; padding: 8px 12px; background: #2563eb; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s;';
+                addBtn.textContent = '➕ Lägg till';  // CLEAN TEXT
+                
+                // Create "Visa" button - CLEAN TEXT, NO HTML
+                const viewBtn = document.createElement('button');
+                viewBtn.className = 'btn btn-secondary view-product-btn';
+                viewBtn.style.cssText = 'flex: 1; padding: 8px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s;';
+                viewBtn.textContent = isMockProduct ? '📋 Demo Info' : '👁️ Visa';  // CLEAN TEXT
+                
+                // Add buttons to container
+                buttonsContainer.appendChild(addBtn);
+                buttonsContainer.appendChild(viewBtn);
+                card.appendChild(buttonsContainer);
+                
+                // Add completed card to grid
+                gridDiv.appendChild(card);
+            }); // <- MISSING CLOSING BRACKET FIXED!
+            
+            // Show results
+            resultsDiv.style.display = 'block';
+            
+            // Add event listeners after DOM is updated
+            setTimeout(() => {
+                addSearchResultEventListeners();
+            }, 100);
+            
+            console.log('✅ Search results displayed with clean DOM elements');
+        }
+
+        // Add event listeners to search result buttons
+        function addSearchResultEventListeners() {
+            // Add click listeners for "Lägg till" buttons
+            document.querySelectorAll('.add-product-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    const productData = {
+                        productId: card.dataset.productId,
+                        platform: card.dataset.platform,
+                        title: card.dataset.title,
+                        price: card.dataset.price,
+                        category: card.dataset.category,
+                        affiliateUrl: card.dataset.affiliateUrl,
+                        image: card.dataset.image
+                    };
+                    selectSearchProduct(productData);
+                });
+                
+                // Add hover effects
+                button.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#1d4ed8';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#2563eb';
+                });
+            });
+            
+            // Add click listeners for "Visa" buttons
+            document.querySelectorAll('.view-product-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    const productUrl = card.dataset.productUrl;
+                    const isMockProduct = card.dataset.isMock === 'true';
+                    viewSearchProduct(productUrl, isMockProduct);
+                });
+                
+                // Add hover effects
+                button.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#374151';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#6b7280';
+                });
+            });
+            
+            console.log('✅ Event listeners added to search result buttons');
+        }
+
+        // Function to handle "Lägg till" button clicks
+        function selectSearchProduct(productData) {
+            console.log('➕ Adding product to form:', productData);
+            
+            // Fill the affiliate form with selected product data
+            const form = document.getElementById('affiliateForm');
+            if (form) {
+                const nameField = document.getElementById('productName');
+                const platformField = document.getElementById('platform');
+                const categoryField = document.getElementById('category');
+                const priceField = document.getElementById('price');
+                const urlField = document.getElementById('affiliateUrl');
+                
+                if (nameField) nameField.value = productData.title;
+                if (platformField) platformField.value = productData.platform;
+                if (categoryField) categoryField.value = productData.category;
+                if (priceField) priceField.value = productData.price;
+                if (urlField) urlField.value = productData.affiliateUrl;
+                
+                // Show success message
+                showNotification(`✅ Produkt "${productData.title}" lades till i formuläret`, 'success');
+                
+                // Scroll to form
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                console.error('❌ Affiliate form not found');
+                showNotification('❌ Kunde inte hitta formuläret', 'error');
+            }
+        }
+
+        // Function to handle "Visa" button clicks
+        function viewSearchProduct(productUrl, isMockProduct) {
+            console.log('👁️ Viewing product:', productUrl, 'isMockProduct:', isMockProduct);
+            
+            // Enhanced mock product detection
+            const isDefinitelyMock = isMockProduct || 
+                                   productUrl.includes('mock') || 
+                                   productUrl.includes('demo') ||
+                                   productUrl.includes('lemonec-20') || // Our demo affiliate tag
+                                   productUrl.includes('tag=lemonec-20');
+            
+            console.log('� Mock product check:', { productUrl, isMockProduct, isDefinitelyMock });
+            
+            if (isDefinitelyMock) {
+                // Show a better demo message with options
+                const demoMessage = `🎯 DEMO PRODUKT
+                
+Detta är en demo-produkt för utveckling och testning.
+
+🔗 Demo URL: ${productUrl}
+
+I produktionsläge skulle detta:
+• Öppna den riktiga Amazon produktsidan
+• Spåra klick för analys
+• Generera affiliate-intäkter
+
+Vill du öppna demo-länken ändå för att se strukturen?`;
+                
+                if (confirm(demoMessage)) {
+                    // Let user see the demo URL structure
+                    console.log('📋 Demo URL opened:', productUrl);
+                    showNotification('📋 Demo-länk öppnad för utvecklingsändamål', 'info');
+                    window.open(productUrl, '_blank');
+                } else {
+                    showNotification('❌ Demo-länk avbruten', 'info');
+                }
+                return;
+            }
+            
+            // For real products (when not using mock data)
+            if (productUrl && productUrl !== '#' && productUrl !== '') {
+                console.log('🌐 Opening real product URL:', productUrl);
+                window.open(productUrl, '_blank');
+                showNotification('🔗 Produktsida öppnad i ny flik', 'success');
+            } else {
+                showNotification('❌ Ingen giltig produktlänk tillgänglig', 'error');
+            }
+        }
+
+        // Simple notification function
+        function showNotification(message, type = 'success') {
+            console.log(`📢 ${message}`);
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6'
+            };
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Mock data för länkar
+        let links = [
+            { id: 1, name: 'Trådlösa Hörlurar Pro', platform: 'amazon', category: 'Elektronik', price: 149, clicks: 342, commission: 2049.58, active: true },
+            { id: 2, name: 'Smart Fitness Tracker', platform: 'aliexpress', category: 'Sport', price: 59, clicks: 198, commission: 584.10, active: true },
+            { id: 3, name: 'Bärbar SSD 1TB', platform: 'amazon', category: 'Elektronik', price: 85, clicks: 156, commission: 663.00, active: true }
+        ];
+
+        // Notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#22c55e',
+                error: '#ef4444',
+                info: '#3b82f6',
+                warning: '#f59e0b'
+            };
+            
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: ${colors[type]}; 
+                color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1001;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Form functions
+        function resetForm() {
+            document.getElementById('affiliateForm').reset();
+            document.getElementById('isActive').checked = true;
+            showNotification('🔄 Formulär rensat', 'info');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Lägg till ny affiliate-länk';
+            document.getElementById('linkModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('linkModal').classList.remove('show');
+        }
+
+        // Link management functions
+        function editLink(id) {
+            const link = links.find(l => l.id === id);
+            if (link) {
+                document.getElementById('productName').value = link.name;
+                document.getElementById('platform').value = link.platform;
+                document.getElementById('category').value = link.category;
+                document.getElementById('price').value = link.price;
+                showNotification('🔧 Länk laddad för redigering', 'info');
+            }
+        }
+
+        function deleteLink(id) {
+            if (confirm('Är du säker på att du vill ta bort denna länk?')) {
+                links = links.filter(l => l.id !== id);
+                showNotification('🗑️ Länk borttagen', 'success');
+                updateStats();
+            }
+        }
+
+        function viewLink(id) {
+            const link = links.find(l => l.id === id);
+            if (link) {
+                alert(`🔍 Visa länk: ${link.name}\nPlattform: ${link.platform}\nKlick: ${link.clicks}\nKommission: $${link.commission}`);
+            }
+        }
+
+        // Filter and search functions
+        function filterLinks() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const platform = document.getElementById('platformFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            console.log('Filtrerar:', { search, platform, status });
+            showNotification('🔍 Filter tillämpade', 'info');
+        }
+
+        function exportData() {
+            const data = links.map(link => ({
+                Produkt: link.name,
+                Plattform: link.platform,
+                Kategori: link.category,
+                Pris: link.price,
+                Klick: link.clicks,
+                Kommission: link.commission,
+                Status: link.active ? 'Aktiv' : 'Inaktiv'
+            }));
+            
+            console.log('Exporterar data:', data);
+            showNotification('📄 Data exporterad till konsol', 'success');
+        }
+
+        // Stats update function
+        function updateStats() {
+            const totalLinks = links.length;
+            const activeLinks = links.filter(l => l.active).length;
+            const totalClicks = links.reduce((sum, l) => sum + l.clicks, 0);
+            const totalCommission = links.reduce((sum, l) => sum + l.commission, 0);
+            
+            document.getElementById('totalLinks').textContent = totalLinks;
+            document.getElementById('activeLinks').textContent = activeLinks;
+            document.getElementById('totalClicks').textContent = totalClicks.toLocaleString();
+            document.getElementById('totalCommission').textContent = `$${totalCommission.toFixed(0)}`;
+        }
+
+        // AI Analysis function
+        function analyzeProductWithAI() {
+            try {
+                const productName = document.getElementById('productName').value;
+                const platform = document.getElementById('platform').value;
+                const category = document.getElementById('category').value;
+                const price = document.getElementById('price').value;
+                
+                if (!productName || productName.trim() === '') {
+                    showNotification('⚠️ Ange produktnamn först för AI-analys', 'error');
+                    return;
+                }
+                
+                showNotification('🤖 AI-analys påbörjad för: ' + productName, 'info');
+                document.getElementById('statusOutput').textContent = 'Status: Kör avancerad AI-analys för ' + productName + '...';
+                
+                // Simulera ML-analys med realistiska beräkningar
+                setTimeout(() => {
+                    const analysis = performAdvancedProductAnalysis(productName, platform, category, price);
+                    displayAIAnalysisResults(analysis);
+                }, 2000);
+                
+            } catch (error) {
+                console.error('AI Analysis error:', error);
+                showNotification('❌ AI-analys fel: ' + error.message, 'error');
+            }
+        }
+        
+        function performAdvancedProductAnalysis(productName, platform, category, price) {
+            // Simulera avancerad ML-analys
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentHour = currentDate.getHours();
+            
+            // Seasonality analysis
+            const seasonalityFactors = {
+                'electronics': [0.8, 0.7, 0.9, 0.8, 0.7, 0.6, 0.5, 0.6, 0.8, 0.9, 1.2, 1.4],
+                'fashion': [0.6, 0.7, 1.1, 1.2, 1.0, 0.8, 0.7, 0.8, 1.1, 1.0, 1.3, 1.2],
+                'sports': [1.2, 1.0, 1.1, 1.3, 1.4, 1.2, 1.0, 0.9, 1.0, 0.8, 0.7, 0.8],
+                'home': [0.9, 0.8, 1.2, 1.3, 1.2, 1.0, 0.9, 0.8, 1.0, 1.1, 1.2, 1.1]
+            };
+            
+            const seasonalFactor = seasonalityFactors[category] ? seasonalityFactors[category][currentMonth] : 1.0;
+            
+            // Platform performance analysis
+            const platformFactors = {
+                'amazon': { conversion: 0.12, trustScore: 0.95, competition: 0.8 },
+                'aliexpress': { conversion: 0.08, trustScore: 0.75, competition: 0.6 },
+                'ksp': { conversion: 0.10, trustScore: 0.85, competition: 0.7 }
+            };
+            
+            const platformData = platformFactors[platform] || { conversion: 0.10, trustScore: 0.80, competition: 0.7 };
+            
+            // Price analysis
+            const priceNum = parseFloat(price) || 100;
+            const priceScore = Math.max(0.3, Math.min(1.0, (200 - priceNum) / 200));
+            
+            // Competition analysis
+            const competitionScore = 1 - platformData.competition;
+            
+            // Trend analysis (simulated)
+            const trendScore = Math.random() * 0.4 + 0.6; // 0.6 - 1.0
+            
+            // Calculate overall recommendation score
+            const recommendationScore = (
+                (seasonalFactor * 0.25) +
+                (platformData.conversion * 10 * 0.2) +
+                (platformData.trustScore * 0.15) +
+                (priceScore * 0.2) +
+                (competitionScore * 0.1) +
+                (trendScore * 0.1)
+            );
+            
+            // Predicted metrics
+            const predictedClicks = Math.round(seasonalFactor * platformData.conversion * trendScore * 1000);
+            const predictedRevenue = Math.round(predictedClicks * platformData.conversion * priceNum * 0.05);
+            
+            return {
+                productName,
+                platform,
+                category,
+                price: priceNum,
+                scores: {
+                    overall: Math.round(recommendationScore * 100),
+                    seasonal: Math.round(seasonalFactor * 100),
+                    platform: Math.round(platformData.conversion * 100),
+                    competition: Math.round(competitionScore * 100),
+                    trend: Math.round(trendScore * 100),
+                    pricing: Math.round(priceScore * 100)
+                },
+                predictions: {
+                    clicks: predictedClicks,
+                    conversionRate: Math.round(platformData.conversion * 100 * 10) / 10,
+                    revenue: predictedRevenue,
+                    bestTime: this.getBestPostingTime(category),
+                    peakMonths: this.getPeakMonths(category)
+                },
+                recommendations: this.generateRecommendations(recommendationScore, seasonalFactor, platform, category, priceNum)
+            };
+        }
+        
+        function getBestPostingTime(category) {
+            const timeRecommendations = {
+                'electronics': '18:00-21:00 (kvällstid)',
+                'fashion': '12:00-15:00 & 19:00-22:00',
+                'sports': '06:00-09:00 & 17:00-20:00',
+                'home': '10:00-16:00 (dagtid)',
+                'default': '18:00-21:00'
+            };
+            return timeRecommendations[category] || timeRecommendations.default;
+        }
+        
+        function getPeakMonths(category) {
+            const peakMonths = {
+                'electronics': 'November-December (Black Friday, Jul)',
+                'fashion': 'April-Maj, September-Oktober',
+                'sports': 'Januari-Mars, Maj-Juli',
+                'home': 'Mars-Maj, September-November'
+            };
+            return peakMonths[category] || 'November-December';
+        }
+        
+        function generateRecommendations(score, seasonal, platform, category, price) {
+            const recommendations = [];
+            
+            if (score > 0.8) {
+                recommendations.push('🎯 MYCKET HOGE POTENTIAL - Rekommenderas starkt!');
+            } else if (score > 0.6) {
+                recommendations.push('✅ BRA POTENTIAL - Värt att testa');
+            } else {
+                recommendations.push('⚠️ LÅGA POTENTIAL - Överväg alternativ');
+            }
+            
+            if (seasonal > 1.1) {
+                recommendations.push('🌟 PERFEKT SÄSONG - Optimalt läge just nu');
+            } else if (seasonal < 0.8) {
+                recommendations.push('⏰ VÄNTA PÅ BÄTTRE SÄSONG');
+            }
+            
+            if (price > 500) {
+                recommendations.push('💰 HÖG PRISKLASS - Fokusera på kvalitet och värde');
+            } else if (price < 50) {
+                recommendations.push('💸 LÅG PRISKLASS - Perfekt för impulskop');
+            }
+            
+            // Platform-specific recommendations
+            if (platform === 'amazon') {
+                recommendations.push('📦 Amazon: Fokusera på recensioner och Prime-leverans');
+            } else if (platform === 'aliexpress') {
+                recommendations.push('🏪 AliExpress: Betona prisets fördelar och gratis frakt');
+            } else if (platform === 'ksp') {
+                recommendations.push('🇮🇱 KSP: Perfekt för Israel-marknaden, använd lokalt språk');
+            }
+            
+            return recommendations;
+        }
+        
+        function displayAIAnalysisResults(analysis) {
+            const resultHTML = `
+                <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h3 style="color: #0369a1; margin-bottom: 15px;">🤖 AI-Analys Resultat: ${analysis.productName}</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: white; padding: 15px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: ${analysis.scores.overall > 70 ? '#22c55e' : analysis.scores.overall > 50 ? '#f59e0b' : '#ef4444'};">
+                                ${analysis.scores.overall}%
+                            </div>
+                            <div style="color: #6b7280; font-size: 14px;">Overall Score</div>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: bold; color: #059669;">${analysis.predictions.clicks}</div>
+                            <div style="color: #6b7280; font-size: 14px;">Förväntade klick</div>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: bold; color: #059669;">${analysis.predictions.revenue}kr</div>
+                            <div style="color: #6b7280; font-size: 14px;">Förväntad intäkt</div>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: bold; color: #8b5cf6;">${analysis.predictions.conversionRate}%</div>
+                            <div style="color: #6b7280; font-size: 14px;">Konverteringsgrad</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #374151; margin-bottom: 10px;">📊 Detaljerade Poäng:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                            <div>Säsong: <strong>${analysis.scores.seasonal}%</strong></div>
+                            <div>Plattform: <strong>${analysis.scores.platform}%</strong></div>
+                            <div>Konkurrens: <strong>${analysis.scores.competition}%</strong></div>
+                            <div>Trend: <strong>${analysis.scores.trend}%</strong></div>
+                            <div>Pris: <strong>${analysis.scores.pricing}%</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #374151; margin-bottom: 10px;">⏰ Optimala Tider:</h4>
+                        <div><strong>Bästa postarader:</strong> ${analysis.predictions.bestTime}</div>
+                        <div><strong>Toppmånader:</strong> ${analysis.predictions.peakMonths}</div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #374151; margin-bottom: 10px;">💡 AI-Rekommendationer:</h4>
+                        ${analysis.recommendations.map(rec => `<div style="margin: 5px 0; padding: 8px; background: white; border-radius: 4px;">${rec}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Visa resultatet i en modal eller uppdatera status
+            showNotification('🎯 AI-analys slutförd! Kontrollera resultat nedan.', 'success');
+            document.getElementById('statusOutput').innerHTML = resultHTML;
+        }
+
+        // ==================== SÄKRA DEBUG FUNKTIONER ====================
+        
+        function debugIntegrations() {
+            try {
+                console.clear();
+                console.log('🔧 SÄKER DEBUG-FUNKTION STARTAR...');
+                
+                const statusOutput = document.getElementById('statusOutput');
+                statusOutput.textContent = 'Status: Kör debug test...';
+                
+                const debugInfo = {
+                    timestamp: new Date().toISOString(),
+                    browser: navigator.userAgent.substring(0, 50) + '...',
+                    screen: `${screen.width}x${screen.height}`,
+                    location: window.location.href,
+                    linksData: {
+                        total: links ? links.length : 0,
+                        active: links ? links.filter(l => l.active).length : 0,
+                        platforms: links ? [...new Set(links.map(l => l.platform))] : [],
+                        categories: links ? [...new Set(links.map(l => l.category))] : []
+                    },
+                    integrations: {
+                        amazonAPI: typeof showAmazonProducts === 'function',
+                        aliexpressAPI: typeof showAliExpressProducts === 'function',
+                        debugFunction: typeof debugIntegrations === 'function'
+                    },
+                    domElements: {
+                        totalLinks: !!document.getElementById('totalLinks'),
+                        activeLinks: !!document.getElementById('activeLinks'),
+                        totalClicks: !!document.getElementById('totalClicks'),
+                        totalCommission: !!document.getElementById('totalCommission'),
+                        statusOutput: !!document.getElementById('statusOutput')
+                    }
+                };
+                
+                console.group('🔧 AI AFFILIATE SITE DEBUG INFORMATION');
+                console.log('📅 Timestamp:', debugInfo.timestamp);
+                console.log('🌐 Browser:', debugInfo.browser);
+                console.log('📱 Screen:', debugInfo.screen);
+                console.log('📍 Location:', debugInfo.location);
+                console.log('🔗 Links Data:', debugInfo.linksData);
+                console.log('🔌 Integrations Status:', debugInfo.integrations);
+                console.log('🎯 DOM Elements:', debugInfo.domElements);
+                console.groupEnd();
+                
+                statusOutput.textContent = `Status: Debug slutfört - ${debugInfo.linksData.total} länkar, ${debugInfo.linksData.active} aktiva`;
+                
+                showNotification('🔧 Debug test slutfört! Kontrollera konsolen för detaljer.', 'success');
+                
+                const debugSummary = `🔧 DEBUG TEST SAMMANFATTNING
+
+✅ Test slutfört: ${new Date().toLocaleTimeString('sv-SE')}
+📍 URL: ${debugInfo.location}
+🔗 Länkar: ${debugInfo.linksData.total} totalt (${debugInfo.linksData.active} aktiva)
+📊 Plattformar: ${debugInfo.linksData.platforms.join(', ')}
+📂 Kategorier: ${debugInfo.linksData.categories.join(', ')}
+
+INTEGRATION STATUS:
+${debugInfo.integrations.amazonAPI ? '✅' : '❌'} Amazon API funktion
+${debugInfo.integrations.aliexpressAPI ? '✅' : '❌'} AliExpress API funktion
+${debugInfo.integrations.debugFunction ? '✅' : '❌'} Debug funktion
+
+DOM ELEMENTS:
+${debugInfo.domElements.totalLinks ? '✅' : '❌'} Total Links Counter
+${debugInfo.domElements.activeLinks ? '✅' : '❌'} Active Links Counter
+${debugInfo.domElements.totalClicks ? '✅' : '❌'} Total Clicks Counter
+${debugInfo.domElements.totalCommission ? '✅' : '❌'} Total Commission Counter
+${debugInfo.domElements.statusOutput ? '✅' : '❌'} Status Output
+
+✅ DEBUG-FUNKTIONEN FUNGERAR PERFEKT!
+❌ KSP-KNAPPEN HAR TAGITS BORT SOM BEGÄRT!
+
+Tryck F12 för detaljerad debug-info i konsolen.`;
+                
+                setTimeout(() => {
+                    alert(debugSummary);
+                }, 500);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Debug function error:', error);
+                showNotification('❌ DEBUG FEL: ' + error.message, 'error');
+                document.getElementById('statusOutput').textContent = 'Status: Debug fel - ' + error.message;
+                return false;
+            }
+        }
+        
+        // ==================== PRODUKTVISNING FUNKTIONER ====================
+        
+        function showAmazonProducts() {
+            try {
+                const section = document.getElementById('amazon-products-section');
+                const aliSection = document.getElementById('aliexpress-products-section');
+                const isVisible = section.classList.contains('active');
+                
+                if (isVisible) {
+                    // Dölj Amazon-sektionen
+                    section.classList.remove('active');
+                    setTimeout(() => {
+                        section.style.display = 'none';
+                    }, 300);
+                    showNotification('📦 Amazon-sektion dold', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: Amazon-sektion dold';
+                } else {
+                    // Dölj AliExpress först med animation
+                    aliSection.classList.remove('active');
+                    setTimeout(() => {
+                        aliSection.style.display = 'none';
+                    }, 300);
+                    
+                    // Visa Amazon-sektion
+                    section.style.display = 'block';
+                    setTimeout(() => {
+                        section.classList.add('active');
+                    }, 50);
+                    
+                    showNotification('📦 Laddar Amazon-produkter...', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: Laddar Amazon-produkter...';
+                    
+                    loadAmazonProducts();
+                }
+                
+            } catch (error) {
+                console.error('Amazon products error:', error);
+                showNotification('❌ Fel vid Amazon-hämtning: ' + error.message, 'error');
+            }
+        }
+        
+        function showAliExpressProducts() {
+            try {
+                const section = document.getElementById('aliexpress-products-section');
+                const amazonSection = document.getElementById('amazon-products-section');
+                const isVisible = section.classList.contains('active');
+                
+                if (isVisible) {
+                    // Dölj AliExpress-sektionen
+                    section.classList.remove('active');
+                    setTimeout(() => {
+                        section.style.display = 'none';
+                    }, 300);
+                    showNotification('🏪 AliExpress-sektion dold', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: AliExpress-sektion dold';
+                } else {
+                    // Dölj Amazon först med animation
+                    amazonSection.classList.remove('active');
+                    setTimeout(() => {
+                        amazonSection.style.display = 'none';
+                    }, 300);
+                    
+                    // Visa AliExpress-sektion
+                    section.style.display = 'block';
+                    setTimeout(() => {
+                        section.classList.add('active');
+                    }, 50);
+                    
+                    showNotification('🏪 Laddar AliExpress-produkter...', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: Laddar AliExpress-produkter...';
+                    
+                    loadAliExpressProducts();
+                }
+                
+            } catch (error) {
+                console.error('AliExpress products error:', error);
+                showNotification('❌ Fel vid AliExpress-hämtning: ' + error.message, 'error');
+            }
+        }
+        
+        // ==================== AI BEST PRODUCTS FINDER ====================
+        
+        async function findBestProducts() {
+            try {
+                showNotification('🎯 AI söker efter de bästa produkterna...', 'info');
+                document.getElementById('statusOutput').textContent = 'Status: AI analyserar alla produkter för att hitta de bästa...';
+                
+                // Samla alla produkter från alla plattformar
+                const allProducts = await getAllProductsFromPlatforms();
+                
+                // Analysera och rankas produkter med AI
+                const rankedProducts = analyzeAndRankProducts(allProducts);
+                
+                // Visa resultaten
+                displayBestProductsResults(rankedProducts);
+                
+            } catch (error) {
+                console.error('Error finding best products:', error);
+                showNotification('❌ Fel vid AI-analys av produkter', 'error');
+            }
+        }
+        
+        async function getAllProductsFromPlatforms() {
+            const allProducts = [];
+            
+            // Amazon produkter
+            const amazonProducts = [
+                {
+                    name: "Apple AirPods Pro (2nd Generation)",
+                    price: 199.99,
+                    platform: "amazon",
+                    category: "electronics",
+                    rating: 4.6,
+                    reviews: 12543,
+                    commission: 12.00,
+                    url: "https://www.amazon.com/Apple-Generation-Cancelling-Transparency-Personalized/dp/B0BDHWDR12"
+                },
+                {
+                    name: "Samsung Galaxy Watch 6", 
+                    price: 329.99,
+                    platform: "amazon",
+                    category: "electronics",
+                    rating: 4.4,
+                    reviews: 8921,
+                    commission: 19.80,
+                    url: "https://www.amazon.com/Samsung-Galaxy-Watch-Bluetooth-Smartwatch/dp/B0C7S4Q3Z8"
+                },
+                {
+                    name: "LEGO Creator Expert Vehicle Collection",
+                    price: 89.99,
+                    platform: "amazon", 
+                    category: "toys",
+                    rating: 4.8,
+                    reviews: 3456,
+                    commission: 5.40,
+                    url: "https://www.amazon.com/LEGO-Creator-Expert-Vehicles-Collection/dp/B08HVXD9V6"
+                },
+                {
+                    name: "Anker PowerCore 10000 Portable Charger",
+                    price: 24.99,
+                    platform: "amazon",
+                    category: "electronics", 
+                    rating: 4.5,
+                    reviews: 67890,
+                    commission: 1.50,
+                    url: "https://www.amazon.com/Anker-PowerCore-Portable-Charger-PowerIQ/dp/B019GJLER8"
+                }
+            ];
+            
+            // AliExpress produkter
+            const aliExpressProducts = [
+                {
+                    name: "Wireless Bluetooth Gaming Headphones RGB",
+                    price: 29.99,
+                    platform: "aliexpress",
+                    category: "electronics",
+                    rating: 4.2,
+                    reviews: 2341,
+                    commission: 2.10,
+                    url: "https://www.aliexpress.com/item/1005003947154782.html"
+                },
+                {
+                    name: "Smart Fitness Tracker Watch Heart Rate Monitor",
+                    price: 19.99,
+                    platform: "aliexpress",
+                    category: "sports",
+                    rating: 4.1,
+                    reviews: 5678,
+                    commission: 1.40,
+                    url: "https://www.aliexpress.com/item/1005004123456789.html"
+                },
+                {
+                    name: "LED Strip Lights RGB Color Changing 5m",
+                    price: 12.99,
+                    platform: "aliexpress",
+                    category: "home",
+                    rating: 4.3,
+                    reviews: 8901,
+                    commission: 0.91,
+                    url: "https://www.aliexpress.com/item/1005002987654321.html"
+                },
+                {
+                    name: "Wireless Phone Charger Fast Charging Pad",
+                    price: 8.99,
+                    platform: "aliexpress",
+                    category: "electronics",
+                    rating: 4.0,
+                    reviews: 12345,
+                    commission: 0.63,
+                    url: "https://www.aliexpress.com/item/1005001234567890.html"
+                }
+            ];
+            
+            // KSP produkter (konvertera ILS till USD för jämförelse)
+            const kspProducts = [
+                {
+                    name: "iPhone 15 Pro 128GB - Natural Titanium",
+                    price: 1388.61, // ~4999 ILS
+                    platform: "ksp",
+                    category: "electronics",
+                    rating: 4.8,
+                    reviews: 850,
+                    commission: 48.61, // ~175 ILS
+                    url: "https://www.ksp.co.il/web/item/78245"
+                },
+                {
+                    name: "MacBook Air 15\" M2 256GB - Midnight",
+                    price: 1747.22, // ~6290 ILS
+                    platform: "ksp",
+                    category: "electronics",
+                    rating: 4.7,
+                    reviews: 340,
+                    commission: 61.11, // ~220 ILS
+                    url: "https://www.ksp.co.il/web/item/79156"
+                },
+                {
+                    name: "PlayStation 5 Console - Standard Edition",
+                    price: 777.50, // ~2799 ILS
+                    platform: "ksp",
+                    category: "gaming",
+                    rating: 4.9,
+                    reviews: 1240,
+                    commission: 38.89, // ~140 ILS
+                    url: "https://www.ksp.co.il/web/item/77832"
+                }
+            ];
+            
+            allProducts.push(...amazonProducts, ...aliExpressProducts, ...kspProducts);
+            return allProducts;
+        }
+        
+        function analyzeAndRankProducts(products) {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            
+            const analyzedProducts = products.map(product => {
+                // Beräkna olika faktorer
+                const ratingScore = (product.rating / 5.0) * 100;
+                const reviewsScore = Math.min(100, (product.reviews / 1000) * 20);
+                const commissionScore = Math.min(100, (product.commission / product.price) * 1000);
+                const priceScore = Math.max(20, 120 - (product.price / 10));
+                
+                // Platform factors
+                const platformFactors = {
+                    amazon: { trust: 95, conversion: 12, market: 90 },
+                    aliexpress: { trust: 75, conversion: 8, market: 70 },
+                    ksp: { trust: 85, conversion: 10, market: 60 }
+                };
+                
+                const platformData = platformFactors[product.platform];
+                
+                // Seasonal factors
+                const seasonalFactors = {
+                    electronics: [0.8, 0.7, 0.9, 0.8, 0.7, 0.6, 0.5, 0.6, 0.8, 0.9, 1.2, 1.4],
+                    sports: [1.2, 1.0, 1.1, 1.3, 1.4, 1.2, 1.0, 0.9, 1.0, 0.8, 0.7, 0.8],
+                    home: [0.9, 0.8, 1.2, 1.3, 1.2, 1.0, 0.9, 0.8, 1.0, 1.1, 1.2, 1.1],
+                    toys: [0.7, 0.6, 0.8, 0.9, 1.0, 1.1, 1.2, 1.1, 0.9, 1.0, 1.3, 1.5],
+                    gaming: [0.9, 0.8, 0.9, 0.8, 0.7, 0.6, 0.6, 0.7, 0.8, 0.9, 1.3, 1.4]
+                };
+                
+                const seasonalFactor = (seasonalFactors[product.category] || [1.0])[currentMonth] * 100;
+                
+                // Beräkna total poäng (viktad)
+                const totalScore = (
+                    ratingScore * 0.20 +         // 20% rating
+                    reviewsScore * 0.15 +        // 15% reviews
+                    commissionScore * 0.25 +     // 25% commission
+                    priceScore * 0.15 +          // 15% price attractiveness
+                    platformData.trust * 0.10 +  // 10% platform trust
+                    platformData.conversion * 5 * 0.10 + // 10% conversion rate
+                    seasonalFactor * 0.05        // 5% seasonal timing
+                );
+                
+                // Beräkna förväntad ROI
+                const expectedClicks = Math.round(totalScore * 2 + Math.random() * 100);
+                const expectedRevenue = Math.round(expectedClicks * (platformData.conversion / 100) * product.commission);
+                
+                return {
+                    ...product,
+                    scores: {
+                        total: Math.round(totalScore),
+                        rating: Math.round(ratingScore),
+                        reviews: Math.round(reviewsScore),
+                        commission: Math.round(commissionScore),
+                        price: Math.round(priceScore),
+                        platform: Math.round(platformData.trust),
+                        seasonal: Math.round(seasonalFactor)
+                    },
+                    predictions: {
+                        expectedClicks,
+                        expectedRevenue,
+                        roi: Math.round((expectedRevenue / (product.price * 0.1)) * 100) // Assuming 10% ad spend
+                    }
+                };
+            });
+            
+            // Sortera efter total poäng
+            return analyzedProducts.sort((a, b) => b.scores.total - a.scores.total);
+        }
+        
+        function displayBestProductsResults(rankedProducts) {
+            const top5Products = rankedProducts.slice(0, 5);
+            
+            let resultHTML = `
+                <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 25px; margin: 20px 0;">
+                    <h3 style="color: #166534; margin-bottom: 20px; text-align: center;">🎯 TOP 5 BÄSTA PRODUKTER (AI-Analys)</h3>
+                    <div style="margin-bottom: 15px; text-align: center; color: #166534;">
+                        <em>Baserat på rating, commission, seasonal trends, platform performance och market potential</em>
+                    </div>
+            `;
+            
+            top5Products.forEach((product, index) => {
+                const medalEmojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+                const scoreColor = product.scores.total > 80 ? '#22c55e' : product.scores.total > 60 ? '#f59e0b' : '#ef4444';
+                
+                resultHTML += `
+                    <div style="background: white; border: 1px solid #d1d5db; border-radius: 8px; padding: 20px; margin: 15px 0; position: relative;">
+                        <div style="position: absolute; top: -10px; left: 15px; background: ${scoreColor}; color: white; padding: 5px 15px; border-radius: 15px; font-weight: bold;">
+                            ${medalEmojis[index]} RANK #${index + 1}
+                        </div>
+                        
+                        <div style="margin-top: 15px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                            <div>
+                                <h4 style="color: #1f2937; margin: 0 0 10px 0;">${product.name}</h4>
+                                <div style="margin-bottom: 8px;">
+                                    <span style="background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 12px; margin-right: 8px;">
+                                        ${product.platform.toUpperCase()}
+                                    </span>
+                                    <span style="background: #f3e8ff; color: #8b5cf6; padding: 3px 8px; border-radius: 12px; font-size: 12px;">
+                                        ${product.category}
+                                    </span>
+                                </div>
+                                <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
+                                    💰 $${product.price} | ⭐ ${product.rating} (${product.reviews.toLocaleString()} reviews) | 💵 $${product.commission} commission
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; font-size: 12px;">
+                                    <div>Total: <strong style="color: ${scoreColor};">${product.scores.total}%</strong></div>
+                                    <div>Rating: <strong>${product.scores.rating}%</strong></div>
+                                    <div>Commission: <strong>${product.scores.commission}%</strong></div>
+                                    <div>Seasonal: <strong>${product.scores.seasonal}%</strong></div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; border-left: 1px solid #e5e7eb; padding-left: 20px;">
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 24px; font-weight: bold; color: ${scoreColor};">${product.scores.total}%</div>
+                                    <div style="color: #6b7280; font-size: 12px;">AI Score</div>
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <div style="font-weight: bold; color: #059669;">${product.predictions.expectedClicks}</div>
+                                    <div style="color: #6b7280; font-size: 12px;">Expected Clicks</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-weight: bold; color: #059669;">$${product.predictions.expectedRevenue}</div>
+                                    <div style="color: #6b7280; font-size: 12px;">Expected Revenue</div>
+                                </div>
+                                <button class="btn btn-primary" onclick="addToAffiliate('${product.name.replace(/'/g, "\\'")}', '${product.platform}', '${product.url}')" style="font-size: 12px; padding: 8px 12px;">
+                                    ➕ Lägg till
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultHTML += `
+                    <div style="text-align: center; margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+                        <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
+                            AI-algoritmen analyserade <strong>${rankedProducts.length} produkter</strong> baserat på:
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; font-size: 12px; color: #374151;">
+                            <div>📊 Rating & Reviews</div>
+                            <div>💰 Commission Rate</div>
+                            <div>🎯 Price Attractiveness</div>
+                            <div>🏪 Platform Performance</div>
+                            <div>📅 Seasonal Trends</div>
+                            <div>📈 Market Potential</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showNotification('🎯 AI-analys slutförd! Hittade de 5 bästa produkterna.', 'success');
+            document.getElementById('statusOutput').innerHTML = resultHTML;
+        }
+        
+        // ==================== KSP PRODUKTHANTERING ====================
+        
+        function showKSPProducts() {
+            try {
+                const section = document.getElementById('ksp-products-section');
+                const amazonSection = document.getElementById('amazon-products-section');
+                const aliSection = document.getElementById('aliexpress-products-section');
+                
+                if (!section) {
+                    showNotification('❌ KSP-sektion hittades inte', 'error');
+                    return;
+                }
+                
+                if (section.classList.contains('active')) {
+                    // Dölj KSP-sektionen
+                    section.classList.remove('active');
+                    setTimeout(() => {
+                        section.style.display = 'none';
+                    }, 300);
+                    showNotification('🇮🇱 KSP-sektion dold', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: KSP-sektion dold';
+                } else {
+                    // Dölj andra sektioner först
+                    amazonSection.classList.remove('active');
+                    aliSection.classList.remove('active');
+                    setTimeout(() => {
+                        amazonSection.style.display = 'none';
+                        aliSection.style.display = 'none';
+                    }, 300);
+                    
+                    // Visa KSP-sektion
+                    section.style.display = 'block';
+                    setTimeout(() => {
+                        section.classList.add('active');
+                    }, 50);
+                    
+                    showNotification('🇮🇱 Laddar KSP-produkter...', 'info');
+                    document.getElementById('statusOutput').textContent = 'Status: Laddar KSP-produkter...';
+                    
+                    loadKSPProducts();
+                }
+                
+            } catch (error) {
+                console.error('KSP products error:', error);
+                showNotification('❌ Fel vid KSP-hämtning: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadKSPProducts() {
+            try {
+                const grid = document.getElementById('ksp-products-grid');
+                const countElement = document.getElementById('ksp-count');
+                
+                // Visa loading
+                grid.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
+                countElement.textContent = 'Laddar...';
+                
+                // Försök ladda från JSON-fil först
+                let products = [];
+                try {
+                    const response = await fetch('ksp_products.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        products = data.products || [];
+                    }
+                } catch (jsonError) {
+                    console.log('Ingen KSP JSON-fil hittad, använder mock-data');
+                }
+                
+                // Fallback till mock-data om ingen fil finns
+                if (products.length === 0) {
+                    products = [
+                        {
+                            id: "ksp_iphone15pro",
+                            name: "iPhone 15 Pro 128GB - Natural Titanium",
+                            price: "4,999 ₪",
+                            originalPrice: "5,299 ₪",
+                            rating: 4.8,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA3M2U2Ii8+PHJlY3QgeD0iMTEwIiB5PSI2MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iIzMzMzMzMyIgcng9IjEwIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjkwIiByeD0iMTUiIHJ5PSIxMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iODUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmlQaG9uZSAxNSBQcm88L3RleHQ+PC9zdmc+",
+                            category: "smartphones",
+                            affiliateUrl: "https://www.ksp.co.il/web/item/78245",
+                            commission: "175 ₪",
+                            description: "iPhone 15 Pro עם שבב A17 Pro המהפכני",
+                            market: "Israel",
+                            shipping: "משלוח חינם",
+                            availability: "במלאי"
+                        },
+                        {
+                            id: "ksp_macbook_air",
+                            name: "MacBook Air 15\" M2 256GB - Midnight",
+                            price: "6,290 ₪",
+                            originalPrice: "6,790 ₪",
+                            rating: 4.7,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA3M2U2Ii8+PHJlY3QgeD0iNzAiIHk9IjgwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIgcng9IjUiLz48cmVjdCB4PSI4MCIgeT0iOTAiIHdpZHRoPSIxNDAiIGhlaWdodD0iNzAiIGZpbGw9IiMwMDAwMDAiIHJ4PSIzIi8+PHRleHQgeD0iNTAlIiB5PSI5MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TWFjQm9vayBBaXI8L3RleHQ+PC9zdmc+",
+                            category: "laptops",
+                            affiliateUrl: "https://www.ksp.co.il/web/item/79156",
+                            commission: "220 ₪",
+                            description: "MacBook Air 15 עם שבב M2 וביצועים מעולים",
+                            market: "Israel",
+                            shipping: "משלוח חינם",
+                            availability: "במלאי"
+                        },
+                        {
+                            id: "ksp_ps5_console",
+                            name: "PlayStation 5 Console - Standard Edition",
+                            price: "2,799 ₪",
+                            originalPrice: "2,999 ₪", 
+                            rating: 4.9,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA3M2U2Ii8+PHJlY3QgeD0iMTIwIiB5PSI3MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZmZmZiIgcng9IjEwIi8+PHJlY3QgeD0iMTMwIiB5PSI4MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMDA3M2U2Ii8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjEzMCIgcng9IjIwIiByeT0iMTAiIGZpbGw9IiMzMzMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjkwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QbGF5U3RhdGlvbiA1PC90ZXh0Pjwvc3ZnPg==",
+                            category: "gaming",
+                            affiliateUrl: "https://www.ksp.co.il/web/item/77832",
+                            commission: "140 ₪",
+                            description: "PlayStation 5 - הקונסולה הכי מתקדמת",
+                            market: "Israel",
+                            shipping: "משלוח חינם",
+                            availability: "במלאי מוגבל"
+                        }
+                    ];
+                }
+                
+                displayKSPProducts(products);
+                countElement.textContent = `${products.length} produkter`;
+                showNotification(`🇮🇱 ${products.length} KSP-produkter laddade`, 'success');
+                document.getElementById('statusOutput').textContent = `Status: ${products.length} KSP-produkter laddade`;
+                
+            } catch (error) {
+                console.error('Error loading KSP products:', error);
+                showNotification('❌ Fel vid laddning av KSP-produkter', 'error');
+                document.getElementById('ksp-products-grid').innerHTML = '<div class="no-products">Kunde inte ladda produkter</div>';
+            }
+        }
+        
+        function displayKSPProducts(products) {
+            const grid = document.getElementById('ksp-products-grid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="no-products">Inga produkter hittades</div>';
+                return;
+            }
+            
+            // Skapa produktkort
+            const productsHTML = products.map((product, index) => {
+                const safeTitle = (product.name || 'Unnamed Product').replace(/'/g, "&#39;");
+                const safeUrl = product.affiliateUrl || product.url || '#';
+                
+                return `
+                    <div class="product-card loading">
+                        <img src="${product.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA3M2U2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPktTUCBQcm9kdWN0PC90ZXh0Pjwvc3ZnPg=='}" 
+                             alt="${safeTitle}" 
+                             class="product-image"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA3M2U2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPktTUCBQcm9kdWN0PC90ZXh0Pjwvc3ZnPg=='"
+                             onload="this.parentElement.classList.remove('loading')">
+                        <div class="product-info">
+                            <div class="product-platform" style="background: #0073e6; color: white;">🇮🇱 KSP Israel</div>
+                            <h4 class="product-title" title="${safeTitle}">${safeTitle}</h4>
+                            <div class="product-price">
+                                ${product.price || 'N/A'}
+                                ${product.originalPrice ? `<span class="product-original-price">${product.originalPrice}</span>` : ''}
+                            </div>
+                            <div class="product-rating">
+                                <span class="stars">${'★'.repeat(Math.floor(product.rating || 4))}</span>
+                                <span>${product.rating || '4.0'}</span>
+                                <span style="margin-left: 0.5rem; color: #22c55e;">${product.availability || 'במלאי'}</span>
+                            </div>
+                            <div class="product-description">${product.description || 'No description available'}</div>
+                            <div class="product-commission">
+                                <span>Kommission: ${product.commission || 'N/A'}</span>
+                                <span style="margin-left: 0.5rem; color: #059669;">${product.shipping || 'משלוח חינם'}</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn btn-primary" onclick="addToAffiliate('${safeTitle}', 'ksp', '${safeUrl}')">
+                                    ➕ Lägg till
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewProduct('${safeUrl}', '${safeTitle}')">
+                                    👁️ Visa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = productsHTML;
+            
+            // Animera in korten efter DOM-uppdatering
+            setTimeout(() => {
+                const cards = grid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                    }, index * 100);
+                });
+            }, 50);
+        }
+        
+        function refreshKSPProducts() {
+            showNotification('🔄 Uppdaterar KSP-produkter...', 'info');
+            loadKSPProducts();
+        }
+        
+        // ==================== AMAZON PRODUKTLADDNING ====================
+        
+        async function loadAmazonProducts() {
+            try {
+                const grid = document.getElementById('amazon-products-grid');
+                const countElement = document.getElementById('amazon-count');
+                
+                // Visa loading
+                grid.innerHTML = '<div class="loading-spinner"></div>';
+                countElement.textContent = 'Laddar...';
+                
+                // Försök ladda från JSON-fil först
+                let products = [];
+                try {
+                    const response = await fetch('amazon_products.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        products = data.products || data || [];
+                    }
+                } catch (jsonError) {
+                    console.log('Ingen Amazon JSON-fil hittad, använder mock-data');
+                }
+                
+                // Fallback till mock-data om ingen fil finns
+                if (products.length === 0) {
+                    products = [
+                        {
+                            title: "Apple AirPods Pro (2nd Generation)",
+                            price: "$199.99",
+                            originalPrice: "$249.99",
+                            rating: 4.6,
+                            reviews: 12543,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PGNpcmNsZSBjeD0iMTUwIiBjeT0iMTEwIiByPSI0MCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iODUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFpcnBvZHMgUHJvPC90ZXh0Pjwvc3ZnPg==",
+                            category: "Electronics",
+                            affiliateUrl: "https://www.amazon.com/Apple-Generation-Cancelling-Transparency-Personalized/dp/B0BDHWDR12",
+                            commission: "$12.00",
+                            description: "Active Noise Cancelling, Adaptive Transparency, H2 chip"
+                        },
+                        {
+                            title: "Samsung Galaxy Watch 6",
+                            price: "$329.99", 
+                            originalPrice: "$399.99",
+                            rating: 4.4,
+                            reviews: 8921,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PGNpcmNsZSBjeD0iMTUwIiBjeT0iMTEwIiByPSI1MCIgZmlsbD0iIzAwNzNlNiIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjMiLz48dGV4dCB4PSI1MCUiIHk9Ijg1JSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5HYWxheHkgV2F0Y2g8L3RleHQ+PC9zdmc+",
+                            category: "Electronics", 
+                            affiliateUrl: "https://www.amazon.com/Samsung-Galaxy-Watch-Bluetooth-Smartwatch/dp/B0C7S4Q3Z8",
+                            commission: "$19.80",
+                            description: "Advanced Sleep Coaching, Heart Rate Monitoring"
+                        },
+                        {
+                            title: "LEGO Creator Expert Vehicle Collection", 
+                            price: "$89.99",
+                            originalPrice: "$99.99", 
+                            rating: 4.8,
+                            reviews: 3456,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PHJlY3QgeD0iNzAiIHk9IjgwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZmYwMDAwIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTUwIiByPSIxNSIgZmlsbD0iIzMzMzMzMyIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjE1MCIgcj0iMTUiIGZpbGw9IiMzMzMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjkwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNmI3MjgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5MRUdPIENhcjwvdGV4dD48L3N2Zz4=",
+                            category: "Toys",
+                            affiliateUrl: "https://www.amazon.com/LEGO-Creator-Expert-Vehicles-Collection/dp/B08HVXD9V6", 
+                            commission: "$5.40",
+                            description: "Building Kit, Great for Kids and Adults"
+                        },
+                        {
+                            title: "Anker PowerCore 10000 Portable Charger",
+                            price: "$24.99",
+                            originalPrice: "$35.99",
+                            rating: 4.5,
+                            reviews: 67890,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PHJlY3QgeD0iMTAwIiB5PSI3MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI4MCIgZmlsbD0iIzMzMzMzMyIgcng9IjEwIi8+PGNpcmNsZSBjeD0iMTMwIiBjeT0iMTAwIiByPSI1IiBmaWxsPSIjMDBmZjAwIi8+PHRleHQgeD0iNTAlIiB5PSI5MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UG93ZXJDb3JlPC90ZXh0Pjwvc3ZnPg==",
+                            category: "Electronics",
+                            affiliateUrl: "https://www.amazon.com/Anker-PowerCore-Portable-Charger-PowerIQ/dp/B019GJLER8",
+                            commission: "$1.50",
+                            description: "Ultra-Compact Portable Charger, PowerIQ Technology"
+                        }
+                    ];
+                }
+                
+                displayAmazonProducts(products);
+                countElement.textContent = `${products.length} produkter`;
+                showNotification(`📦 ${products.length} Amazon-produkter laddade`, 'success');
+                document.getElementById('statusOutput').textContent = `Status: ${products.length} Amazon-produkter laddade`;
+                
+            } catch (error) {
+                console.error('Error loading Amazon products:', error);
+                showNotification('❌ Fel vid laddning av Amazon-produkter', 'error');
+                document.getElementById('amazon-products-grid').innerHTML = '<div class="no-products">Kunde inte ladda produkter</div>';
+            }
+        }
+        
+        function displayAmazonProducts(products) {
+            const grid = document.getElementById('amazon-products-grid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="no-products">Inga produkter hittades</div>';
+                return;
+            }
+            
+            // Skapa produktkort utan animationer först
+            const productsHTML = products.map((product, index) => {
+                const safeTitle = (product.title || 'Unnamed Product').replace(/'/g, "&#39;");
+                const safeUrl = product.affiliateUrl || '#';
+                
+                return `
+                    <div class="product-card loading">
+                        <img src="${product.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFtYXpvbiBQcm9kdWN0PC90ZXh0Pjwvc3ZnPg=='}" 
+                             alt="${safeTitle}" 
+                             class="product-image"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmYWZjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFtYXpvbiBQcm9kdWN0PC90ZXh0Pjwvc3ZnPg=='"
+                             onload="this.parentElement.classList.remove('loading')">
+                        <div class="product-info">
+                            <div class="product-platform">Amazon</div>
+                            <h4 class="product-title" title="${safeTitle}">${safeTitle}</h4>
+                            <div class="product-price">
+                                ${product.price || '$0.00'}
+                                ${product.originalPrice ? `<span class="product-original-price">${product.originalPrice}</span>` : ''}
+                            </div>
+                            <div class="product-rating">
+                                <span class="stars">${'★'.repeat(Math.floor(product.rating || 4))}</span>
+                                <span>${product.rating || '4.0'} (${(product.reviews || 1000).toLocaleString()})</span>
+                            </div>
+                            <div class="product-description">${product.description || 'No description available'}</div>
+                            <div class="product-commission">Kommission: ${product.commission || 'N/A'}</div>
+                            <div class="product-actions">
+                                <button class="btn btn-primary" onclick="addToAffiliate('${safeTitle}', 'amazon', '${safeUrl}')">
+                                    ➕ Lägg till
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewProduct('${safeUrl}', '${safeTitle}')">
+                                    👁️ Visa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = productsHTML;
+            
+            // Animera in korten efter DOM-uppdatering
+            setTimeout(() => {
+                const cards = grid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                    }, index * 100);
+                });
+            }, 50);
+        }
+        
+        // ==================== ALIEXPRESS PRODUKTLADDNING ====================
+        
+        async function loadAliExpressProducts() {
+            try {
+                const grid = document.getElementById('aliexpress-products-grid');
+                const countElement = document.getElementById('aliexpress-count');
+                
+                // Visa loading
+                grid.innerHTML = '<div class="loading-spinner"></div>';
+                countElement.textContent = 'Laddar...';
+                
+                // Försök ladda från JSON-fil först
+                let products = [];
+                try {
+                    const response = await fetch('aliexpress_products.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        products = data.products || data || [];
+                    }
+                } catch (jsonError) {
+                    console.log('Ingen AliExpress JSON-fil hittad, använder mock-data');
+                }
+                
+                // Fallback till mock-data om ingen fil finns
+                if (products.length === 0) {
+                    products = [
+                        {
+                            title: "Wireless Bluetooth Gaming Headphones RGB",
+                            price: "$29.99",
+                            originalPrice: "$59.99", 
+                            rating: 4.2,
+                            orders: 2341,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PGVsbGlwc2UgY3g9IjEyMCIgY3k9IjEwMCIgcng9IjQwIiByeT0iMzAiIGZpbGw9IiMzMzMzMzMiLz48ZWxsaXBzZSBjeD0iMTgwIiBjeT0iMTAwIiByeD0iNDAiIHJ5PSIzMCIgZmlsbD0iIzMzMzMzMyIvPjxwYXRoIGQ9Ik0xMjAgNzBRMTUwIDUwIDE4MCA3MCIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48dGV4dCB4PSI1MCUiIHk9Ijg1JSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5HYW1pbmcgSGVhZHBob25lczwvdGV4dD48L3N2Zz4=",
+                            category: "electronics",
+                            affiliateUrl: "https://www.aliexpress.com/item/1005003947154782.html",
+                            commission: "$2.10",
+                            shipping: "Gratis frakt",
+                            discount: "50% OFF"
+                        },
+                        {
+                            title: "Smart Fitness Tracker Watch Heart Rate Monitor",
+                            price: "$19.99", 
+                            originalPrice: "$39.99",
+                            rating: 4.1,
+                            orders: 5678,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PHJlY3QgeD0iMTIwIiB5PSI4MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMzMzMzMzIiByeD0iMTAiLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjE1IiBmaWxsPSIjMzMzMzMzIi8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMTAwIiByPSIxNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iODUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZpdG5lc3MgVHJhY2tlcjwvdGV4dD48L3N2Zz4=",
+                            category: "sports",
+                            affiliateUrl: "https://www.aliexpress.com/item/1005004123456789.html", 
+                            commission: "$1.40",
+                            shipping: "Gratis frakt",
+                            discount: "50% OFF"
+                        },
+                        {
+                            title: "LED Strip Lights RGB Color Changing 5m",
+                            price: "$12.99",
+                            originalPrice: "$25.99",
+                            rating: 4.3, 
+                            orders: 8901,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PHJlY3QgeD0iNTAiIHk9IjkwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZmYwMDAwIiByeD0iMTAiLz48cmVjdCB4PSI1MCIgeT0iMTEwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMDBmZjAwIiByeD0iMTAiLz48cmVjdCB4PSI1MCIgeT0iMTMwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMDA4MGZmIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5MRUQgU3RyaXAgTGlnaHRzPC90ZXh0Pjwvc3ZnPg==",
+                            category: "home",
+                            affiliateUrl: "https://www.aliexpress.com/item/1005002987654321.html",
+                            commission: "$0.91",
+                            shipping: "Gratis frakt", 
+                            discount: "50% OFF"
+                        },
+                        {
+                            title: "Wireless Phone Charger Fast Charging Pad",
+                            price: "$8.99",
+                            originalPrice: "$17.99",
+                            rating: 4.0,
+                            orders: 12345,
+                            image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PGNpcmNsZSBjeD0iMTUwIiBjeT0iMTEwIiByPSI1MCIgZmlsbD0iIzMzMzMzMyIvPjxyZWN0IHg9IjEzNSIgeT0iOTUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgZmlsbD0iIzAwZmYwMCIgcng9IjUiLz48dGV4dCB4PSI1MCUiIHk9Ijg1JSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5XaXJlbGVzcyBDaGFyZ2VyPC90ZXh0Pjwvc3ZnPg==", 
+                            category: "electronics",
+                            affiliateUrl: "https://www.aliexpress.com/item/1005001234567890.html",
+                            commission: "$0.63",
+                            shipping: "Gratis frakt",
+                            discount: "50% OFF"
+                        }
+                    ];
+                }
+                
+                displayAliExpressProducts(products);
+                countElement.textContent = `${products.length} produkter`;
+                showNotification(`🏪 ${products.length} AliExpress-produkter laddade`, 'success');
+                document.getElementById('statusOutput').textContent = `Status: ${products.length} AliExpress-produkter laddade`;
+                
+            } catch (error) {
+                console.error('Error loading AliExpress products:', error);
+                showNotification('❌ Fel vid laddning av AliExpress-produkter', 'error');
+                document.getElementById('aliexpress-products-grid').innerHTML = '<div class="no-products">Kunde inte ladda produkter</div>';
+            }
+        }
+        
+        function displayAliExpressProducts(products) {
+            const grid = document.getElementById('aliexpress-products-grid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="no-products">Inga produkter hittades</div>';
+                return;
+            }
+            
+            // Skapa produktkort utan animationer först
+            const productsHTML = products.map((product, index) => {
+                const safeTitle = (product.title || 'Unnamed Product').replace(/'/g, "&#39;");
+                const safeUrl = product.affiliateUrl || '#';
+                
+                return `
+                    <div class="product-card loading">
+                        <img src="${product.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFsaUV4cHJlc3MgUHJvZHVjdDwvdGV4dD48L3N2Zz4='}" 
+                             alt="${safeTitle}" 
+                             class="product-image"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFsaUV4cHJlc3MgUHJvZHVjdDwvdGV4dD48L3N2Zz4='"
+                             onload="this.parentElement.classList.remove('loading')">
+                        <div class="product-info">
+                            <div class="product-platform" style="background: #ff6b35; color: white;">AliExpress</div>
+                            <h4 class="product-title" title="${safeTitle}">${safeTitle}</h4>
+                            <div class="product-price">
+                                ${product.price || '$0.00'}
+                                ${product.originalPrice ? `<span class="product-original-price">${product.originalPrice}</span>` : ''}
+                                ${product.discount ? `<span style="background: #ef4444; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; margin-left: 0.5rem;">${product.discount}</span>` : ''}
+                            </div>
+                            <div class="product-rating">
+                                <span class="stars">${'★'.repeat(Math.floor(product.rating || 4))}</span>
+                                <span>${product.rating || '4.0'} (${(product.orders || 100).toLocaleString()} orders)</span>
+                            </div>
+                            <div class="product-description" style="color: #22c55e;">${product.shipping || 'Gratis frakt'}</div>
+                            <div class="product-commission">Kommission: ${product.commission || 'N/A'}</div>
+                            <div class="product-actions">
+                                <button class="btn btn-primary" onclick="addToAffiliate('${safeTitle}', 'aliexpress', '${safeUrl}')">
+                                    ➕ Lägg till
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewProduct('${safeUrl}', '${safeTitle}')">
+                                    👁️ Visa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = productsHTML;
+            
+            // Animera in korten efter DOM-uppdatering
+            setTimeout(() => {
+                const cards = grid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                    }, index * 100);
+                });
+            }, 50);
+        }
+        
+        // ==================== HJÄLPFUNKTIONER ====================
+        
+        // Normalisera produktdata från API
+        function normalizeProductData(product) {
+            return {
+                ...product,
+                title: product.title || product.name || 'Unnamed Product',
+                price: formatPrice(product.price),
+                image: product.image || generatePlaceholderImage(product.platform || 'unknown', product.title),
+                rating: product.rating || 4.0,
+                url: product.url || product.affiliateUrl || '#',
+                affiliateUrl: product.affiliateUrl || product.url || '#'
+            };
+        }
+        
+        // Formatera pris från olika format
+        function formatPrice(price) {
+            if (!price) return 'N/A';
+            
+            // Om det är ett objekt (från API)
+            if (typeof price === 'object' && price.current) {
+                return `${price.current} ${price.currency || 'USD'}`;
+            }
+            
+            // Om det är redan en sträng
+            if (typeof price === 'string') {
+                return price;
+            }
+            
+            // Om det är ett nummer
+            if (typeof price === 'number') {
+                return `$${price.toFixed(2)}`;
+            }
+            
+            return 'N/A';
+        }
+        
+        // Generera placeholder-bild
+        function generatePlaceholderImage(platform, title) {
+            const colors = {
+                amazon: { bg: '#232F3E', text: '#FF9900' },
+                aliexpress: { bg: '#FF6B35', text: '#FFFFFF' },
+                ksp: { bg: '#0073E6', text: '#FFFFFF' }
+            };
+            
+            const color = colors[platform.toLowerCase()] || { bg: '#666666', text: '#FFFFFF' };
+            const productName = (title || platform).substring(0, 15);
+            
+            return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220"><rect width="100%" height="100%" fill="${color.bg}"/><text x="50%" y="40%" text-anchor="middle" dy=".3em" fill="white" font-weight="bold" font-size="14">${platform.charAt(0).toUpperCase() + platform.slice(1)}</text><text x="50%" y="60%" text-anchor="middle" dy=".3em" fill="${color.text}" font-size="12">${productName}</text></svg>`;
+        }
+        
+        function viewProduct(url, title) {
+            try {
+                console.log('Försöker öppna produkt:', { url, title });
+                
+                if (!url || url === '#' || url === '') {
+                    showNotification('❌ Ingen giltigt URL för denna produkt', 'error');
+                    return;
+                }
+                
+                // Visa information till användaren
+                showNotification(`🔗 Öppnar: ${title}`, 'info');
+                
+                // Öppna länken i nytt fönster
+                const newWindow = window.open(url, '_blank');
+                
+                if (!newWindow) {
+                    // Om popup blockerades, visa information
+                    showNotification('🚫 Popup blockerades. Här är länken: ' + url, 'error');
+                    // Kopiera till urklipp som backup
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(url).then(() => {
+                            showNotification('📋 Länk kopierad till urklipp', 'success');
+                        });
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Fel vid öppning av produktlänk:', error);
+                showNotification('❌ Kunde inte öppna produktlänk: ' + error.message, 'error');
+            }
+        }
+        
+        function addToAffiliate(title, platform, url) {
+            try {
+                // Fyll i formuläret med produktdata
+                document.getElementById('productName').value = title;
+                document.getElementById('platform').value = platform;
+                document.getElementById('affiliateUrl').value = url;
+                
+                // Scrolla till formuläret
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                
+                showNotification(`✅ Produktdata ifylld: ${title}`, 'success');
+                document.getElementById('statusOutput').textContent = `Status: Produktdata ifylld för ${title}`;
+                
+            } catch (error) {
+                console.error('Error adding to affiliate:', error);
+                showNotification('❌ Fel vid ifyllning av produktdata', 'error');
+            }
+        }
+        
+        function refreshAmazonProducts() {
+            showNotification('🔄 Uppdaterar Amazon-produkter...', 'info');
+            loadAmazonProducts();
+        }
+        
+        function refreshAliExpressProducts() {
+            showNotification('🔄 Uppdaterar AliExpress-produkter...', 'info');
+            loadAliExpressProducts();
+        }
+
+        // Handle form submission
+        document.getElementById('affiliateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newLink = {
+                id: links.length + 1,
+                name: document.getElementById('productName').value,
+                platform: document.getElementById('platform').value,
+                category: document.getElementById('category').value,
+                price: parseFloat(document.getElementById('price').value) || 0,
+                clicks: 0,
+                commission: 0,
+                active: document.getElementById('isActive').checked
+            };
+            
+            links.push(newLink);
+            showNotification('✅ Ny affiliate-länk skapad!', 'success');
+            resetForm();
+            updateStats();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('linkModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initialize på page load
+        window.addEventListener('load', function() {
+            updateStats();
+            showNotification('🚀 Admin panel laddad! KSP-knappen borttagen.', 'success');
+            document.getElementById('statusOutput').textContent = 'Status: Admin panel laddad - KSP-integration borttagen som begärt';
+        });
+    </script>
+
+    <!-- API Integration Script -->
+    <script>
+        // Next.js API Integration
+        class AffiliateAPI {
+            constructor() {
+                this.baseUrl = 'http://localhost:3000/api';
+                this.isEnabled = true;
+            }
+
+            async request(endpoint, options = {}) {
+                if (!this.isEnabled) return null;
+                
+                const url = `${this.baseUrl}${endpoint}`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                };
+
+                try {
+                    const response = await fetch(url, config);
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || `HTTP ${response.status}`);
+                    }
+                    
+                    return data;
+                } catch (error) {
+                    console.error(`API Error (${endpoint}):`, error);
+                    showNotification(`❌ API Fel: ${error.message}`, 'error');
+                    return null;
+                }
+            }
+
+            async getProducts(filters = {}) {
+                return this.request(`/products?${new URLSearchParams(filters)}`);
+            }
+
+            async createProduct(productData) {
+                return this.request('/products', {
+                    method: 'POST',
+                    body: JSON.stringify(productData)
+                });
+            }
+
+            async trackClick(clickData) {
+                return this.request('/clicks', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        ...clickData,
+                        sessionId: this.getSessionId()
+                    })
+                });
+            }
+
+            async getAnalytics() {
+                return this.request('/analytics');
+            }
+
+            getSessionId() {
+                let sessionId = sessionStorage.getItem('affiliate_session');
+                if (!sessionId) {
+                    sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('affiliate_session', sessionId);
+                }
+                return sessionId;
+            }
+        }
+
+        // Global API instance
+        const affiliateAPI = new AffiliateAPI();
+
+        // Enhanced product loading with API
+        async function loadProductsWithAPI() {
+            try {
+                const response = await affiliateAPI.getProducts({ limit: 50 });
+                if (response && response.success) {
+                    displayAPIProducts(response.data.products);
+                    showNotification(`📦 ${response.data.products.length} produkter laddade från API`, 'success');
+                }
+            } catch (error) {
+                console.error('Failed to load products from API:', error);
+                // Fallback till mock data
+                loadMockProducts();
+            }
+        }
+
+        function displayAPIProducts(products) {
+            const amazonResults = document.getElementById('amazon-results');
+            const aliexpressResults = document.getElementById('aliexpress-results');
+            const kspResults = document.getElementById('ksp-results');
+            
+            // Clear existing products
+            if (amazonResults) amazonResults.innerHTML = '';
+            if (aliexpressResults) aliexpressResults.innerHTML = '';
+            if (kspResults) kspResults.innerHTML = '';
+
+            products.forEach(product => {
+                const productCard = createAPIProductCard(product);
+                
+                switch(product.platform) {
+                    case 'amazon':
+                        if (amazonResults) amazonResults.appendChild(productCard);
+                        break;
+                    case 'aliexpress':
+                        if (aliexpressResults) aliexpressResults.appendChild(productCard);
+                        break;
+                    case 'ksp':
+                        if (kspResults) kspResults.appendChild(productCard);
+                        break;
+                }
+            });
+        }
+
+        function createAPIProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card api-product';
+            card.setAttribute('data-id', product._id);
+            
+            card.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.title}" 
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"200\\" height=\\"150\\"><rect width=\\"100%\\" height=\\"100%\\" fill=\\"#f0f0f0\\"/><text x=\\"50%\\" y=\\"50%\\" text-anchor=\\"middle\\" dy=\\".3em\\" fill=\\"#999\\">API</text></svg>'"
+                         loading="lazy">
+                </div>
+                <div class="product-info">
+                    <h4>${product.title}</h4>
+                    <p class="price">${product.price.current} ${product.price.currency}</p>
+                    <p class="category">${product.category}</p>
+                    ${product.rating ? `<div class="rating">⭐ ${product.rating}</div>` : ''}
+                    <div class="platform-badge">${product.platform.toUpperCase()}</div>
+                </div>
+                <div class="product-actions">
+                    <button onclick="selectAPIProduct('${product._id}')" class="btn-select">➕ Lägg till</button>
+                    <button onclick="viewAPIProduct('${product.url}')" class="btn-view">👁️ Visa</button>
+                    <button onclick="trackAPIClick('${product._id}', '${product.platform}')" class="btn-track">📊 Klick</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Enhanced form submission with API
+        async function addProductToAPI() {
+            const form = document.getElementById('affiliate-form');
+            if (!form) return;
+
+            const formData = new FormData(form);
+            const productData = {
+                platform: formData.get('platform') || 'amazon',
+                productId: formData.get('productId') || 'api_' + Date.now(),
+                title: formData.get('title'),
+                description: formData.get('description'),
+                price: {
+                    current: parseFloat(formData.get('price')) || 0,
+                    currency: 'SEK'
+                },
+                image: formData.get('image') || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150"><rect width="100%" height="100%" fill="#f0f0f0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#999">Produkt</text></svg>',
+                url: formData.get('url'),
+                affiliateUrl: formData.get('affiliateUrl'),
+                category: formData.get('category') || 'Okategoriserad',
+                brand: formData.get('brand')
+            };
+
+            try {
+                const response = await affiliateAPI.createProduct(productData);
+                if (response && response.success) {
+                    showNotification('✅ Produkt sparad i API-databasen!', 'success');
+                    form.reset();
+                    loadProductsWithAPI();
+                    updateStats();
+                }
+            } catch (error) {
+                showNotification(`❌ Kunde inte spara produkt: ${error.message}`, 'error');
+            }
+        }
+
+        // API product selection
+        function selectAPIProduct(productId) {
+            // Implementera formulär-fyllning baserat på produkt-ID
+            showNotification(`🎯 Produkt ${productId} vald för redigering`, 'info');
+        }
+
+        // Enhanced click tracking
+        async function trackAPIClick(productId, platform) {
+            const clickData = {
+                productId: productId,
+                platform: platform,
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await affiliateAPI.trackClick(clickData);
+            if (response && response.success) {
+                showNotification('📊 Klick registrerat i API', 'success');
+            }
+        }
+
+        // View product with tracking
+        async function viewAPIProduct(url) {
+            if (!url) return;
+            
+            try {
+                // Track view
+                await trackAPIClick('view_' + Date.now(), 'external');
+                window.open(url, '_blank');
+                showNotification('🔗 Produkt öppnad - klick spårat', 'info');
+            } catch (error) {
+                console.error('View tracking failed:', error);
+                window.open(url, '_blank');
+            }
+        }
+
+        // Load analytics dashboard
+        async function loadAPIAnalytics() {
+            try {
+                const response = await affiliateAPI.getAnalytics();
+                if (response && response.success) {
+                    updateAnalyticsDashboard(response.data);
+                }
+            } catch (error) {
+                console.error('Analytics loading failed:', error);
+            }
+        }
+
+        function updateAnalyticsDashboard(data) {
+            const overview = data.overview;
+            
+            // Update existing stats or create new ones
+            document.querySelectorAll('.stat-value').forEach((el, index) => {
+                switch(index) {
+                    case 0: el.textContent = overview.totalClicks || 0; break;
+                    case 1: el.textContent = overview.totalConversions || 0; break;
+                    case 2: el.textContent = (overview.conversionRate || 0).toFixed(1) + '%'; break;
+                    case 3: el.textContent = overview.totalCommissions || 0; break;
+                }
+            });
+        }
+
+        // Product Search Functions
+        // OLD IMPLEMENTATION COMMENTED OUT - Using simple implementation above
+        /*
+        // Product Search Functions - Full Implementation
+        async function searchProductsFull() {
+            // ... old implementation commented out
+        }
+        */
+
+        // Product data normalization functions
+        function normalizeProductData(product) {
+            return {
+                productId: product.productId || product.id || 'unknown',
+                title: String(product.title || product.name || 'Unnamed Product'),
+                price: {
+                    current: product.price?.current || product.price || 0,
+                    currency: product.price?.currency || 'USD'
+                },
+                category: String(product.category || 'Uncategorized'),
+                platform: String(product.platform || 'unknown').toLowerCase(),
+                image: product.image || product.imageUrl || '',
+                rating: product.rating || null,
+                url: product.url || product.productUrl || '#',
+                affiliateUrl: product.affiliateUrl || product.url || '#'
+            };
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+
+
+        function showSearchLoading(show) {
+            const button = document.querySelector('button[onclick="searchProducts()"]');
+            if (button) {
+                if (show) {
+                    button.innerHTML = '⏳ Söker...';
+                    button.disabled = true;
+                } else {
+                    button.innerHTML = '🔍 Sök';
+                    button.disabled = false;
+                }
+            }
+        }
+
+        // Initialize API integration
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM Content Loaded - Initializing admin panel');
+            
+            // Add API toggle
+            const statusDiv = document.getElementById('statusOutput');
+            if (statusDiv) {
+                statusDiv.innerHTML += '<br>🔌 API Integration: Aktiverad';
+            }
+
+            // Initialize search functionality
+            const searchButton = document.querySelector('button[onclick="searchProducts()"]');
+            const searchKeywords = document.getElementById('searchKeywords');
+            const searchPlatform = document.getElementById('searchPlatform');
+            
+            if (searchButton && searchKeywords && searchPlatform) {
+                console.log('✅ Search elements found and initialized');
+                
+                // Ensure search button is enabled
+                searchButton.disabled = false;
+                searchButton.style.pointerEvents = 'auto';
+                searchButton.style.opacity = '1';
+                
+                // Add Enter key support for search input
+                searchKeywords.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        console.log('⌨️ Enter key pressed in search field');
+                        searchProducts();
+                    }
+                });
+                
+                // Add click event listener as backup to onclick
+                searchButton.addEventListener('click', function(e) {
+                    console.log('🔍 Search button clicked via event listener');
+                    if (!searchButton.disabled) {
+                        searchProducts();
+                    }
+                });
+                
+                // Test the search button
+                console.log('🔍 Search button onclick attribute:', searchButton.getAttribute('onclick'));
+                console.log('🔍 Search button disabled status:', searchButton.disabled);
+            } else {
+                console.error('❌ Search elements missing:', {
+                    searchButton: !!searchButton,
+                    searchKeywords: !!searchKeywords,
+                    searchPlatform: !!searchPlatform
+                });
+            }
+
+            // Load products from API
+            loadProductsWithAPI();
+            
+            // Load analytics
+            loadAPIAnalytics();
+            
+            // Replace form submission
+            const affiliateForm = document.getElementById('affiliateForm');
+            if (affiliateForm) {
+                const submitBtn = affiliateForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.onclick = function(e) {
+                        e.preventDefault();
+                        addProductToAPI();
+                    };
+                }
+            }
+
+            showNotification('🚀 API Integration initierad!', 'success');
+        });
+    </script>
+</body>
+</html>

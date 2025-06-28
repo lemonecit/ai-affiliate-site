@@ -9,21 +9,22 @@ import json
 from datetime import datetime
 from typing import Dict, List, Optional
 
+
 class GoogleAnalytics4:
     def __init__(self):
         # GA4 Measurement ID (kommer från Google Analytics)
         self.measurement_id = os.getenv('GA4_MEASUREMENT_ID', 'G-XXXXXXXXXX')
         self.api_secret = os.getenv('GA4_API_SECRET', 'your-api-secret')
-        
+
         # GA4 Measurement Protocol endpoint
         self.endpoint = f"https://www.google-analytics.com/mp/collect?measurement_id={self.measurement_id}&api_secret={self.api_secret}"
-        
+
     def track_event(self, client_id: str, event_name: str, parameters: Dict = None) -> bool:
         """Skicka event till GA4"""
         try:
             if parameters is None:
                 parameters = {}
-                
+
             # GA4 event payload
             payload = {
                 "client_id": client_id,
@@ -37,26 +38,26 @@ class GoogleAnalytics4:
                     }
                 ]
             }
-            
+
             response = requests.post(
                 self.endpoint,
                 json=payload,
                 headers={"Content-Type": "application/json"}
             )
-            
+
             if response.status_code == 204:
                 print(f"✅ GA4 Event skickat: {event_name}")
                 return True
             else:
                 print(f"❌ GA4 fel: {response.status_code}")
                 return False
-                
+
         except Exception as e:
             print(f"❌ GA4 tracking fel: {e}")
             return False
-    
-    def track_affiliate_click(self, client_id: str, product_id: str, 
-                            platform: str, category: str, source: str = "website") -> bool:
+
+    def track_affiliate_click(self, client_id: str, product_id: str,
+                              platform: str, category: str, source: str = "website") -> bool:
         """Spåra affiliate-klick"""
         parameters = {
             "product_id": product_id,
@@ -65,11 +66,11 @@ class GoogleAnalytics4:
             "source": source,
             "currency": "SEK"
         }
-        
+
         return self.track_event(client_id, "affiliate_click", parameters)
-    
+
     def track_affiliate_conversion(self, client_id: str, product_id: str,
-                                 revenue: float, platform: str) -> bool:
+                                   revenue: float, platform: str) -> bool:
         """Spåra affiliate-konvertering"""
         parameters = {
             "product_id": product_id,
@@ -78,24 +79,26 @@ class GoogleAnalytics4:
             "currency": "SEK",
             "transaction_id": f"aff_{product_id}_{int(datetime.now().timestamp())}"
         }
-        
+
         return self.track_event(client_id, "purchase", parameters)
-    
-    def track_page_view(self, client_id: str, page_title: str, 
-                       page_location: str, page_referrer: str = None) -> bool:
+
+    def track_page_view(self, client_id: str, page_title: str,
+                        page_location: str, page_referrer: str = None) -> bool:
         """Spåra sidvisning"""
         parameters = {
             "page_title": page_title,
             "page_location": page_location
         }
-        
+
         if page_referrer:
             parameters["page_referrer"] = page_referrer
-            
+
         return self.track_event(client_id, "page_view", parameters)
+
 
 # Global instance
 ga4 = GoogleAnalytics4()
+
 
 def setup_ga4_tracking():
     """Setup instruktioner för GA4"""
@@ -114,13 +117,15 @@ def setup_ga4_tracking():
        GA4_API_SECRET=your-api-secret
     """
     print(instructions)
-    
+
     return instructions
+
 
 if __name__ == "__main__":
     # Visa setup-instruktioner
     setup_ga4_tracking()
-    
+
     # Test tracking (kräver riktiga credentials)
     test_client_id = "test.user.123456"
-    ga4.track_affiliate_click(test_client_id, "test_product", "amazon", "elektronik")
+    ga4.track_affiliate_click(
+        test_client_id, "test_product", "amazon", "elektronik")
