@@ -65,10 +65,10 @@ export async function GET(request: NextRequest) {
       id: product._id.toString(),
       title: product.title,
       category: product.category,
-      price: `${product.price} kr`,
-      originalPrice: product.originalPrice ? `${product.originalPrice} kr` : undefined,
+      price: product.price, // Return as number
+      originalPrice: product.originalPrice || undefined, // Return as number
       discount: product.originalPrice ? 
-        `${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF` : 
+        `${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%` : 
         undefined,
       affiliateUrl: product.affiliateUrl,
       platform: product.platform,
@@ -77,10 +77,11 @@ export async function GET(request: NextRequest) {
       keywords: product.title.toLowerCase().split(' ').filter((word: string) => word.length > 3),
       buttonText: product.platform === 'amazon' ? 'Köp på Amazon' : 'Köp på AliExpress',
       disclaimer: `Som Amazon/AliExpress affiliate tjänar vi provision på kvalificerade köp.`,
-      commission: product.commission ? `${product.commission} kr` : undefined,
+      commission: product.commission || undefined, // Return as number
       imageUrl: product.imageUrl,
       description: product.description,
-      aiScore: product.aiScore
+      aiScore: product.aiScore,
+      stats: product.stats || { totalClicks: 0, lastClicked: null }
     }));
     
     // Get available categories and platforms

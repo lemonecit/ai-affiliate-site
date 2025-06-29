@@ -115,29 +115,33 @@ export default function AdminDashboard() {
         method: 'POST'
       })
       
-      if (response.ok) {
+      const result = await response.json()
+      console.log('Update products result:', result)
+      
+      if (response.ok && result.success) {
         setActionStatus({ 
           isLoading: false, 
-          message: 'Produkter uppdaterade framgångsrikt!', 
+          message: `${result.message} (${result.data?.products || 0} produkter)`, 
           type: 'success' 
         })
         // Uppdatera stats efter produktuppdatering
         fetchRealStats()
       } else {
-        throw new Error('Failed to update products')
+        throw new Error(result.error || result.details || 'Failed to update products')
       }
     } catch (error) {
+      console.error('Update products error:', error)
       setActionStatus({ 
         isLoading: false, 
-        message: 'Fel vid uppdatering av produkter', 
+        message: `Fel vid uppdatering av produkter: ${error instanceof Error ? error.message : 'Okänt fel'}`, 
         type: 'error' 
       })
     }
     
-    // Rensa meddelandet efter 3 sekunder
+    // Rensa meddelandet efter 5 sekunder
     setTimeout(() => {
       setActionStatus({ isLoading: false, message: '', type: 'info' })
-    }, 3000)
+    }, 5000)
   }
 
   const handleRunTrendsAnalysis = async () => {

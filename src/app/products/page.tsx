@@ -40,35 +40,44 @@ export default function ProductDashboard() {
 
   const loadProducts = async () => {
     try {
+      console.log('Loading products from API...')
       // Hämta produkter från MongoDB via API
       const response = await fetch('/api/products?limit=50')
+      console.log('API response status:', response.status)
+      
       if (response.ok) {
         const result = await response.json()
+        console.log('API result:', result)
+        
         if (result.success && result.data.products) {
+          console.log('Found products:', result.data.products.length)
           // Transform products to match existing interface
           const transformedProducts = result.data.products.map((product: any) => ({
             id: product.id,
             title: product.title,
             category: product.category,
-            price: `${product.price.toLocaleString()} kr`,
+            price: typeof product.price === 'number' ? `${product.price.toLocaleString()} kr` : `${product.price} kr`,
             affiliateUrl: product.affiliateUrl,
             platform: product.platform,
             source: product.platform,
-            trending: product.stats.totalClicks > 5, // Consider trending if > 5 clicks
+            trending: product.stats && product.stats.totalClicks > 5, // Consider trending if > 5 clicks
             keywords: [product.category, product.platform],
-            buttonText: `Köp på ${product.platform === 'amazon' ? 'Amazon' : 'AliExpress'}`,
+            buttonText: `Köp på ${product.platform === 'amazon' ? 'Amazon' : product.platform === 'aliexpress' ? 'AliExpress' : product.platform}`,
             disclaimer: 'Denna länk innehåller affiliate-information',
-            commission: product.commission ? `${product.commission} kr` : undefined,
+            commission: product.commission && typeof product.commission === 'number' ? `${product.commission} kr` : product.commission,
             discount: product.discount,
-            originalPrice: product.originalPrice ? `${product.originalPrice.toLocaleString()} kr` : undefined
+            originalPrice: product.originalPrice && typeof product.originalPrice === 'number' ? `${product.originalPrice.toLocaleString()} kr` : product.originalPrice
           }))
+          console.log('Transformed products:', transformedProducts)
           setProducts(transformedProducts)
         } else {
           console.error('Invalid API response:', result)
           setProducts([])
         }
       } else {
-        console.error('Failed to fetch products from API')
+        console.error('Failed to fetch products from API, status:', response.status)
+        const errorText = await response.text()
+        console.error('Error response:', errorText)
         setProducts([])
       }
     } catch (error) {
