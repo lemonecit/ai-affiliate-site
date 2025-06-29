@@ -355,7 +355,7 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">AI Affiliate Platform Analytics</p>
+          <p className="text-gray-600">AI Affiliate Platform Analytics & Control Center</p>
           
           {/* Action Status */}
           {actionStatus.message && (
