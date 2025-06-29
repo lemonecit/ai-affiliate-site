@@ -4,10 +4,31 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching products for public display...');
+    console.log('=== FETCHING PRODUCTS FOR PUBLIC DISPLAY ===');
     
     const { connectToDatabase, COLLECTIONS } = await import('../../../lib/mongodb-runtime');
+    
+    console.log('Connecting to database...');
     const { db } = await connectToDatabase();
+    console.log('Connected to database successfully');
+    
+    // First, check if we have any products at all
+    const totalCount = await db.collection(COLLECTIONS.PRODUCTS).countDocuments();
+    console.log(`Total products in database: ${totalCount}`);
+    
+    if (totalCount === 0) {
+      console.log('No products found in database - returning empty result');
+      return NextResponse.json({
+        success: true,
+        message: 'Inga produkter tillgängliga. Kör "Uppdatera Produkter" i admin först.',
+        data: {
+          products: [],
+          total: 0,
+          categories: ['All'],
+          platforms: ['All']
+        }
+      });
+    }
     
     // Get query parameters
     const { searchParams } = new URL(request.url);
@@ -77,11 +98,19 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('=== PRODUCTS API ERROR ===');
+    console.error('Error details:', error);
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack');
+    
     return NextResponse.json({
       success: false,
-      error: 'Kunde inte hämta produkter',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Kunde inte hämta produkter från databasen',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      debug: {
+        mongoUri: !!process.env.MONGODB_URI,
+        nodeEnv: process.env.NODE_ENV,
+        vercelEnv: process.env.VERCEL_ENV
+      }
     }, { status: 500 });
   }
 }
