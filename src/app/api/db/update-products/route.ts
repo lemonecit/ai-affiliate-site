@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { searchAmazonProducts } from '../../../../lib/amazon-api';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,105 +27,37 @@ function addAmazonAffiliateTag(url: string): string {
 }
 
 export async function POST() {
-  console.log('=== UPDATING PRODUCTS WITH AI RECOMMENDATIONS ===');
-  
+  console.log('=== UPDATING PRODUCTS WITH AMAZON API ===');
   try {
     const { connectToDatabase, COLLECTIONS } = await import('../../../../lib/mongodb-runtime');
     const { db } = await connectToDatabase();
-    
-    // Clear existing products
     await db.collection(COLLECTIONS.PRODUCTS).deleteMany({});
     console.log('Cleared existing products');
-    
-    // Generate AI-curated sample products (until we implement real APIs)
-    const aiCuratedProducts = [
-      {
-        title: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones',
-        price: 2999,
-        originalPrice: 3999,
-        platform: 'amazon',
-        category: 'Electronics',
-        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09XM2XW2G'),
-        imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-        description: 'Industry-leading noise canceling with Auto NC Optimizer',
-        commission: 149.95,
-        aiScore: 9.4,
-        trending: true,
-        createdAt: new Date()
-      },
-      {
-        title: 'Apple AirPods Pro (2nd generation)',
-        price: 1899,
-        originalPrice: 2299,
-        platform: 'amazon', 
-        category: 'Electronics',
-        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B0BDJ6W6S9'),
-        imageUrl: 'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400',
-        description: 'Active Noise Cancellation, Adaptive Transparency, Spatial Audio',
-        commission: 94.95,
-        aiScore: 9.5,
-        trending: true,
-        createdAt: new Date()
-      },
-      {
-        title: 'Echo Dot (5th Gen) Smart Speaker with Alexa',
-        price: 399,
-        originalPrice: 599,
-        platform: 'amazon',
-        category: 'Smart Home',
-        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09B8V1LZ3'),
-        imageUrl: 'https://images.unsplash.com/photo-1543512214-318c7553f230?w=400',
-        description: 'Our best sounding Echo Dot yet - Smart speaker with Alexa',
-        commission: 19.95,
-        aiScore: 8.8,
-        trending: true,
-        createdAt: new Date()
-      },
-      {
-        title: 'Logitech MX Master 3S Advanced Wireless Mouse',
-        price: 999,
-        originalPrice: 1299,
-        platform: 'amazon',
-        category: 'Electronics',
-        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09HM94VDS'),
-        imageUrl: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
-        description: 'Quiet clicks, 8K DPI, ergonomic design',
-        commission: 49.95,
-        aiScore: 9.1,
-        trending: false,
-        createdAt: new Date()
-      },
-      {
-        title: 'RGB LED Strip Lights 16.4ft Smart WiFi',
-        price: 299,
-        originalPrice: 499,
-        platform: 'aliexpress',
-        category: 'Smart Home',
-        affiliateUrl: 'https://s.click.aliexpress.com/e/_DCxkWz1',
-        imageUrl: 'https://images.unsplash.com/photo-1558618047-dd5ee3b2ad99?w=400',
-        description: 'Smart WiFi LED strips with app control and voice commands',
-        commission: 14.95,
-        aiScore: 8.5,
-        trending: true,
-        createdAt: new Date()
-      },
-      {
-        title: 'Anker PowerCore Slim 10000 Portable Charger',
-        price: 299,
-        originalPrice: 399,
-        platform: 'amazon',
-        category: 'Electronics',
-        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B07WRKXQ8W'),
-        imageUrl: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400',
-        description: 'Slim, lightweight 10000mAh portable charger with PowerIQ and USB-C',
-        commission: 14.95,
-        aiScore: 8.8,
-        trending: false,
-        createdAt: new Date()
+
+    // Hämta produkter dynamiskt från Amazon API för varje trending-kategori
+    let aiCuratedProducts = [];
+    for (const category of AI_TRENDING_CATEGORIES) {
+      const items = await searchAmazonProducts(category, 1);
+      for (const item of items) {
+        aiCuratedProducts.push({
+          title: item.ItemInfo?.Title?.DisplayValue || 'Amazon Product',
+          price: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
+          originalPrice: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
+          platform: 'amazon',
+          category,
+          affiliateUrl: addAmazonAffiliateTag(item.DetailPageURL),
+          imageUrl: item.Images?.Primary?.Large?.URL || '',
+          description: (item.ItemInfo?.Features?.DisplayValues || []).join(' '),
+          commission: 0, // Kan beräknas om du har data
+          aiScore: 8 + Math.random() * 2,
+          trending: true,
+          createdAt: new Date()
+        });
       }
-    ];
-    
-    // Insert AI-curated products
+    }
+
+    // Om du vill lägga till AliExpress eller andra produkter, lägg till dem här
+
     const result = await db.collection(COLLECTIONS.PRODUCTS).insertMany(aiCuratedProducts);
     console.log(`Inserted ${result.insertedCount} AI-curated products`);
     
