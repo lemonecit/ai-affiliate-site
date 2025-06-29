@@ -109,16 +109,16 @@ export async function POST() {
         createdAt: new Date()
       },
       {
-        title: 'Anker PowerCore 10000 Portable Charger',
-        price: 249,
-        originalPrice: 349,
+        title: 'Anker PowerCore Slim 10000 Portable Charger',
+        price: 299,
+        originalPrice: 399,
         platform: 'amazon',
         category: 'Electronics',
         affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B07WRKXQ8W'),
         imageUrl: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400',
-        description: 'Ultra-compact 10000mAh portable charger with PowerIQ',
-        commission: 12.45,
-        aiScore: 8.7,
+        description: 'Slim, lightweight 10000mAh portable charger with PowerIQ and USB-C',
+        commission: 14.95,
+        aiScore: 8.8,
         trending: false,
         createdAt: new Date()
       }
