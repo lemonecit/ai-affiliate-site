@@ -14,6 +14,17 @@ const AI_TRENDING_CATEGORIES = [
   'tech accessories'
 ];
 
+// Hjälpfunktion för att alltid lägga till affiliate-tag på Amazon-länkar
+function addAmazonAffiliateTag(url: string): string {
+  if (!url) return url;
+  if (!url.includes('amazon.')) return url;
+  if (url.includes('tag=lemonec-20')) return url;
+  // Ta bort eventuell gammal tag och lägg till rätt
+  const urlObj = new URL(url);
+  urlObj.searchParams.set('tag', 'lemonec-20');
+  return urlObj.toString();
+}
+
 export async function POST() {
   console.log('=== UPDATING PRODUCTS WITH AI RECOMMENDATIONS ===');
   
@@ -28,16 +39,16 @@ export async function POST() {
     // Generate AI-curated sample products (until we implement real APIs)
     const aiCuratedProducts = [
       {
-        title: 'Sony WH-1000XM4 Wireless Noise Canceling Headphones',
-        price: 2499,
-        originalPrice: 3499,
+        title: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones',
+        price: 2999,
+        originalPrice: 3999,
         platform: 'amazon',
         category: 'Electronics',
-        affiliateUrl: 'https://amazon.com/dp/B0863TXGM3?tag=lemonec-20',
+        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09XM2XW2G'),
         imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-        description: 'Industry-leading noise canceling with Dual Noise Sensor technology',
-        commission: 124.95,
-        aiScore: 9.2,
+        description: 'Industry-leading noise canceling with Auto NC Optimizer',
+        commission: 149.95,
+        aiScore: 9.4,
         trending: true,
         createdAt: new Date()
       },
@@ -47,7 +58,7 @@ export async function POST() {
         originalPrice: 2299,
         platform: 'amazon', 
         category: 'Electronics',
-        affiliateUrl: 'https://amazon.com/dp/B0BDHWDR12?tag=lemonec-20',
+        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B0BDJ6W6S9'),
         imageUrl: 'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400',
         description: 'Active Noise Cancellation, Adaptive Transparency, Spatial Audio',
         commission: 94.95,
@@ -61,7 +72,7 @@ export async function POST() {
         originalPrice: 599,
         platform: 'amazon',
         category: 'Smart Home',
-        affiliateUrl: 'https://amazon.com/dp/B09B8V1LZ3?tag=lemonec-20',
+        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09B8V1LZ3'),
         imageUrl: 'https://images.unsplash.com/photo-1543512214-318c7553f230?w=400',
         description: 'Our best sounding Echo Dot yet - Smart speaker with Alexa',
         commission: 19.95,
@@ -70,16 +81,16 @@ export async function POST() {
         createdAt: new Date()
       },
       {
-        title: 'Logitech MX Master 3 Advanced Wireless Mouse',
-        price: 899,
-        originalPrice: 1199,
+        title: 'Logitech MX Master 3S Advanced Wireless Mouse',
+        price: 999,
+        originalPrice: 1299,
         platform: 'amazon',
         category: 'Electronics',
-        affiliateUrl: 'https://amazon.com/dp/B07S395RWD?tag=lemonec-20',
+        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B09HM94VDS'),
         imageUrl: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
-        description: 'Advanced wireless mouse with ultra-fast scrolling',
-        commission: 44.95,
-        aiScore: 9.0,
+        description: 'Quiet clicks, 8K DPI, ergonomic design',
+        commission: 49.95,
+        aiScore: 9.1,
         trending: false,
         createdAt: new Date()
       },
@@ -103,7 +114,7 @@ export async function POST() {
         originalPrice: 349,
         platform: 'amazon',
         category: 'Electronics',
-        affiliateUrl: 'https://amazon.com/dp/B019GJLER8?tag=lemonec-20',
+        affiliateUrl: addAmazonAffiliateTag('https://www.amazon.com/dp/B07WRKXQ8W'),
         imageUrl: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400',
         description: 'Ultra-compact 10000mAh portable charger with PowerIQ',
         commission: 12.45,
