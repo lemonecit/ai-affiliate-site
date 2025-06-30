@@ -36,11 +36,11 @@ export async function POST() {
     console.log('Cleared existing products');
 
     // Dynamically fetch Amazon products for each trending category
-    const { searchAmazonProducts } = require('../../../../lib/amazon-api');
+    const { searchAmazonProductsREST } = await import('../../../../lib/amazon-api-rest');
     const aiCuratedProducts = [];
     for (const category of AI_TRENDING_CATEGORIES) {
       try {
-        const items = await searchAmazonProducts(category, 5); // Fetch more per category for stricter filtering
+        const items = await searchAmazonProductsREST(category, 5); // Fetch more per category for stricter filtering
         for (const item of items) {
           // Strict filtering: must have valid URL, be in stock, and URL must be a valid Amazon product page
           const url = item.DetailPageURL;
