@@ -40,20 +40,21 @@ export async function POST() {
     const aiCuratedProducts = [];
     for (const category of AI_TRENDING_CATEGORIES) {
       try {
-        const items = await searchAmazonProducts(category, 3); // Fetch 3 per category
+        const items = await searchAmazonProducts(category, 5); // Fetch more per category for stricter filtering
         for (const item of items) {
-          // Only add if product is available and has a valid URL
-          if (
-            item.DetailPageURL &&
-            item.Offers?.Listings?.[0]?.Availability?.Message?.toLowerCase().includes('in stock')
-          ) {
+          // Strict filtering: must have valid URL, be in stock, and URL must be a valid Amazon product page
+          const url = item.DetailPageURL;
+          const isValidAmazonUrl = url && /^https:\/\/www\.amazon\.(com|co\.uk|de|fr|it|es|ca|co\.jp)\/.*$/.test(url);
+          const inStock = item.Offers?.Listings?.[0]?.Availability?.Message?.toLowerCase().includes('in stock');
+          const hasImage = !!item.Images?.Primary?.Large?.URL;
+          if (isValidAmazonUrl && inStock && hasImage) {
             aiCuratedProducts.push({
               title: item.ItemInfo?.Title?.DisplayValue || 'Amazon Product',
               price: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
               originalPrice: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
               platform: 'amazon',
               category,
-              affiliateUrl: addAmazonAffiliateTag(item.DetailPageURL),
+              affiliateUrl: addAmazonAffiliateTag(url),
               imageUrl: item.Images?.Primary?.Large?.URL || '',
               description: (item.ItemInfo?.Features?.DisplayValues || []).join(' '),
               commission: Math.round((item.Offers?.Listings?.[0]?.Price?.Amount || 0) * 0.05 * 100) / 100, // 5% est.
