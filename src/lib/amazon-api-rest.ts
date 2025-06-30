@@ -8,7 +8,6 @@ const PARTNER_TAG = process.env.AMAZON_ASSOCIATE_TAG || '';
 const HOST = 'webservices.amazon.com';
 const REGION = 'us-east-1';
 const SERVICE = 'ProductAdvertisingAPI';
-const ENDPOINT = `https://${HOST}/paapi5/searchitems`;
 
 function getAmzDate(date: Date) {
   return date.toISOString().replace(/[:-]|\..*$/g, '');
@@ -26,7 +25,7 @@ function getSignatureKey(key: string, dateStamp: string, regionName: string, ser
   return kSigning;
 }
 
-export async function searchAmazonProductsREST(keywords: string, maxResults = 3) {
+export async function searchAmazonProductsREST(keywords: string, maxResults = 3, host = 'webservices.amazon.com') {
   const now = new Date();
   const amzDate = getAmzDate(now);
   const dateStamp = amzDate.slice(0, 8);
@@ -47,10 +46,12 @@ export async function searchAmazonProductsREST(keywords: string, maxResults = 3)
     ],
   });
 
+  const ENDPOINT = `https://${host}/paapi5/searchitems`;
+
   const headers = {
     'content-encoding': 'amz-1.0',
     'content-type': 'application/json; charset=UTF-8',
-    host: HOST,
+    host: host,
     'x-amz-date': amzDate,
     'x-amz-target': 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems',
   };

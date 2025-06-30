@@ -14,6 +14,17 @@ const AI_TRENDING_CATEGORIES = [
   'tech accessories'
 ];
 
+// Lägg till stöd för flera Amazon-marknader och länder
+const AMAZON_MARKETS = [
+  { marketplace: 'www.amazon.com', country: 'US' },
+  { marketplace: 'www.amazon.co.uk', country: 'UK' },
+  { marketplace: 'www.amazon.de', country: 'DE' },
+  { marketplace: 'www.amazon.ca', country: 'CA' },
+  { marketplace: 'www.amazon.se', country: 'SE' },
+  { marketplace: 'www.amazon.be', country: 'BE' },
+  { marketplace: 'www.amazon.co.il', country: 'IL' } // Om Amazon Israel finns, annars KSP
+];
+
 // Hjälpfunktion för att alltid lägga till affiliate-tag på Amazon-länkar
 function addAmazonAffiliateTag(url: string): string {
   if (!url) return url;
@@ -35,52 +46,74 @@ export async function POST() {
     await db.collection(COLLECTIONS.PRODUCTS).deleteMany({});
     console.log('Cleared existing products');
 
-    // Dynamically fetch Amazon products for each trending category
+    // Dynamically fetch Amazon products for each trending category and market
     const { searchAmazonProductsREST } = await import('../../../../lib/amazon-api-rest');
     const aiCuratedProducts = [];
-    for (const category of AI_TRENDING_CATEGORIES) {
-      try {
-        const items = await searchAmazonProductsREST(category, 5); // Fetch more per category for stricter filtering
-        for (const item of items) {
-          // Strict filtering: must have valid URL, be in stock, and URL must be a valid Amazon product page
-          const url = item.DetailPageURL;
-          const isValidAmazonUrl = url && /^https:\/\/www\.amazon\.(com|co\.uk|de|fr|it|es|ca|co\.jp)\/.*$/.test(url);
-          const inStock = item.Offers?.Listings?.[0]?.Availability?.Message?.toLowerCase().includes('in stock');
-          const hasImage = !!item.Images?.Primary?.Large?.URL;
-          if (isValidAmazonUrl && inStock && hasImage) {
-            aiCuratedProducts.push({
-              title: item.ItemInfo?.Title?.DisplayValue || 'Amazon Product',
-              price: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
-              originalPrice: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
-              platform: 'amazon',
-              category,
-              affiliateUrl: addAmazonAffiliateTag(url),
-              imageUrl: item.Images?.Primary?.Large?.URL || '',
-              description: (item.ItemInfo?.Features?.DisplayValues || []).join(' '),
-              commission: Math.round((item.Offers?.Listings?.[0]?.Price?.Amount || 0) * 0.05 * 100) / 100, // 5% est.
-              aiScore: 8 + Math.random() * 2, // Simulate AI score
-              trending: true,
-              createdAt: new Date()
-            });
+    for (const market of AMAZON_MARKETS) {
+      for (const category of AI_TRENDING_CATEGORIES) {
+        try {
+          const items = await searchAmazonProductsREST(category, 5, market.marketplace); // Skicka marketplace
+          for (const item of items) {
+            // Strict filtering: must have valid URL, be in stock, and URL must be a valid Amazon product page
+            const url = item.DetailPageURL;
+            const isValidAmazonUrl = url && url.includes(market.marketplace);
+            const inStock = item.Offers?.Listings?.[0]?.Availability?.Message?.toLowerCase().includes('in stock');
+            const hasImage = !!item.Images?.Primary?.Large?.URL;
+            if (isValidAmazonUrl && inStock && hasImage) {
+              aiCuratedProducts.push({
+                title: item.ItemInfo?.Title?.DisplayValue || 'Amazon Product',
+                price: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
+                originalPrice: item.Offers?.Listings?.[0]?.Price?.Amount || 0,
+                platform: 'amazon',
+                category,
+                country: market.country,
+                marketplace: market.marketplace,
+                affiliateUrl: addAmazonAffiliateTag(url),
+                imageUrl: item.Images?.Primary?.Large?.URL || '',
+                description: (item.ItemInfo?.Features?.DisplayValues || []).join(' '),
+                commission: Math.round((item.Offers?.Listings?.[0]?.Price?.Amount || 0) * 0.05 * 100) / 100, // 5% est.
+                aiScore: 8 + Math.random() * 2, // Simulate AI score
+                trending: true,
+                createdAt: new Date()
+              });
+            }
           }
+        } catch (err) {
+          console.error(`Amazon fetch failed for category ${category} (${market.marketplace}):`, err);
         }
-      } catch (err) {
-        console.error(`Amazon fetch failed for category ${category}:`, err);
       }
     }
 
-    // Add a sample AliExpress product (optional, keep or extend as needed)
+    // Lägg till AliExpress och KSP Israel manuellt för Israel
     aiCuratedProducts.push({
-      title: 'RGB LED Strip Lights 16.4ft Smart WiFi',
-      price: 299,
-      originalPrice: 499,
+      title: 'AliExpress Bestseller IL',
+      price: 199,
+      originalPrice: 299,
       platform: 'aliexpress',
-      category: 'Smart Home',
+      category: 'Tech',
+      country: 'IL',
+      network: 'aliexpress',
       affiliateUrl: 'https://s.click.aliexpress.com/e/_DCxkWz1',
       imageUrl: 'https://images.unsplash.com/photo-1558618047-dd5ee3b2ad99?w=400',
-      description: 'Smart WiFi LED strips with app control and voice commands',
-      commission: 14.95,
+      description: 'Populär tech-produkt från AliExpress för Israel',
+      commission: 9.95,
       aiScore: 8.5,
+      trending: true,
+      createdAt: new Date()
+    });
+    aiCuratedProducts.push({
+      title: 'KSP Israel Bestseller',
+      price: 299,
+      originalPrice: 399,
+      platform: 'ksp',
+      category: 'Tech',
+      country: 'IL',
+      network: 'ksp',
+      affiliateUrl: 'https://ksp.co.il/web/item/12345?aff=YOUR_KSP_AFFILIATE_ID',
+      imageUrl: 'https://images.unsplash.com/photo-1558618047-dd5ee3b2ad99?w=400',
+      description: 'Populär tech-produkt från KSP Israel',
+      commission: 14.95,
+      aiScore: 8.7,
       trending: true,
       createdAt: new Date()
     });
