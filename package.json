@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "amazon-pa-api50": "^0.2.0",
     "autoprefixer": "^10.4.0",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
